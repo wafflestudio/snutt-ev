@@ -13,12 +13,12 @@ class EvaluationService (
     private val semesterLectureRepository: SemesterLectureRepository,
     private val lectureEvaluationRepository: LectureEvaluationRepository
 ) {
-    fun createEvaluation(createEvaluationRequest: CreateEvaluationRequest): LectureEvaluationDto? {
+    fun createEvaluation(userId: Long, createEvaluationRequest: CreateEvaluationRequest): LectureEvaluationDto? {
         val semesterLecture = semesterLectureRepository.findByIdOrNull(createEvaluationRequest.semesterLectureId)
         semesterLecture?.let {
             val lectureEvaluation = LectureEvaluation(
                 semesterLecture = it,
-                userId = 1,
+                userId = userId,
                 content = createEvaluationRequest.content
             )
             lectureEvaluationRepository.save(lectureEvaluation)

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component
 class DataLoader(
     private val semesterLectureRepository: SemesterLectureRepository
 ) : ApplicationRunner {
+
     override fun run(args: ApplicationArguments?) {
         val semesterLecture = SemesterLecture(
             title = "소프트웨어 개발의 원리와 실습",

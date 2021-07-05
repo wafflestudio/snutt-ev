@@ -4,9 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.wafflestudio.snuttev.service.EvaluationService
 import com.wafflestudio.snuttev.service.LectureEvaluationDto
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.NotNull
@@ -18,9 +16,10 @@ class EvaluationController(
 
     @PostMapping("/api/v1/evaluation/")
     fun createEvaluation(
+        @RequestAttribute(value = "UserId") userId: Long,
         @RequestBody @Valid createEvaluationRequest: CreateEvaluationRequest
     ) : ResponseEntity<LectureEvaluationDto?> {
-        return evaluationService.createEvaluation(createEvaluationRequest)?.let {
+        return evaluationService.createEvaluation(userId, createEvaluationRequest)?.let {
             ResponseEntity.ok(it)
         } ?: ResponseEntity.notFound().build()
     }
