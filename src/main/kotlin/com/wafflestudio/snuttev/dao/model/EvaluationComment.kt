@@ -12,7 +12,7 @@ data class EvaluationComment (
     @JoinColumn(name = "evaluation_id")
     val evaluation: LectureEvaluation,
 
-    val userId: Long,
+    val userId: String,
 
     @Column(columnDefinition = "longtext")
     val content: String,

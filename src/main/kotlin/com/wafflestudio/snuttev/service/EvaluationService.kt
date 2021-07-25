@@ -13,7 +13,7 @@ class EvaluationService (
     private val semesterLectureRepository: SemesterLectureRepository,
     private val lectureEvaluationRepository: LectureEvaluationRepository
 ) {
-    fun createEvaluation(userId: Long, createEvaluationRequest: CreateEvaluationRequest): LectureEvaluationDto? {
+    fun createEvaluation(userId: String, createEvaluationRequest: CreateEvaluationRequest): LectureEvaluationDto? {
         val semesterLecture = semesterLectureRepository.findByIdOrNull(createEvaluationRequest.semesterLectureId)
         semesterLecture?.let {
             val lectureEvaluation = LectureEvaluation(
@@ -40,7 +40,7 @@ class EvaluationService (
 data class LectureEvaluationDto(
     val id: Long,
     @JsonProperty("user_id")
-    val userId: Long,
+    val userId: String,
     @JsonProperty("like_count")
     val likeCount: Long,
     @JsonProperty("dislike_count")

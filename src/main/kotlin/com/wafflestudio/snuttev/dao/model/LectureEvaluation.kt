@@ -9,7 +9,7 @@ data class LectureEvaluation (
     @JoinColumn(name = "semester_lecture_id")
     val semesterLecture: SemesterLecture,
 
-    val userId: Long,
+    val userId: String,
 
     @Column(columnDefinition = "longtext")
     val content: String,

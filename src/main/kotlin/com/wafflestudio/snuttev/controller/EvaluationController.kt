@@ -16,7 +16,7 @@ class EvaluationController(
 
     @PostMapping("/api/v1/evaluation/")
     fun createEvaluation(
-        @RequestAttribute(value = "UserId") userId: Long,
+        @RequestAttribute(value = "UserId") userId: String,
         @RequestBody @Valid createEvaluationRequest: CreateEvaluationRequest
     ) : ResponseEntity<LectureEvaluationDto?> {
         return evaluationService.createEvaluation(userId, createEvaluationRequest)?.let {

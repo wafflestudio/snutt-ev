@@ -1,25 +1,20 @@
 package com.wafflestudio.snuttev.dao.model
 
-import javax.persistence.Entity
-import javax.persistence.GeneratedValue
-import javax.persistence.GenerationType
-import javax.persistence.Id
+import javax.persistence.*
 
 @Entity
 data class SemesterLecture (
 
-    val title: String,
-
-    val instructor: String,
-
-    val department: String,
+    @ManyToOne
+    @JoinColumn(name = "lecture_id")
+    val lecture: Lecture,
 
     val year: Int,
 
     val semester: Int,
 
-    val courseNumber: String = "",
+    val credit: Int,
 
-    val lectureNumber: String = ""
+    val extraInfo: String = ""
 
 ) : BaseEntity()
