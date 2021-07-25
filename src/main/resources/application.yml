@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:mysql://localhost/snutt?serverTimezone=UTC
+    url: jdbc:mysql://wafflestudio-mysql.caxwrw8c4qqq.ap-northeast-2.rds.amazonaws.com/snutt?serverTimezone=UTC
     username: snutt
     password: 237044526e3441d2b7cac45ece763d1a
   jpa:
