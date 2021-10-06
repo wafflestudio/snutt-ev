@@ -2,7 +2,7 @@ name: Deploy
 
 on:
   push:
-    branches: [ develop, feature/SNUTT-151 ]
+    branches: [ develop ]
 
 jobs:
   deploy:
