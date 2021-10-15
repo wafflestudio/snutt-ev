@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.wafflestudio.snuttev.controller.CreateEvaluationRequest
 import com.wafflestudio.snuttev.dao.model.LectureEvaluation
 import com.wafflestudio.snuttev.dao.repository.LectureEvaluationRepository
+import com.wafflestudio.snuttev.dao.repository.LectureRepository
 import com.wafflestudio.snuttev.dao.repository.SemesterLectureRepository
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
@@ -11,7 +12,8 @@ import org.springframework.stereotype.Service
 @Service
 class EvaluationService(
     private val semesterLectureRepository: SemesterLectureRepository,
-    private val lectureEvaluationRepository: LectureEvaluationRepository
+    private val lectureEvaluationRepository: LectureEvaluationRepository,
+    private val lectureRepository: LectureRepository
 ) {
     fun createEvaluation(userId: String, createEvaluationRequest: CreateEvaluationRequest): LectureEvaluationDto? {
         val semesterLecture = semesterLectureRepository.findByIdOrNull(createEvaluationRequest.semesterLectureId)
@@ -28,7 +30,7 @@ class EvaluationService(
     }
 
     fun getLectureEvaluationsOfLecture(lectureId: Long): List<LectureEvaluationDto> {
-        val result = lectureEvaluationRepository.findByLectureId(lectureId)
+        val result = lectureRepository.getById(lectureId).semesterLectures.flatMap { it.lectureEvaluations }
         return result.map { genLectureEvaluationDto(it) }
     }
 
