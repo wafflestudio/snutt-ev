@@ -3,11 +3,11 @@ package com.wafflestudio.snuttev.dao.model
 import javax.persistence.*
 
 @Entity
-data class SemesterLecture (
+data class SemesterLecture(
 
     @ManyToOne
     @JoinColumn(name = "lecture_id")
-    val lecture: Lecture,
+    var lecture: Lecture,
 
     val year: Int,
 
@@ -15,6 +15,10 @@ data class SemesterLecture (
 
     val credit: Int,
 
-    val extraInfo: String = ""
+    val extraInfo: String = "",
+
+    @OneToMany
+    @JoinColumn(name = "semester_lecture_id")
+    var lectureEvaluations: List<LectureEvaluation> = emptyList()
 
 ) : BaseEntity()
