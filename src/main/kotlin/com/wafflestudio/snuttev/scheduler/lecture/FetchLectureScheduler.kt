@@ -8,13 +8,13 @@ import org.springframework.stereotype.Component
 class FetchLectureScheduler(private val context: FetchLectureContext) {
 
     //    @PostConstruct
-    fun fetchAllAtOnce() {
+    fun fetchAll() {
         context.migrateAllData()
     }
 
     // 매주 수요일 6:00
     @Scheduled(cron = "0 0 6 * * 3")
-    fun fetchWeekly() {
+    fun fetchLatestWeekly() {
         context.migrateCurrentSemesterData()
     }
 }
