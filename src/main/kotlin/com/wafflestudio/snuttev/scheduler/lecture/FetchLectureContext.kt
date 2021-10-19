@@ -41,16 +41,6 @@ class FetchLectureContext(
     }
 
     private fun migrateSemesterLectureFromSnuttToSnuttev(semesterLectures: List<SnuttSemesterLecture>) {
-        //        semesterLectures.forEach {
-//            val lecture: Lecture =
-//                lectureRepository.findByCourseNumberAndInstructorAndTitleAndDepartment(
-//                    it.course_Int,
-//                    it.instructor,
-//                    it.course_title,
-//                    it.department
-//                ) ?: convertMongoSemesterLectureToLecture(it)
-//            semesterLectureRepository.save(convertMongoSemesterLectureToSemesterLecture(it, lecture))
-//        }
         fun keyOf(e: Lecture): String {
             return "${e.courseNumber},${e.instructor},${e.department},${e.title}"
         }
