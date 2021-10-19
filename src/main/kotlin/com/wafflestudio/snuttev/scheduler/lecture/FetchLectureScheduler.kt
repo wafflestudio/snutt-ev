@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component
 class FetchLectureScheduler(private val context: FetchLectureContext) {
 
     //    @PostConstruct
-    fun fetchOnce() {
+    fun fetchAllAtOnce() {
         context.migrateAllData()
     }
 
