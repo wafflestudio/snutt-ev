@@ -15,6 +15,8 @@ class Lecture(
     @Column(name = "course_number")
     val courseNumber: String = "",
 
-    @OneToMany(mappedBy = "lecture", fetch = FetchType.LAZY)
-    var semesterLectures: MutableList<SemesterLecture> = mutableListOf()
+    @OneToMany
+    @JoinColumn(name = "lecture_id")
+    var semesterLectures: List<SemesterLecture> = emptyList()
+
 ) : BaseEntity()
