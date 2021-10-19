@@ -1,9 +1,12 @@
 package com.wafflestudio.snuttev.dao.model
 
-import javax.persistence.*
+import javax.persistence.Column
+import javax.persistence.Entity
+import javax.persistence.JoinColumn
+import javax.persistence.ManyToOne
 
 @Entity
-data class LectureEvaluation (
+class LectureEvaluation(
 
     @ManyToOne
     @JoinColumn(name = "semester_lecture_id")

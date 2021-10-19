@@ -1,13 +1,69 @@
 spring:
+  profiles:
+    active: local
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: local
+  datasource:
+    url: jdbc:mysql://localhost:3306/seminar?serverTimezone=UTC
+    username: waffle-spring
+    password: wafflestudio
+  jpa:
+    generate-ddl: true
+    hibernate:
+      ddl-auto: create
+    show-sql: true
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      authentication-database: admin
+      database: snutt
+  #      username: snutt
+  #      password: snutt
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: dev
   datasource:
     url: jdbc:mysql://wafflestudio-mysql-202107.caxwrw8c4qqq.ap-northeast-2.rds.amazonaws.com/snutt?serverTimezone=UTC
     username: snutt
     password: 237044526e3441d2b7cac45ece763d1a
   jpa:
+    generate-ddl: true
     hibernate:
-      ddl-auto: create
-    properties:
-      hibernate:
-        show_sql: true
-        format_sql: true
-        use_sql_comments: true
+      ddl-auto: update
+  data:
+    mongodb:
+      host: 13.209.14.101
+      port: 27017
+      authentication-database: admin
+      database: snutt
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: prod
+  datasource:
+    url: jdbc:mysql://:3306/seminar?serverTimezone=UTC
+    username: waffle-spring
+    password: wafflestudio
+  jpa:
+    hibernate:
+      ddl-auto: update
+    generate-ddl: true
+  data:
+    mongodb:
+      host: 13.124.196.39
+      port: 27017
+      authentication-database: admin
+      database: snutt

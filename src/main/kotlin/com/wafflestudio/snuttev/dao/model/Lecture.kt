@@ -1,9 +1,10 @@
 package com.wafflestudio.snuttev.dao.model
 
-import javax.persistence.Entity
+import javax.persistence.*
 
 @Entity
-data class Lecture (
+@Table(uniqueConstraints = [UniqueConstraint(columnNames = ["title", "department", "course_number", "instructor"])])
+class Lecture(
 
     val title: String,
 
@@ -11,8 +12,9 @@ data class Lecture (
 
     val department: String,
 
+    @Column(name = "course_number")
     val courseNumber: String = "",
 
-    val lectureNumber: String = "",
-
+    @OneToMany(mappedBy = "lecture", fetch = FetchType.LAZY)
+    var semesterLectures: MutableList<SemesterLecture> = mutableListOf()
 ) : BaseEntity()

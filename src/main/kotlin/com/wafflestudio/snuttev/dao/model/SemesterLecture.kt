@@ -3,9 +3,9 @@ package com.wafflestudio.snuttev.dao.model
 import javax.persistence.*
 
 @Entity
-data class SemesterLecture (
+class SemesterLecture(
 
-    @ManyToOne
+    @ManyToOne(cascade = [CascadeType.ALL])
     @JoinColumn(name = "lecture_id")
     val lecture: Lecture,
 
@@ -15,6 +15,6 @@ data class SemesterLecture (
 
     val credit: Int,
 
+    @Column(columnDefinition = "longtext")
     val extraInfo: String = ""
-
 ) : BaseEntity()
