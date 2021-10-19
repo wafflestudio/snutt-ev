@@ -10,7 +10,7 @@ class LectureEvaluation(
 
     @ManyToOne
     @JoinColumn(name = "semester_lecture_id")
-    val semesterLecture: SemesterLecture,
+    var semesterLecture: SemesterLecture,
 
     val userId: String,
 

@@ -7,7 +7,7 @@ class SemesterLecture(
 
     @ManyToOne(cascade = [CascadeType.ALL])
     @JoinColumn(name = "lecture_id")
-    val lecture: Lecture,
+    var lecture: Lecture,
 
     val year: Int,
 
@@ -17,4 +17,9 @@ class SemesterLecture(
 
     @Column(columnDefinition = "longtext")
     val extraInfo: String = ""
+
+    @OneToMany
+    @JoinColumn(name = "semester_lecture_id")
+    var lectureEvaluations: List<LectureEvaluation> = emptyList()
+
 ) : BaseEntity()
