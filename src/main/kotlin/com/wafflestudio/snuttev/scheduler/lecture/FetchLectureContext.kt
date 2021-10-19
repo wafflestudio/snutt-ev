@@ -56,7 +56,7 @@ class FetchLectureContext(
         }
 
         fun keyOf(e: SnuttSemesterLecture): String {
-            return "${e.course_Int ?: ""},${e.instructor},${e.department},${e.course_title}"
+            return "${e.courseNumber ?: ""},${e.instructor},${e.department},${e.courseTitle}"
         }
 
         val originalLecturesMap = lectureRepository.findAll()
@@ -100,10 +100,10 @@ class FetchLectureContext(
 
     private fun convertMongoSemesterLectureToLecture(e: SnuttSemesterLecture): Lecture {
         return Lecture(
-            e.course_title,
+            e.courseTitle,
             e.instructor,
             e.department,
-            e.course_Int ?: "",
+            e.courseNumber ?: "",
         )
     }
 

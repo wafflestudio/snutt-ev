@@ -2,6 +2,7 @@ package com.wafflestudio.snuttev.scheduler.lecture
 
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
+import javax.annotation.PostConstruct
 
 
 @Component
