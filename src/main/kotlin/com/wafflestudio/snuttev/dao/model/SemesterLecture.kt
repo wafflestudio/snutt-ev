@@ -16,7 +16,7 @@ class SemesterLecture(
     val credit: Int,
 
     @Column(columnDefinition = "longtext")
-    val extraInfo: String = ""
+    val extraInfo: String = "",
 
     @OneToMany
     @JoinColumn(name = "semester_lecture_id")
