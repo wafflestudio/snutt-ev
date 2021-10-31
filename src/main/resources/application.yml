@@ -10,12 +10,12 @@ spring:
       on-profile: local
   datasource:
     url: jdbc:mysql://localhost:3306/snutt?serverTimezone=UTC
-    username: waffle-spring
+    username: snutt
     password: wafflestudio
   jpa:
     generate-ddl: true
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     show-sql: true
   data:
     mongodb:
@@ -42,7 +42,7 @@ spring:
       ddl-auto: update
   data:
     mongodb:
-      host: 13.209.14.101
+      host: snutt-mongo-dev.wafflestudio.com
       port: 27017
       authentication-database: admin
       database: snutt
@@ -53,17 +53,3 @@ spring:
   config:
     activate:
       on-profile: prod
-  datasource:
-    url: jdbc:mysql://:3306/seminar?serverTimezone=UTC
-    username: waffle-spring
-    password: wafflestudio
-  jpa:
-    hibernate:
-      ddl-auto: update
-    generate-ddl: true
-  data:
-    mongodb:
-      host: 13.124.196.39
-      port: 27017
-      authentication-database: admin
-      database: snutt

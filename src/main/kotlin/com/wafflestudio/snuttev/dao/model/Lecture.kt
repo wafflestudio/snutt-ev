@@ -1,6 +1,7 @@
 package com.wafflestudio.snuttev.dao.model
 
 import javax.persistence.*
+import javax.validation.constraints.NotBlank
 
 @Entity
 @Table(uniqueConstraints = [UniqueConstraint(columnNames = ["title", "department", "course_number", "instructor"])])
@@ -13,10 +14,21 @@ class Lecture(
     val department: String,
 
     @Column(name = "course_number")
-    val courseNumber: String = "",
+    @NotBlank
+    val courseNumber: String,
+
+    var credit: Int,
+
+    @Column(name = "academic_year")
+    var academicYear: String,
+
+    var category: String,
+
+    var classfication: String,
+
 
     @OneToMany
     @JoinColumn(name = "lecture_id")
-    var semesterLectures: List<SemesterLecture> = emptyList()
+    var semesterLectures: MutableList<SemesterLecture> = mutableListOf<SemesterLecture>()
 
 ) : BaseEntity()
