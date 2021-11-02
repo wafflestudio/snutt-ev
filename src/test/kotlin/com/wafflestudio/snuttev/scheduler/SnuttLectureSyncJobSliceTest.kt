@@ -106,9 +106,8 @@ internal class SnuttLectureSyncJobSliceTest(
         given(semesterUtils.getCurrentYearAndSemester()).willReturn(2021 to Semester.SUMMER)
         given(semesterUtils.getYearAndSemesterOfNextSemester()).willReturn(2021 to Semester.AUTUMN)
         given(snuttSemesterLectureRepository.existsByYearAndSemester(2021, 3)).willReturn(true)
-        given(snuttSemesterLectureRepository.findMongoSemesterLecturesByYearAndSemester(2021, 3)).willReturn(
-            autumnSemesterLectures
-        )
+        given(snuttSemesterLectureRepository.findMongoSemesterLecturesByYearAndSemester(2021, 3))
+            .willReturn(autumnSemesterLectures)
 
         snuttLectureSyncJobContext.migrateLatestSemesterLectureDataFromSnutt()
         val lectures = lectureRepository.findAll()
@@ -156,6 +155,7 @@ internal class SnuttLectureSyncJobSliceTest(
     }
 
     @Test
+    @Transactional
     fun `최신 학기 정보로 lecture 정보 최신화`() {
         given(snuttSemesterLectureRepository.findAll()).willReturn(autumnSemesterLectures)
         given(semesterUtils.getCurrentYearAndSemester()).willReturn(2021 to Semester.AUTUMN)
