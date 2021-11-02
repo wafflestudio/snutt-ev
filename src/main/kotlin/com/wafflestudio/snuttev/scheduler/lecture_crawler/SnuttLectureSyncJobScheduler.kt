@@ -7,7 +7,7 @@ import javax.annotation.PostConstruct
 
 
 @Component
-class SnuttLectureSyncScheduler(private val context: SnuttLectureSyncContext) {
+class SnuttLectureSyncJobScheduler(private val context: SnuttLectureSyncJobContext) {
 
     //    전체 수강편람 옮기는 job, local인 경우에만 작동
     @PostConstruct

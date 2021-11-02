@@ -4,7 +4,7 @@ import com.wafflestudio.snuttev.common.Semester
 import com.wafflestudio.snuttev.dao.repository.LectureRepository
 import com.wafflestudio.snuttev.dao.repository.SemesterLectureRepository
 import com.wafflestudio.snuttev.scheduler.lecture_crawler.SemesterUtils
-import com.wafflestudio.snuttev.scheduler.lecture_crawler.SnuttLectureSyncContext
+import com.wafflestudio.snuttev.scheduler.lecture_crawler.SnuttLectureSyncJobContext
 import com.wafflestudio.snuttev.scheduler.lecture_crawler.model.SnuttSemesterLecture
 import com.wafflestudio.snuttev.scheduler.lecture_crawler.model.SnuttTimePlace
 import com.wafflestudio.snuttev.scheduler.lecture_crawler.repository.SnuttSemesterLectureRepository
@@ -19,8 +19,8 @@ import javax.transaction.Transactional
 
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @SpringBootTest
-internal class SnuttLectureSyncIntegrationTest(
-    private val snuttLectureSyncContext: SnuttLectureSyncContext,
+internal class SnuttLectureSyncJobSliceTest(
+    private val snuttLectureSyncJobContext: SnuttLectureSyncJobContext,
     private val lectureRepository: LectureRepository,
     private val semesterLectureRepository: SemesterLectureRepository,
 ) {
@@ -83,7 +83,7 @@ internal class SnuttLectureSyncIntegrationTest(
     fun `snutt 전체 강의 데이터 migration 강의 중복 제거 테스트`() {
         given(snuttSemesterLectureRepository.findAll()).willReturn(autumnSemesterLectures + winterSemesterLectures)
 
-        snuttLectureSyncContext.migrateAllLectureDataFromSnutt()
+        snuttLectureSyncJobContext.migrateAllLectureDataFromSnutt()
         val lectures = lectureRepository.findAll()
 
         assertEquals(lectures.size, 11)
@@ -94,7 +94,7 @@ internal class SnuttLectureSyncIntegrationTest(
     fun `snutt 전체 강의 데이터 migration semesterLecture 생성 테스트`() {
         given(snuttSemesterLectureRepository.findAll()).willReturn(autumnSemesterLectures + winterSemesterLectures)
 
-        snuttLectureSyncContext.migrateAllLectureDataFromSnutt()
+        snuttLectureSyncJobContext.migrateAllLectureDataFromSnutt()
         val semesterLectures = semesterLectureRepository.findAll()
 
         assertEquals(semesterLectures.size, 13)
@@ -110,7 +110,7 @@ internal class SnuttLectureSyncIntegrationTest(
             autumnSemesterLectures
         )
 
-        snuttLectureSyncContext.migrateLatestSemesterLectureDataFromSnutt()
+        snuttLectureSyncJobContext.migrateLatestSemesterLectureDataFromSnutt()
         val lectures = lectureRepository.findAll()
         val semesterLectures = semesterLectureRepository.findAll()
 
@@ -122,11 +122,11 @@ internal class SnuttLectureSyncIntegrationTest(
     @Transactional
     fun `snutt데이터 그대로일 때 sync 여러번 일어나도 기존 데이터 유지`() {
         given(snuttSemesterLectureRepository.findAll()).willReturn(autumnSemesterLectures + winterSemesterLectures)
-        snuttLectureSyncContext.migrateAllLectureDataFromSnutt()
+        snuttLectureSyncJobContext.migrateAllLectureDataFromSnutt()
 
         val semesterLecturesBefore = semesterLectureRepository.findAll()
 
-        snuttLectureSyncContext.migrateAllLectureDataFromSnutt()
+        snuttLectureSyncJobContext.migrateAllLectureDataFromSnutt()
 
         val semesterLecturesAfter = semesterLectureRepository.findAll()
 
@@ -149,13 +149,13 @@ internal class SnuttLectureSyncIntegrationTest(
             autumnSemesterLectures
         )
 
-        snuttLectureSyncContext.migrateAllLectureDataFromSnutt()
+        snuttLectureSyncJobContext.migrateAllLectureDataFromSnutt()
 
         val targetSemesterLectures = semesterLectureRepository.findAll().first()
 
         assertEquals(targetSemesterLectures.category, "")
 
-        snuttLectureSyncContext.migrateLatestSemesterLectureDataFromSnutt()
+        snuttLectureSyncJobContext.migrateLatestSemesterLectureDataFromSnutt()
 
         assertEquals(targetSemesterLectures.category, "a")
     }
@@ -170,11 +170,11 @@ internal class SnuttLectureSyncIntegrationTest(
             winterSemesterLectures
         )
 
-        snuttLectureSyncContext.migrateAllLectureDataFromSnutt()
+        snuttLectureSyncJobContext.migrateAllLectureDataFromSnutt()
 
         val lectureBefore = lectureRepository.findByCourseNumberAndInstructorAndTitleAndDepartment("1", "1", "", "")
 
-        snuttLectureSyncContext.migrateLatestSemesterLectureDataFromSnutt()
+        snuttLectureSyncJobContext.migrateLatestSemesterLectureDataFromSnutt()
 
         val lectureAfter = lectureRepository.findByCourseNumberAndInstructorAndTitleAndDepartment("1", "1", "", "")
 

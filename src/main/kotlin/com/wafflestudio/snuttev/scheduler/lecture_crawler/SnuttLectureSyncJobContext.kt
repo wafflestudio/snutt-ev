@@ -11,7 +11,7 @@ import javax.transaction.Transactional
 
 
 @Component
-class SnuttLectureSyncContext(
+class SnuttLectureSyncJobContext(
     private val semesterUtils: SemesterUtils,
     private val snuttSemesterLectureRepository: SnuttSemesterLectureRepository,
     private val lectureRepository: LectureRepository,
