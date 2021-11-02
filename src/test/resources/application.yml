@@ -17,10 +17,4 @@ spring:
     hibernate:
       ddl-auto: create
     show-sql: true
-
-#  data:
-#    mongodb:
-#      host: localhost
-#      port: 27017
-#      authentication-database: admin
-#      database: snutt
+    
