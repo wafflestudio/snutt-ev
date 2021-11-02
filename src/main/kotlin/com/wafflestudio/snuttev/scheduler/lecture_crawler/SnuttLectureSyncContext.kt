@@ -1,6 +1,5 @@
 package com.wafflestudio.snuttev.scheduler.lecture_crawler
 
-import com.wafflestudio.snuttev.common.Semester
 import com.wafflestudio.snuttev.dao.model.Lecture
 import com.wafflestudio.snuttev.dao.model.SemesterLecture
 import com.wafflestudio.snuttev.dao.repository.LectureRepository
@@ -8,13 +7,12 @@ import com.wafflestudio.snuttev.dao.repository.SemesterLectureRepository
 import com.wafflestudio.snuttev.scheduler.lecture_crawler.model.SnuttSemesterLecture
 import com.wafflestudio.snuttev.scheduler.lecture_crawler.repository.SnuttSemesterLectureRepository
 import org.springframework.stereotype.Component
-import java.time.LocalDate
-import java.time.Month
 import javax.transaction.Transactional
 
 
 @Component
 class SnuttLectureSyncContext(
+    private val semesterUtils: SemesterUtils,
     private val snuttSemesterLectureRepository: SnuttSemesterLectureRepository,
     private val lectureRepository: LectureRepository,
     private val semesterLectureRepository: SemesterLectureRepository
@@ -22,7 +20,6 @@ class SnuttLectureSyncContext(
     @Transactional
     fun migrateAllLectureDataFromSnutt() {
         val snuttSemesterLectures = snuttSemesterLectureRepository.findAll()
-
         val existingSemesterLectures = semesterLectureRepository.findAll()
 
         migrateSemesterLecturesFromSnutt(snuttSemesterLectures, existingSemesterLectures)
@@ -30,8 +27,8 @@ class SnuttLectureSyncContext(
 
     @Transactional
     fun migrateLatestSemesterLectureDataFromSnutt() {
-        val (currentYear, currentSemester) = getCurrentYearAndSemester()
-        val (yearOfNextSemester, nextSemester) = getYearAndSemesterOfNextSemester()
+        val (currentYear, currentSemester) = semesterUtils.getCurrentYearAndSemester()
+        val (yearOfNextSemester, nextSemester) = semesterUtils.getYearAndSemesterOfNextSemester()
         val (targetYear, targetSemester) = when (snuttSemesterLectureRepository.existsByYearAndSemester(
             yearOfNextSemester,
             nextSemester.raw
@@ -48,28 +45,6 @@ class SnuttLectureSyncContext(
             semesterLectureRepository.findAllByYearAndSemester(targetYear, targetSemester.raw)
 
         migrateSemesterLecturesFromSnutt(latestSnuttSemesterLectures, existingSemesterLectures)
-    }
-
-    private fun getCurrentYearAndSemester(): Pair<Int, Semester> {
-        val now = LocalDate.now()
-        val year = now.year
-        val semester = when {
-            now.month < Month.MARCH -> Semester.WINTER
-            now.month < Month.JULY -> Semester.SPRING
-            now.month < Month.SEPTEMBER -> Semester.SUMMER
-            else -> Semester.AUTUMN
-        }
-        return year to semester
-    }
-
-    private fun getYearAndSemesterOfNextSemester(): Pair<Int, Semester> {
-        val (year, semester) = getCurrentYearAndSemester()
-        return when (semester) {
-            Semester.SPRING -> year to Semester.SUMMER
-            Semester.SUMMER -> year to Semester.AUTUMN
-            Semester.AUTUMN -> year to Semester.WINTER
-            Semester.WINTER -> year + 1 to Semester.SPRING
-        }
     }
 
     private fun migrateSemesterLecturesFromSnutt(
@@ -146,19 +121,19 @@ class SnuttLectureSyncContext(
         )
     }
 
-    fun lectureKeyOf(e: Lecture): String {
+    private fun lectureKeyOf(e: Lecture): String {
         return lectureKeyOf(e.courseNumber, e.instructor, e.department, e.title)
     }
 
-    fun lectureKeyOf(e: SnuttSemesterLecture): String {
+    private fun lectureKeyOf(e: SnuttSemesterLecture): String {
         return lectureKeyOf(e.courseNumber, e.instructor, e.department, e.courseTitle)
     }
 
-    fun lectureKeyOf(courseNumber: String, instructor: String, department: String, title: String): String {
+    private fun lectureKeyOf(courseNumber: String, instructor: String, department: String, title: String): String {
         return "${courseNumber},${instructor},${department},${title}"
     }
 
-    fun semesterLectureKeyOf(snuttSemesterLecture: SnuttSemesterLecture): String {
+    private fun semesterLectureKeyOf(snuttSemesterLecture: SnuttSemesterLecture): String {
         return semesterLectureKeyOf(
             snuttSemesterLecture.year,
             snuttSemesterLecture.semester,
@@ -167,7 +142,7 @@ class SnuttLectureSyncContext(
         )
     }
 
-    fun semesterLectureKeyOf(semesterLecture: SemesterLecture): String {
+    private fun semesterLectureKeyOf(semesterLecture: SemesterLecture): String {
         return semesterLectureKeyOf(
             semesterLecture.year,
             semesterLecture.semester,
@@ -176,7 +151,7 @@ class SnuttLectureSyncContext(
         )
     }
 
-    fun semesterLectureKeyOf(year: Int, semester: Int, courseNumber: String, lectureNumber: String): String {
+    private fun semesterLectureKeyOf(year: Int, semester: Int, courseNumber: String, lectureNumber: String): String {
         return "${year},${semester},${courseNumber},${lectureNumber}"
     }
 }

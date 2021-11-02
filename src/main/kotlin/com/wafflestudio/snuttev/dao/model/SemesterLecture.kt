@@ -3,7 +3,7 @@ package com.wafflestudio.snuttev.dao.model
 import javax.persistence.*
 
 @Entity
-@Table(uniqueConstraints = [UniqueConstraint(columnNames = ["lecture_id", "lecture_number"])])
+@Table(uniqueConstraints = [UniqueConstraint(columnNames = ["lecture_id", "lecture_number", "year", "semester"])])
 class SemesterLecture(
 
     @ManyToOne(cascade = [CascadeType.ALL])
