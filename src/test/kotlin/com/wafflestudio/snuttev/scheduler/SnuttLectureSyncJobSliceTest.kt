@@ -125,9 +125,7 @@ internal class SnuttLectureSyncJobSliceTest(
         snuttLectureSyncJobContext.migrateAllLectureDataFromSnutt()
 
         val semesterLecturesBefore = semesterLectureRepository.findAll()
-
         snuttLectureSyncJobContext.migrateAllLectureDataFromSnutt()
-
         val semesterLecturesAfter = semesterLectureRepository.findAll()
 
         assertIterableEquals(semesterLecturesAfter, semesterLecturesBefore)
@@ -150,12 +148,9 @@ internal class SnuttLectureSyncJobSliceTest(
         )
 
         snuttLectureSyncJobContext.migrateAllLectureDataFromSnutt()
+        snuttLectureSyncJobContext.migrateLatestSemesterLectureDataFromSnutt()
 
         val targetSemesterLectures = semesterLectureRepository.findAll().first()
-
-        assertEquals(targetSemesterLectures.category, "")
-
-        snuttLectureSyncJobContext.migrateLatestSemesterLectureDataFromSnutt()
 
         assertEquals(targetSemesterLectures.category, "a")
     }
@@ -180,8 +175,6 @@ internal class SnuttLectureSyncJobSliceTest(
 
         assertNotNull(lectureBefore)
         assertNotNull(lectureAfter)
-
-        assertEquals(lectureBefore!!.category, "b")
         assertEquals(lectureAfter!!.category, "b")
     }
 }
