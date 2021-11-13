@@ -7,19 +7,19 @@ import javax.annotation.PostConstruct
 
 
 @Component
-class SnuttLectureSyncJobScheduler(private val context: SnuttLectureSyncJobContext) {
+class SnuttLectureSyncJobScheduler(private val service: SnuttLectureSyncJobService) {
 
     //    전체 수강편람 옮기는 job, local인 경우에만 작동
     @PostConstruct
     @Profile("local")
     fun fetchAll() {
-        context.migrateAllLectureDataFromSnutt()
+        service.migrateAllLectureDataFromSnutt()
     }
 
     //    매주 수요일 6:00
-    @Scheduled(cron = "0 0 6 * * 3")
+    @Scheduled(cron = "0 0 21 * * 2", zone = "UTC")
     @Profile("!test")
     fun fetchLatestWeekly() {
-        context.migrateLatestSemesterLectureDataFromSnutt()
+        service.migrateLatestSemesterLectureDataFromSnutt()
     }
 }

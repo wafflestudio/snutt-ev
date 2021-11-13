@@ -4,7 +4,7 @@ import com.wafflestudio.snuttev.common.Semester
 import com.wafflestudio.snuttev.dao.repository.LectureRepository
 import com.wafflestudio.snuttev.dao.repository.SemesterLectureRepository
 import com.wafflestudio.snuttev.scheduler.lecture_crawler.SemesterUtils
-import com.wafflestudio.snuttev.scheduler.lecture_crawler.SnuttLectureSyncJobContext
+import com.wafflestudio.snuttev.scheduler.lecture_crawler.SnuttLectureSyncJobService
 import com.wafflestudio.snuttev.scheduler.lecture_crawler.model.SnuttSemesterLecture
 import com.wafflestudio.snuttev.scheduler.lecture_crawler.model.SnuttTimePlace
 import com.wafflestudio.snuttev.scheduler.lecture_crawler.repository.SnuttSemesterLectureRepository
@@ -19,8 +19,8 @@ import javax.transaction.Transactional
 
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @SpringBootTest
-internal class SnuttLectureSyncJobSliceTest(
-    private val snuttLectureSyncJobContext: SnuttLectureSyncJobContext,
+class SnuttLectureSyncJobSliceTest(
+    private val snuttLectureSyncJobService: SnuttLectureSyncJobService,
     private val lectureRepository: LectureRepository,
     private val semesterLectureRepository: SemesterLectureRepository,
 ) {
@@ -60,30 +60,121 @@ internal class SnuttLectureSyncJobSliceTest(
     }
 
     val autumnSemesterLectures = listOf<SnuttSemesterLecture>(
-        makeTestSnuttSemesterLecture(2021, 3, "1", "1", "1", "a"),
-        makeTestSnuttSemesterLecture(2021, 3, "1", "2", "1", "b"),
-        makeTestSnuttSemesterLecture(2021, 3, "2", "1", "2", "c"),
-        makeTestSnuttSemesterLecture(2021, 3, "2", "2", "1", "d"),
-        makeTestSnuttSemesterLecture(2021, 3, "3", "1", "3", "e"),
-        makeTestSnuttSemesterLecture(2021, 3, "3", "2", "4", "f"),
+        makeTestSnuttSemesterLecture(
+            year = 2021,
+            semester = 3,
+            courseNumber = "course1",
+            lectureNumber = "lecture1",
+            instructor = "instructor1",
+            category = "categorya"
+        ),
+        makeTestSnuttSemesterLecture(
+            year = 2021,
+            semester = 3,
+            courseNumber = "course1",
+            lectureNumber = "lecture2",
+            instructor = "instructor1",
+            category = "categorya"
+        ),
+        makeTestSnuttSemesterLecture(
+            year = 2021,
+            semester = 3,
+            courseNumber = "course2",
+            lectureNumber = "lecture1",
+            instructor = "instructor2",
+            category = "categoryc"
+        ),
+        makeTestSnuttSemesterLecture(
+            year = 2021,
+            semester = 3,
+            courseNumber = "course2",
+            lectureNumber = "lecture2",
+            instructor = "instructor1",
+            category = "categoryd"
+        ),
+        makeTestSnuttSemesterLecture(
+            year = 2021,
+            semester = 3,
+            courseNumber = "course3",
+            lectureNumber = "lecture1",
+            instructor = "instructor3",
+            category = "categorye"
+        ),
+        makeTestSnuttSemesterLecture(
+            year = 2021,
+            semester = 3,
+            courseNumber = "course3",
+            lectureNumber = "lecture2",
+            instructor = "instructor4",
+            category = "categoryf"
+        ),
     )
 
     val winterSemesterLectures = listOf<SnuttSemesterLecture>(
-        makeTestSnuttSemesterLecture(2021, 4, "1", "1", "1", "b"),
-        makeTestSnuttSemesterLecture(2021, 4, "1", "2", "3", "c"),
-        makeTestSnuttSemesterLecture(2021, 4, "2", "1", "3", "d"),
-        makeTestSnuttSemesterLecture(2021, 4, "2", "2", "4", "e"),
-        makeTestSnuttSemesterLecture(2021, 4, "5", "1", "5", "f"),
-        makeTestSnuttSemesterLecture(2021, 4, "5", "1", "2", "g"),
-        makeTestSnuttSemesterLecture(2021, 4, "6", "1", "6", "i"),
+        makeTestSnuttSemesterLecture(
+            year = 2021,
+            semester = 4,
+            courseNumber = "course1",
+            lectureNumber = "lecture1",
+            instructor = "instructor1",
+            category = "categoryb"
+        ),
+        makeTestSnuttSemesterLecture(
+            year = 2021,
+            semester = 4,
+            courseNumber = "course1",
+            lectureNumber = "lecture2",
+            instructor = "instructor3",
+            category = "categoryc"
+        ),
+        makeTestSnuttSemesterLecture(
+            year = 2021,
+            semester = 4,
+            courseNumber = "course2",
+            lectureNumber = "lecture1",
+            instructor = "instructor3",
+            category = "categoryd"
+        ),
+        makeTestSnuttSemesterLecture(
+            year = 2021,
+            semester = 4,
+            courseNumber = "course2",
+            lectureNumber = "lecture2",
+            instructor = "instructor4",
+            category = "categorye"
+        ),
+        makeTestSnuttSemesterLecture(
+            year = 2021,
+            semester = 4,
+            courseNumber = "course5",
+            lectureNumber = "lecture1",
+            instructor = "instructor5",
+            category = "categoryf"
+        ),
+        makeTestSnuttSemesterLecture(
+            year = 2021,
+            semester = 4,
+            courseNumber = "course5",
+            lectureNumber = "lecture1",
+            instructor = "instructor2",
+            category = "categoryg"
+        ),
+        makeTestSnuttSemesterLecture(
+            year = 2021,
+            semester = 4,
+            courseNumber = "course6",
+            lectureNumber = "lecture1",
+            instructor = "instructor6",
+            category = "categoryi"
+        ),
     )
 
     @Test
     @Transactional
-    fun `snutt 전체 강의 데이터 migration 강의 중복 제거 테스트`() {
+    fun `snutt 전체 강의 데이터 migration 시에 course번호와 교수이름이 중복되는 강의 데이터는 중복해 저장하지 않는다`() {
         given(snuttSemesterLectureRepository.findAll()).willReturn(autumnSemesterLectures + winterSemesterLectures)
 
-        snuttLectureSyncJobContext.migrateAllLectureDataFromSnutt()
+        snuttLectureSyncJobService.migrateAllLectureDataFromSnutt()
         val lectures = lectureRepository.findAll()
 
         assertEquals(lectures.size, 11)
@@ -91,10 +182,10 @@ internal class SnuttLectureSyncJobSliceTest(
 
     @Test
     @Transactional
-    fun `snutt 전체 강의 데이터 migration semesterLecture 생성 테스트`() {
+    fun `snutt 전체 강의 데이터 migration 시에 course번호와 lecture번호가 중복되는 데이터는 중복해 저장하지 않는다`() {
         given(snuttSemesterLectureRepository.findAll()).willReturn(autumnSemesterLectures + winterSemesterLectures)
 
-        snuttLectureSyncJobContext.migrateAllLectureDataFromSnutt()
+        snuttLectureSyncJobService.migrateAllLectureDataFromSnutt()
         val semesterLectures = semesterLectureRepository.findAll()
 
         assertEquals(semesterLectures.size, 13)
@@ -102,14 +193,14 @@ internal class SnuttLectureSyncJobSliceTest(
 
     @Test
     @Transactional
-    fun `snutt 최근 수강편람 강의 데이터 migration 테스트`() {
+    fun `snutt 최근 강의 데이터 migration시 강의, semesterLecture 중복 제거 테스트`() {
         given(semesterUtils.getCurrentYearAndSemester()).willReturn(2021 to Semester.SUMMER)
         given(semesterUtils.getYearAndSemesterOfNextSemester()).willReturn(2021 to Semester.AUTUMN)
-        given(snuttSemesterLectureRepository.existsByYearAndSemester(2021, 3)).willReturn(true)
-        given(snuttSemesterLectureRepository.findMongoSemesterLecturesByYearAndSemester(2021, 3))
+        given(snuttSemesterLectureRepository.existsByYearAndSemester(2021, Semester.AUTUMN.value)).willReturn(true)
+        given(snuttSemesterLectureRepository.findMongoSemesterLecturesByYearAndSemester(2021, Semester.AUTUMN.value))
             .willReturn(autumnSemesterLectures)
 
-        snuttLectureSyncJobContext.migrateLatestSemesterLectureDataFromSnutt()
+        snuttLectureSyncJobService.migrateLatestSemesterLectureDataFromSnutt()
         val lectures = lectureRepository.findAll()
         val semesterLectures = semesterLectureRepository.findAll()
 
@@ -121,10 +212,10 @@ internal class SnuttLectureSyncJobSliceTest(
     @Transactional
     fun `snutt데이터 그대로일 때 sync 여러번 일어나도 기존 데이터 유지`() {
         given(snuttSemesterLectureRepository.findAll()).willReturn(autumnSemesterLectures + winterSemesterLectures)
-        snuttLectureSyncJobContext.migrateAllLectureDataFromSnutt()
+        snuttLectureSyncJobService.migrateAllLectureDataFromSnutt()
 
         val semesterLecturesBefore = semesterLectureRepository.findAll()
-        snuttLectureSyncJobContext.migrateAllLectureDataFromSnutt()
+        snuttLectureSyncJobService.migrateAllLectureDataFromSnutt()
         val semesterLecturesAfter = semesterLectureRepository.findAll()
 
         assertIterableEquals(semesterLecturesAfter, semesterLecturesBefore)
@@ -132,49 +223,67 @@ internal class SnuttLectureSyncJobSliceTest(
 
     @Test
     @Transactional
-    fun `업데이트 된 snutt 데이터 sync 할 때 기존 semesterLecture 업데이트`() {
+    fun `기존에 들어있던 SemesterLecture에 courseNumber, lectureNumber가 같은 semester가 업데이트 된 경우 정상 업데이트 작동 확인`() {
 
         given(snuttSemesterLectureRepository.findAll()).willReturn(
             listOf(
-                makeTestSnuttSemesterLecture(2021, 3, "1", "1", "1", ""),
+                makeTestSnuttSemesterLecture(
+                    year = 2021,
+                    semester = 3,
+                    courseNumber = "course1",
+                    lectureNumber = "lecture1",
+                    instructor = "instructor1",
+                    category = ""
+                ),
             )
         )
         given(semesterUtils.getCurrentYearAndSemester()).willReturn(2021 to Semester.SUMMER)
         given(semesterUtils.getYearAndSemesterOfNextSemester()).willReturn(2021 to Semester.AUTUMN)
-        given(snuttSemesterLectureRepository.existsByYearAndSemester(2021, 3)).willReturn(true)
-        given(snuttSemesterLectureRepository.findMongoSemesterLecturesByYearAndSemester(2021, 3)).willReturn(
+        given(snuttSemesterLectureRepository.existsByYearAndSemester(2021, Semester.AUTUMN.value)).willReturn(true)
+        given(
+            snuttSemesterLectureRepository.findMongoSemesterLecturesByYearAndSemester(
+                2021,
+                Semester.AUTUMN.value
+            )
+        ).willReturn(
             autumnSemesterLectures
         )
 
-        snuttLectureSyncJobContext.migrateAllLectureDataFromSnutt()
-        snuttLectureSyncJobContext.migrateLatestSemesterLectureDataFromSnutt()
+        snuttLectureSyncJobService.migrateAllLectureDataFromSnutt()
+        snuttLectureSyncJobService.migrateLatestSemesterLectureDataFromSnutt()
 
         val targetSemesterLectures = semesterLectureRepository.findAll().first()
 
-        assertEquals(targetSemesterLectures.category, "a")
+        assertEquals(targetSemesterLectures.category, "categorya")
     }
 
     @Test
     @Transactional
-    fun `최신 학기 정보로 lecture 정보 최신화`() {
+    fun `기존에 들어있던 lecture 데이터들 최신 학기의 강의 정보로 lecture 정보 최신화`() {
         given(snuttSemesterLectureRepository.findAll()).willReturn(autumnSemesterLectures)
         given(semesterUtils.getCurrentYearAndSemester()).willReturn(2021 to Semester.AUTUMN)
         given(semesterUtils.getYearAndSemesterOfNextSemester()).willReturn(2021 to Semester.WINTER)
-        given(snuttSemesterLectureRepository.existsByYearAndSemester(2021, 4)).willReturn(true)
-        given(snuttSemesterLectureRepository.findMongoSemesterLecturesByYearAndSemester(2021, 4)).willReturn(
+        given(snuttSemesterLectureRepository.existsByYearAndSemester(2021, Semester.WINTER.value)).willReturn(true)
+        given(
+            snuttSemesterLectureRepository.findMongoSemesterLecturesByYearAndSemester(
+                2021,
+                Semester.WINTER.value
+            )
+        ).willReturn(
             winterSemesterLectures
         )
 
-        snuttLectureSyncJobContext.migrateAllLectureDataFromSnutt()
+        snuttLectureSyncJobService.migrateAllLectureDataFromSnutt()
 
-        val lectureBefore = lectureRepository.findByCourseNumberAndInstructorAndTitleAndDepartment("1", "1", "", "")
-
-        snuttLectureSyncJobContext.migrateLatestSemesterLectureDataFromSnutt()
-
-        val lectureAfter = lectureRepository.findByCourseNumberAndInstructorAndTitleAndDepartment("1", "1", "", "")
-
+        val lectureBefore = lectureRepository.findByCourseNumberAndInstructor("course1", "instructor1")
         assertNotNull(lectureBefore)
+        assertEquals(lectureBefore!!.category, "categorya")
+
+        snuttLectureSyncJobService.migrateLatestSemesterLectureDataFromSnutt()
+
+        val lectureAfter = lectureRepository.findByCourseNumberAndInstructor("course1", "instructor1")
+
         assertNotNull(lectureAfter)
-        assertEquals(lectureAfter!!.category, "b")
+        assertEquals(lectureAfter!!.category, "categoryb")
     }
 }

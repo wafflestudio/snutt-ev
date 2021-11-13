@@ -4,7 +4,7 @@ import javax.persistence.*
 import javax.validation.constraints.NotBlank
 
 @Entity
-@Table(uniqueConstraints = [UniqueConstraint(columnNames = ["title", "department", "course_number", "instructor"])])
+@Table(uniqueConstraints = [UniqueConstraint(columnNames = ["course_number", "instructor"])])
 class Lecture(
 
     val title: String,

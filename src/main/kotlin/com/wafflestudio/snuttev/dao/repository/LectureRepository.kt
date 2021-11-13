@@ -5,10 +5,8 @@ import org.springframework.data.jpa.repository.JpaRepository
 
 interface LectureRepository : JpaRepository<Lecture, Long> {
     fun existsByCourseNumberAndInstructor(courseNumber: String?, instructor: String): Boolean
-    fun findByCourseNumberAndInstructorAndTitleAndDepartment(
+    fun findByCourseNumberAndInstructor(
         courseNumber: String?,
         instructor: String,
-        title: String,
-        department: String
     ): Lecture?
 }

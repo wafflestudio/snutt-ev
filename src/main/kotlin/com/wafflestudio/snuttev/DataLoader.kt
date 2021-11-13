@@ -33,7 +33,7 @@ class DataLoader(
             lecture = lecture,
             lectureNumber = "001",
             year = 2019,
-            semester = Semester.AUTUMN.raw,
+            semester = Semester.AUTUMN.value,
             credit = 4,
             academicYear = "3학년",
             category = "",

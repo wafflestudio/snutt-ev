@@ -11,7 +11,7 @@ import javax.transaction.Transactional
 
 
 @Component
-class SnuttLectureSyncJobContext(
+class SnuttLectureSyncJobService(
     private val semesterUtils: SemesterUtils,
     private val snuttSemesterLectureRepository: SnuttSemesterLectureRepository,
     private val lectureRepository: LectureRepository,
@@ -31,7 +31,7 @@ class SnuttLectureSyncJobContext(
         val (yearOfNextSemester, nextSemester) = semesterUtils.getYearAndSemesterOfNextSemester()
         val (targetYear, targetSemester) = when (snuttSemesterLectureRepository.existsByYearAndSemester(
             yearOfNextSemester,
-            nextSemester.raw
+            nextSemester.value
         )) {
             true -> yearOfNextSemester to nextSemester
             false -> currentYear to currentSemester
@@ -39,20 +39,21 @@ class SnuttLectureSyncJobContext(
 
         val latestSnuttSemesterLectures = snuttSemesterLectureRepository.findMongoSemesterLecturesByYearAndSemester(
             targetYear,
-            targetSemester.raw
+            targetSemester.value
         )
         val existingSemesterLectures =
-            semesterLectureRepository.findAllByYearAndSemester(targetYear, targetSemester.raw)
+            semesterLectureRepository.findAllByYearAndSemester(targetYear, targetSemester.value)
 
         migrateSemesterLecturesFromSnutt(latestSnuttSemesterLectures, existingSemesterLectures)
     }
 
     private fun migrateSemesterLecturesFromSnutt(
-        snuttSemesterLectures: List<SnuttSemesterLecture>,
+        newSnuttSemesterLectures: List<SnuttSemesterLecture>,
         existingSemesterLectures: List<SemesterLecture>
     ) {
-        val mergedSemesterLectures =
-            mergeNewSemesterLecturesWithOriginal(snuttSemesterLectures, existingSemesterLectures)
+        val mergedSemesterLectures = mergeNewSemesterLecturesWithOriginal(
+            newSnuttSemesterLectures, existingSemesterLectures
+        )
 
         semesterLectureRepository.saveAll(mergedSemesterLectures)
     }
@@ -61,11 +62,13 @@ class SnuttLectureSyncJobContext(
         snuttSemesterLectures: List<SnuttSemesterLecture>,
         existingSemesterLectures: List<SemesterLecture>
     ): List<SemesterLecture> {
-        val lecturesMap = generateUpdatedLectureMapWIthSnuttSemesterLectures(snuttSemesterLectures)
-        val existingSemesterLecturesMap = existingSemesterLectures.associateBy { semesterLectureKeyOf(it) }
+        val mergedLecturesMap: Map<String, Lecture> =
+            extractLecturesFromNewSemesterLecturesAndMergeThemWithOriginal(snuttSemesterLectures)
+        val existingSemesterLecturesMap: Map<String, SemesterLecture> =
+            existingSemesterLectures.associateBy { semesterLectureKeyOf(it) }
 
         return snuttSemesterLectures.map {
-            val lecture = lecturesMap[lectureKeyOf(it)]!!
+            val lecture = mergedLecturesMap[lectureKeyOf(it)]!!
             existingSemesterLecturesMap[semesterLectureKeyOf(it)]?.apply {
                 this.academicYear = it.academic_year
                 this.category = it.category
@@ -77,11 +80,13 @@ class SnuttLectureSyncJobContext(
         }
     }
 
-    private fun generateUpdatedLectureMapWIthSnuttSemesterLectures(snuttSemesterLectures: List<SnuttSemesterLecture>): Map<String, Lecture> {
+    private fun extractLecturesFromNewSemesterLecturesAndMergeThemWithOriginal(
+        newSnuttSemesterLectures: List<SnuttSemesterLecture>
+    ): Map<String, Lecture> {
         val originalLecturesMap = lectureRepository.findAll()
             .associateBy { lectureKeyOf(it) }
 
-        return snuttSemesterLectures.associate {
+        return newSnuttSemesterLectures.associate {
             lectureKeyOf(it) to (originalLecturesMap[lectureKeyOf(it)]?.apply {
                 this.academicYear = it.academic_year
                 this.credit = it.credit
@@ -122,15 +127,15 @@ class SnuttLectureSyncJobContext(
     }
 
     private fun lectureKeyOf(e: Lecture): String {
-        return lectureKeyOf(e.courseNumber, e.instructor, e.department, e.title)
+        return lectureKeyOf(e.courseNumber, e.instructor)
     }
 
     private fun lectureKeyOf(e: SnuttSemesterLecture): String {
-        return lectureKeyOf(e.courseNumber, e.instructor, e.department, e.courseTitle)
+        return lectureKeyOf(e.courseNumber, e.instructor)
     }
 
-    private fun lectureKeyOf(courseNumber: String, instructor: String, department: String, title: String): String {
-        return "${courseNumber},${instructor},${department},${title}"
+    private fun lectureKeyOf(courseNumber: String, instructor: String): String {
+        return "${courseNumber},${instructor}"
     }
 
     private fun semesterLectureKeyOf(snuttSemesterLecture: SnuttSemesterLecture): String {
