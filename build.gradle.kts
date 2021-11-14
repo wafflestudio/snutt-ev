@@ -6,6 +6,16 @@ plugins {
     kotlin("jvm") version "1.5.10"
     kotlin("plugin.spring") version "1.5.10"
     kotlin("plugin.jpa") version "1.5.10"
+    kotlin("plugin.allopen") version "1.3.71"
+    kotlin("plugin.noarg") version "1.3.71"
+}
+
+allOpen {
+    annotation("javax.persistence.Entity")
+}
+
+noArg {
+    annotation("javax.persistence.Entity")
 }
 
 group = "com.wafflestudio"
@@ -17,6 +27,7 @@ repositories {
 }
 
 dependencies {
+    implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-validation")

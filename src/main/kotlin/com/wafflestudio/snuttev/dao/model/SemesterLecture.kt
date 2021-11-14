@@ -3,22 +3,34 @@ package com.wafflestudio.snuttev.dao.model
 import javax.persistence.*
 
 @Entity
-data class SemesterLecture(
+@Table(uniqueConstraints = [UniqueConstraint(columnNames = ["lecture_id", "lecture_number", "year", "semester"])])
+class SemesterLecture(
 
-    @ManyToOne
+    @ManyToOne(cascade = [CascadeType.ALL])
     @JoinColumn(name = "lecture_id")
     var lecture: Lecture,
+
+    @Column(name = "lecture_number")
+    val lectureNumber: String,
 
     val year: Int,
 
     val semester: Int,
 
-    val credit: Int,
+    var credit: Int,
 
-    val extraInfo: String = "",
+    @Column(name = "extra_info", columnDefinition = "longtext")
+    var extraInfo: String = "",
+
+    @Column(name = "academic_year")
+    var academicYear: String,
+
+    var category: String,
+
+    var classfication: String,
 
     @OneToMany
     @JoinColumn(name = "semester_lecture_id")
-    var lectureEvaluations: List<LectureEvaluation> = emptyList()
+    var lectureEvaluations: MutableList<LectureEvaluation> = mutableListOf<LectureEvaluation>()
 
 ) : BaseEntity()

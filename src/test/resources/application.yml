@@ -1,0 +1,20 @@
+spring:
+  profiles:
+    active: test
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: test
+  datasource:
+    url: jdbc:mysql://localhost:3306/snutt?serverTimezone=UTC
+    username: snutt
+    password: wafflestudio
+  jpa:
+    generate-ddl: true
+    hibernate:
+      ddl-auto: create
+    show-sql: true
+    

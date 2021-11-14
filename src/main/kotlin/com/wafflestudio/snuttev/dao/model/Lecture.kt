@@ -1,11 +1,11 @@
 package com.wafflestudio.snuttev.dao.model
 
-import javax.persistence.Entity
-import javax.persistence.JoinColumn
-import javax.persistence.OneToMany
+import javax.persistence.*
+import javax.validation.constraints.NotBlank
 
 @Entity
-data class Lecture(
+@Table(uniqueConstraints = [UniqueConstraint(columnNames = ["course_number", "instructor"])])
+class Lecture(
 
     val title: String,
 
@@ -13,12 +13,22 @@ data class Lecture(
 
     val department: String,
 
-    val courseNumber: String = "",
+    @Column(name = "course_number")
+    @NotBlank
+    val courseNumber: String,
 
-    val lectureNumber: String = "",
+    var credit: Int,
+
+    @Column(name = "academic_year")
+    var academicYear: String,
+
+    var category: String,
+
+    var classfication: String,
+
 
     @OneToMany
     @JoinColumn(name = "lecture_id")
-    var semesterLectures: List<SemesterLecture> = emptyList()
+    var semesterLectures: MutableList<SemesterLecture> = mutableListOf<SemesterLecture>()
 
 ) : BaseEntity()
