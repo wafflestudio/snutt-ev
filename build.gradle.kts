@@ -35,8 +35,6 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     runtimeOnly("mysql:mysql-connector-java")
-    implementation("com.amazonaws:aws-java-sdk-secretsmanager:1.11.965")
-
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("com.h2database:h2")
     testImplementation("org.junit.jupiter:junit-jupiter-api")
