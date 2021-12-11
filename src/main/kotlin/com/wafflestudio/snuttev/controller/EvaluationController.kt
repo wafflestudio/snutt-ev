@@ -1,7 +1,6 @@
 package com.wafflestudio.snuttev.controller
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.wafflestudio.snuttev.dao.model.Lecture
 import com.wafflestudio.snuttev.service.EvaluationService
 import com.wafflestudio.snuttev.service.LectureEvaluationDto
 import org.springframework.http.ResponseEntity
@@ -15,7 +14,7 @@ class EvaluationController(
     private val evaluationService: EvaluationService
 ) {
 
-    @PostMapping("/api/v1/evaluation/")
+    @PostMapping("/v1/lectures/evaluations/")
     fun createEvaluation(
         @RequestAttribute(value = "UserId") userId: String,
         @RequestBody @Valid createEvaluationRequest: CreateEvaluationRequest
@@ -25,7 +24,7 @@ class EvaluationController(
         } ?: ResponseEntity.notFound().build()
     }
 
-    @GetMapping("/api/v1/lecture/{id}/evaluation/")
+    @GetMapping("/v1/lectures/{id}/evaluations/")
     fun getLectureEvaluation(
         @PathVariable(value = "id") lectureId: Long
     ): ResponseEntity<List<LectureEvaluationDto>> {

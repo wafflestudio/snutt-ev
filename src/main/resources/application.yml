@@ -1,3 +1,5 @@
+secretNames: dev/snutt-ev
+
 spring:
   profiles:
     active: local
@@ -33,9 +35,9 @@ spring:
     activate:
       on-profile: dev
   datasource:
-    url: jdbc:mysql://wafflestudio-mysql-202107.caxwrw8c4qqq.ap-northeast-2.rds.amazonaws.com/snutt?serverTimezone=UTC
-    username: snutt
-    password: 237044526e3441d2b7cac45ece763d1a
+    url:
+    username:
+    password:
   jpa:
     generate-ddl: true
     hibernate:
