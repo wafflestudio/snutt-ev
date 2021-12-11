@@ -15,7 +15,7 @@ class EvaluationController(
     private val evaluationService: EvaluationService
 ) {
 
-    @PostMapping("/api/v1/evaluation/")
+    @PostMapping("/v1/evaluations/")
     fun createEvaluation(
         @RequestAttribute(value = "UserId") userId: String,
         @RequestBody @Valid createEvaluationRequest: CreateEvaluationRequest
@@ -25,7 +25,7 @@ class EvaluationController(
         } ?: ResponseEntity.notFound().build()
     }
 
-    @GetMapping("/api/v1/lecture/{id}/evaluation/")
+    @GetMapping("/v1/lectures/{id}/evaluations/")
     fun getLectureEvaluation(
         @PathVariable(value = "id") lectureId: Long
     ): ResponseEntity<List<LectureEvaluationDto>> {
