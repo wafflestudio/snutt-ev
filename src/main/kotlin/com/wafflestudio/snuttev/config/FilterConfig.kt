@@ -12,7 +12,7 @@ class FilterConfig {
     @Bean
     fun filterRegistrationBean(): FilterRegistrationBean<Filter> {
         val filterRegistrationBean = FilterRegistrationBean<Filter>(SnuttUserFilter())
-        filterRegistrationBean.addUrlPatterns("/v1/*")
+        filterRegistrationBean.addUrlPatterns("/api/*")
         return filterRegistrationBean
     }
 }
