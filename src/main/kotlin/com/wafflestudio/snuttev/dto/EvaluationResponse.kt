@@ -11,12 +11,6 @@ data class LectureEvaluationDto(
 
     val content: String,
 
-    @JsonProperty("taken_year")
-    val takenYear: Int,
-
-    @JsonProperty("taken_semester")
-    val takenSemester: Int,
-
     @JsonProperty("grade_satisfaction")
     val gradeSatisfaction: Double,
 
@@ -41,4 +35,32 @@ data class LectureEvaluationDto(
 
     @JsonProperty("is_reported")
     val isReported: Boolean,
+)
+
+data class GetSemesterLecturesResponse(
+    @JsonProperty("semester_lectures")
+    val semesterLectures: List<SemesterLectureDto>
+)
+
+data class SemesterLectureDto(
+    val id: Long,
+
+    @JsonProperty("lecture_number")
+    val lectureNumber: String,
+
+    val year: Int,
+
+    val semester: Int,
+
+    val credit: Int,
+
+    @JsonProperty("extra_info")
+    val extraInfo: String,
+
+    @JsonProperty("academic_year")
+    val academicYear: String,
+
+    val category: String,
+
+    val classification: String,
 )

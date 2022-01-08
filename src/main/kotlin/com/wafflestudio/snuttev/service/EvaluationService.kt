@@ -1,11 +1,16 @@
 package com.wafflestudio.snuttev.service
 
 import com.wafflestudio.snuttev.dao.model.LectureEvaluation
+import com.wafflestudio.snuttev.dao.model.SemesterLecture
 import com.wafflestudio.snuttev.dao.repository.LectureEvaluationRepository
 import com.wafflestudio.snuttev.dao.repository.LectureRepository
 import com.wafflestudio.snuttev.dao.repository.SemesterLectureRepository
 import com.wafflestudio.snuttev.dto.CreateEvaluationRequest
+import com.wafflestudio.snuttev.dto.GetSemesterLecturesResponse
 import com.wafflestudio.snuttev.dto.LectureEvaluationDto
+import com.wafflestudio.snuttev.dto.SemesterLectureDto
+import com.wafflestudio.snuttev.error.LectureNotFoundException
+import com.wafflestudio.snuttev.error.SemesterLectureNotFoundException
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 
@@ -19,25 +24,33 @@ class EvaluationService(
         userId: String,
         semesterLectureId: Long,
         createEvaluationRequest: CreateEvaluationRequest
-    ): LectureEvaluationDto? {
-        val semesterLecture = semesterLectureRepository.findByIdOrNull(semesterLectureId)
-        semesterLecture?.let {
-            val lectureEvaluation = LectureEvaluation(
-                semesterLecture = it,
-                userId = userId,
-                content = createEvaluationRequest.content,
-                takenYear = createEvaluationRequest.takenYear,
-                takenSemester = createEvaluationRequest.takenSemester,
-                gradeSatisfaction = createEvaluationRequest.gradeSatisfaction,
-                teachingSkill = createEvaluationRequest.teachingSkill,
-                gains = createEvaluationRequest.gains,
-                lifeBalance = createEvaluationRequest.lifeBalance,
-                rating = createEvaluationRequest.rating,
-            )
-            lectureEvaluationRepository.save(lectureEvaluation)
-            return genLectureEvaluationDto(lectureEvaluation)
-        }
-        return null
+    ): LectureEvaluationDto {
+        val semesterLecture = semesterLectureRepository.findByIdOrNull(semesterLectureId) ?: throw SemesterLectureNotFoundException
+
+        val lectureEvaluation = LectureEvaluation(
+            semesterLecture = semesterLecture,
+            userId = userId,
+            content = createEvaluationRequest.content,
+            gradeSatisfaction = createEvaluationRequest.gradeSatisfaction,
+            teachingSkill = createEvaluationRequest.teachingSkill,
+            gains = createEvaluationRequest.gains,
+            lifeBalance = createEvaluationRequest.lifeBalance,
+            rating = createEvaluationRequest.rating,
+        )
+        lectureEvaluationRepository.save(lectureEvaluation)
+        return genLectureEvaluationDto(lectureEvaluation)
+    }
+
+    fun getSemesterLectures(
+        lectureId: Long
+    ): GetSemesterLecturesResponse {
+        val lecture = lectureRepository.findByIdOrNull(lectureId) ?: throw LectureNotFoundException
+
+        return GetSemesterLecturesResponse(
+            lecture.semesterLectures.map {
+                genSemesterLectureDto(it)
+            }
+        )
     }
 
     fun getLectureEvaluationsOfLecture(lectureId: Long): List<LectureEvaluationDto> {
@@ -50,8 +63,6 @@ class EvaluationService(
             id = lectureEvaluation.id!!,
             userId = lectureEvaluation.userId,
             content = lectureEvaluation.content,
-            takenYear = lectureEvaluation.takenYear,
-            takenSemester = lectureEvaluation.takenSemester,
             gradeSatisfaction = lectureEvaluation.gradeSatisfaction,
             teachingSkill = lectureEvaluation.teachingSkill,
             gains = lectureEvaluation.gains,
@@ -61,5 +72,18 @@ class EvaluationService(
             dislikeCount = lectureEvaluation.dislikeCount,
             isHidden = lectureEvaluation.isHidden,
             isReported = lectureEvaluation.isReported,
+        )
+
+    private fun genSemesterLectureDto(semesterLecture: SemesterLecture): SemesterLectureDto =
+        SemesterLectureDto(
+            id = semesterLecture.id!!,
+            lectureNumber = semesterLecture.lectureNumber,
+            year = semesterLecture.year,
+            semester = semesterLecture.semester,
+            credit = semesterLecture.credit,
+            extraInfo = semesterLecture.extraInfo,
+            academicYear = semesterLecture.academicYear,
+            category = semesterLecture.category,
+            classification = semesterLecture.classification,
         )
 }

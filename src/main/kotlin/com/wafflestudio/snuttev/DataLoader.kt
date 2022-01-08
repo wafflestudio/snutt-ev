@@ -26,7 +26,7 @@ class DataLoader(
             credit = 4,
             academicYear = "3학년",
             category = "",
-            classfication = "전선"
+            classification = "전선",
         )
         lectureRepository.save(lecture)
 
@@ -38,7 +38,7 @@ class DataLoader(
             credit = 4,
             academicYear = "3학년",
             category = "",
-            classfication = "전필"
+            classification = "전필",
         )
         semesterLectureRepository.save(semesterLecture)
     }

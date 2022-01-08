@@ -35,7 +35,7 @@ class LectureRepositoryTest(
             credit = 3,
             academicYear = "1학년",
             category = "category",
-            classfication = "classification",
+            classification = "classification",
         )
         lectureRepository.save(lecture1)
 
@@ -48,7 +48,7 @@ class LectureRepositoryTest(
             extraInfo = "",
             academicYear = "1학년",
             category = "category",
-            classfication = "classification",
+            classification = "classification",
         )
         semesterLectureRepository.save(semesterLecture1)
 
@@ -56,8 +56,6 @@ class LectureRepositoryTest(
             semesterLecture = semesterLecture1,
             userId = "asdf1",
             content = "asdf1",
-            takenYear = 2021,
-            takenSemester = 3,
             gradeSatisfaction = 4.0,
             teachingSkill = 4.0,
             gains = 4.0,
@@ -71,8 +69,6 @@ class LectureRepositoryTest(
             semesterLecture = semesterLecture1,
             userId = "asdf2",
             content = "asdf2",
-            takenYear = 2021,
-            takenSemester = 3,
             gradeSatisfaction = 4.0,
             teachingSkill = 4.0,
             gains = 4.0,
@@ -91,7 +87,7 @@ class LectureRepositoryTest(
             credit = 3,
             academicYear = "1학년",
             category = "category",
-            classfication = "classification",
+            classification = "classification",
         )
         lectureRepository.save(lecture2)
         val semesterLecture2 = SemesterLecture(
@@ -103,15 +99,13 @@ class LectureRepositoryTest(
             extraInfo = "",
             academicYear = "1학년",
             category = "category",
-            classfication = "classification",
+            classification = "classification",
         )
         semesterLectureRepository.save(semesterLecture2)
         val lectureEvaluation1OfLecture2 = LectureEvaluation(
             semesterLecture = semesterLecture2,
             userId = "asdf",
             content = "asdf",
-            takenYear = 2021,
-            takenSemester = 3,
             gradeSatisfaction = 4.0,
             teachingSkill = 4.0,
             gains = 4.0,

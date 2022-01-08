@@ -24,7 +24,7 @@ class Lecture(
 
     var category: String,
 
-    var classfication: String,
+    var classification: String,
 
     @OneToMany(mappedBy = "lecture")
     var semesterLectures: MutableList<SemesterLecture> = mutableListOf()

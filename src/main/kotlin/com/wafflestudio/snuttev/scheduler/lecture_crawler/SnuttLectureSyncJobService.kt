@@ -74,7 +74,7 @@ class SnuttLectureSyncJobService(
             existingSemesterLecturesMap[semesterLectureKeyOf(it)]?.apply {
                 this.academicYear = it.academic_year
                 this.category = it.category
-                this.classfication = it.classification
+                this.classification = it.classification
                 this.extraInfo = it.remark
                 this.lecture = lecture
                 this.credit = it.credit
@@ -92,7 +92,7 @@ class SnuttLectureSyncJobService(
             lectureKeyOf(it) to (originalLecturesMap[lectureKeyOf(it)]?.apply {
                 this.academicYear = it.academic_year
                 this.credit = it.credit
-                this.classfication = it.classification
+                this.classification = it.classification
                 this.category = it.category
             } ?: createNewLectureFromSnuttSemesterLecture(it))
         }
