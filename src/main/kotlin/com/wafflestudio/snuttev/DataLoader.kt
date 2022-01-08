@@ -28,6 +28,7 @@ class DataLoader(
             category = "",
             classfication = "전선"
         )
+        lectureRepository.save(lecture)
 
         val semesterLecture = SemesterLecture(
             lecture = lecture,

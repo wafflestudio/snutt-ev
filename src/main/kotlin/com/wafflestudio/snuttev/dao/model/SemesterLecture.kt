@@ -6,7 +6,7 @@ import javax.persistence.*
 @Table(uniqueConstraints = [UniqueConstraint(columnNames = ["lecture_id", "lecture_number", "year", "semester"])])
 class SemesterLecture(
 
-    @ManyToOne(cascade = [CascadeType.ALL])
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "lecture_id")
     var lecture: Lecture,
 
@@ -29,8 +29,7 @@ class SemesterLecture(
 
     var classfication: String,
 
-    @OneToMany
-    @JoinColumn(name = "semester_lecture_id")
-    var lectureEvaluations: MutableList<LectureEvaluation> = mutableListOf<LectureEvaluation>()
+    @OneToMany(mappedBy = "semesterLecture")
+    var lectureEvaluations: MutableList<LectureEvaluation> = mutableListOf()
 
 ) : BaseEntity()
