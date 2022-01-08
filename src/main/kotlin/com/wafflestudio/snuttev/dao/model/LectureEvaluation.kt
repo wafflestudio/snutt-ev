@@ -9,17 +9,43 @@ class LectureEvaluation(
     @JoinColumn(name = "semester_lecture_id")
     var semesterLecture: SemesterLecture,
 
+    @Column(nullable = false)
     val userId: String,
 
     @Column(columnDefinition = "longtext")
     val content: String,
 
+    @Column(nullable = false)
+    val takenYear: Int,
+
+    @Column(nullable = false)
+    val takenSemester: Int,
+
+    @Column(nullable = false)
+    val gradeSatisfaction: Double = 0.0,
+
+    @Column(nullable = false)
+    val teachingSkill: Double = 0.0,
+
+    @Column(nullable = false)
+    val gains: Double = 0.0,
+
+    @Column(nullable = false)
+    val lifeBalance: Double = 0.0,
+
+    @Column(nullable = false)
+    val rating: Double = 0.0,
+
+    @Column(nullable = false)
     val likeCount: Long = 0,
 
+    @Column(nullable = false)
     val dislikeCount: Long = 0,
 
+    @Column(nullable = false)
     val isHidden: Boolean = false,
 
-    val isReported: Boolean = false
+    @Column(nullable = false)
+    val isReported: Boolean = false,
 
 ) : BaseEntity()

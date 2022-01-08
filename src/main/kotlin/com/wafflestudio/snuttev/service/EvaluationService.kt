@@ -1,11 +1,11 @@
 package com.wafflestudio.snuttev.service
 
-import com.fasterxml.jackson.annotation.JsonProperty
-import com.wafflestudio.snuttev.controller.CreateEvaluationRequest
 import com.wafflestudio.snuttev.dao.model.LectureEvaluation
 import com.wafflestudio.snuttev.dao.repository.LectureEvaluationRepository
 import com.wafflestudio.snuttev.dao.repository.LectureRepository
 import com.wafflestudio.snuttev.dao.repository.SemesterLectureRepository
+import com.wafflestudio.snuttev.dto.CreateEvaluationRequest
+import com.wafflestudio.snuttev.dto.LectureEvaluationDto
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 
@@ -25,7 +25,14 @@ class EvaluationService(
             val lectureEvaluation = LectureEvaluation(
                 semesterLecture = it,
                 userId = userId,
-                content = createEvaluationRequest.content
+                content = createEvaluationRequest.content,
+                takenYear = createEvaluationRequest.takenYear,
+                takenSemester = createEvaluationRequest.takenSemester,
+                gradeSatisfaction = createEvaluationRequest.gradeSatisfaction,
+                teachingSkill = createEvaluationRequest.teachingSkill,
+                gains = createEvaluationRequest.gains,
+                lifeBalance = createEvaluationRequest.lifeBalance,
+                rating = createEvaluationRequest.rating,
             )
             lectureEvaluationRepository.save(lectureEvaluation)
             return genLectureEvaluationDto(lectureEvaluation)
@@ -42,23 +49,17 @@ class EvaluationService(
         LectureEvaluationDto(
             id = lectureEvaluation.id!!,
             userId = lectureEvaluation.userId,
+            content = lectureEvaluation.content,
+            takenYear = lectureEvaluation.takenYear,
+            takenSemester = lectureEvaluation.takenSemester,
+            gradeSatisfaction = lectureEvaluation.gradeSatisfaction,
+            teachingSkill = lectureEvaluation.teachingSkill,
+            gains = lectureEvaluation.gains,
+            lifeBalance = lectureEvaluation.lifeBalance,
+            rating = lectureEvaluation.rating,
             likeCount = lectureEvaluation.likeCount,
             dislikeCount = lectureEvaluation.dislikeCount,
             isHidden = lectureEvaluation.isHidden,
-            isReported = lectureEvaluation.isReported
+            isReported = lectureEvaluation.isReported,
         )
 }
-
-data class LectureEvaluationDto(
-    val id: Long,
-    @JsonProperty("user_id")
-    val userId: String,
-    @JsonProperty("like_count")
-    val likeCount: Long,
-    @JsonProperty("dislike_count")
-    val dislikeCount: Long,
-    @JsonProperty("is_hidden")
-    val isHidden: Boolean,
-    @JsonProperty("is_reported")
-    val isReported: Boolean
-)
