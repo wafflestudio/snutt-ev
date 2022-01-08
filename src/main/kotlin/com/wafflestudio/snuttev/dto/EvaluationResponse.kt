@@ -1,8 +1,6 @@
 package com.wafflestudio.snuttev.dto
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import javax.persistence.Column
-import javax.validation.constraints.NotBlank
 
 
 data class LectureEvaluationDto(
