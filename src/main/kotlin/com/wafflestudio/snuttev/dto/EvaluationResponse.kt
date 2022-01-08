@@ -64,3 +64,48 @@ data class SemesterLectureDto(
 
     val classification: String,
 )
+
+data class LectureEvaluationSummaryResponse(
+    val id: Long,
+
+    val title: String?,
+
+    val instructor: String?,
+
+    val department: String?,
+
+    @JsonProperty("course_number")
+    val courseNumber: String?,
+
+    val credit: Int?,
+
+    @JsonProperty("academic_year")
+    val academicYear: String?,
+
+    val category: String?,
+
+    val classification: String?,
+
+    val summary: LectureEvaluationSummary,
+)
+
+data class LectureEvaluationSummary(
+    @JsonProperty("avg_grade_satisfaction")
+    val avgGradeSatisfaction: Double?,
+
+    @JsonProperty("avg_teaching_skill")
+    val avgTeachingSkill: Double?,
+
+    @JsonProperty("avg_gains")
+    val avgGains: Double?,
+
+    @JsonProperty("avg_life_balance")
+    val avgLifeBalance: Double?,
+
+    @JsonProperty("avg_rating")
+    val avgRating: Double?,
+)
+
+data class LectureEvaluationsResponse(
+    val evaluations: List<LectureEvaluationDto>,
+)

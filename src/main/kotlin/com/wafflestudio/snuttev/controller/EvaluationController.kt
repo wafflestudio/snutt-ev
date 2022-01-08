@@ -1,10 +1,7 @@
 package com.wafflestudio.snuttev.controller
 
-import com.wafflestudio.snuttev.dto.CreateEvaluationRequest
-import com.wafflestudio.snuttev.dto.GetSemesterLecturesResponse
-import com.wafflestudio.snuttev.dto.LectureEvaluationDto
+import com.wafflestudio.snuttev.dto.*
 import com.wafflestudio.snuttev.service.EvaluationService
-import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
 
@@ -29,12 +26,17 @@ class EvaluationController(
         return evaluationService.getSemesterLectures(lectureId)
     }
 
+    @GetMapping("/v1/lectures/{id}/evaluation-summary")
+    fun getLectureEvaluationSummary(
+        @PathVariable(value = "id") lectureId: Long,
+    ): LectureEvaluationSummaryResponse {
+        return evaluationService.getEvaluationSummaryOfLecture(lectureId)
+    }
+
     @GetMapping("/v1/lectures/{id}/evaluations")
-    fun getLectureEvaluation(
+    fun getLectureEvaluations(
         @PathVariable(value = "id") lectureId: Long
-    ): ResponseEntity<List<LectureEvaluationDto>> {
-        return evaluationService.getLectureEvaluationsOfLecture(lectureId).let {
-            ResponseEntity.ok(it)
-        }
+    ): LectureEvaluationsResponse {
+        return evaluationService.getEvaluationsOfLecture(lectureId)
     }
 }
