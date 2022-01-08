@@ -1,4 +1,4 @@
-spring.profiles.default: local
+spring.profiles.default: dev
 
 secretNames: dev/snutt-ev
 

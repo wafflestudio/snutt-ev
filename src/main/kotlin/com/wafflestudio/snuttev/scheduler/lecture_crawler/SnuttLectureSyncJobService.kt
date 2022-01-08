@@ -19,11 +19,8 @@ class SnuttLectureSyncJobService(
 ) {
     @Transactional
     fun migrateAllLectureDataFromSnutt() {
-        print("===mongo===")
         val snuttSemesterLectures = snuttSemesterLectureRepository.findAll()
-        print("===$snuttSemesterLectures")
         val existingSemesterLectures = semesterLectureRepository.findAll()
-        print("===$existingSemesterLectures")
 
         migrateSemesterLecturesFromSnutt(snuttSemesterLectures, existingSemesterLectures)
     }

@@ -12,7 +12,6 @@ class SnuttLectureSyncJobScheduler(private val service: SnuttLectureSyncJobServi
     //    전체 수강편람 옮기는 job, local인 경우에만 작동
 //    @PostConstruct
     fun fetchAll() {
-        print("local??===")
         service.migrateAllLectureDataFromSnutt()
     }
 

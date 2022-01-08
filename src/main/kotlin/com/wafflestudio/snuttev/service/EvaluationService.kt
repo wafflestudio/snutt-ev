@@ -21,7 +21,6 @@ class EvaluationService(
         createEvaluationRequest: CreateEvaluationRequest
     ): LectureEvaluationDto? {
         val semesterLecture = semesterLectureRepository.findByIdOrNull(semesterLectureId)
-        print("===find $semesterLecture")
         semesterLecture?.let {
             val lectureEvaluation = LectureEvaluation(
                 semesterLecture = it,
