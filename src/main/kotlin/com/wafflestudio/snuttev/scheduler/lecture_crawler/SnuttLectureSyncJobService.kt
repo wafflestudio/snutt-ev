@@ -55,6 +55,8 @@ class SnuttLectureSyncJobService(
             newSnuttSemesterLectures, existingSemesterLectures
         )
 
+        val lectures = mergedSemesterLectures.map { it.lecture }
+        lectureRepository.saveAll(lectures)
         semesterLectureRepository.saveAll(mergedSemesterLectures)
     }
 

@@ -26,9 +26,7 @@ class Lecture(
 
     var classfication: String,
 
-
-    @OneToMany
-    @JoinColumn(name = "lecture_id")
-    var semesterLectures: MutableList<SemesterLecture> = mutableListOf<SemesterLecture>()
+    @OneToMany(mappedBy = "lecture")
+    var semesterLectures: MutableList<SemesterLecture> = mutableListOf()
 
 ) : BaseEntity()
