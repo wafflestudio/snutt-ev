@@ -16,12 +16,6 @@ class LectureEvaluation(
     val content: String,
 
     @Column(nullable = false)
-    val takenYear: Int,
-
-    @Column(nullable = false)
-    val takenSemester: Int,
-
-    @Column(nullable = false)
     val gradeSatisfaction: Double = 0.0,
 
     @Column(nullable = false)

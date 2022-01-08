@@ -9,14 +9,6 @@ data class CreateEvaluationRequest(
     val content: String,
 
     @field:NotNull
-    @JsonProperty("taken_year")
-    val takenYear: Int,
-
-    @field:NotNull
-    @JsonProperty("taken_semester")
-    val takenSemester: Int,
-
-    @field:NotNull
     @field:Range(min = 0, max = 10)
     @JsonProperty("grade_satisfaction")
     val gradeSatisfaction: Double,
