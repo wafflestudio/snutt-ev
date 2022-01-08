@@ -1,7 +1,8 @@
-package com.wafflestudio.snuttev.controller
+package com.wafflestudio.snuttev.domain.evaluation.controller
 
-import com.wafflestudio.snuttev.dto.*
-import com.wafflestudio.snuttev.service.EvaluationService
+import com.wafflestudio.snuttev.domain.evaluation.dto.*
+import com.wafflestudio.snuttev.domain.evaluation.service.EvaluationService
+import com.wafflestudio.snuttev.domain.lecture.dto.GetSemesterLecturesResponse
 import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
 
@@ -17,13 +18,6 @@ class EvaluationController(
         @RequestAttribute(value = "UserId") userId: String
     ): LectureEvaluationDto {
         return evaluationService.createEvaluation(userId, semesterLectureId, createEvaluationRequest)
-    }
-
-    @GetMapping("/v1/lectures/{id}/semester-lectures")
-    fun getSemesterLectures(
-        @PathVariable(value = "id") lectureId: Long,
-    ): GetSemesterLecturesResponse {
-        return evaluationService.getSemesterLectures(lectureId)
     }
 
     @GetMapping("/v1/lectures/{id}/evaluation-summary")

@@ -1,4 +1,4 @@
-package com.wafflestudio.snuttev.dao.model
+package com.wafflestudio.snuttev.domain.common.model
 
 import java.time.LocalDateTime
 import javax.persistence.*

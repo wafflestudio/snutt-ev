@@ -1,6 +1,6 @@
 package com.wafflestudio.snuttev.scheduler.lecture_crawler
 
-import com.wafflestudio.snuttev.common.Semester
+import com.wafflestudio.snuttev.domain.common.Semester
 import org.springframework.stereotype.Component
 import java.time.LocalDate
 import java.time.Month

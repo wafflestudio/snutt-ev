@@ -1,11 +1,11 @@
 package com.wafflestudio.snuttev
 
-import com.wafflestudio.snuttev.dao.model.Lecture
-import com.wafflestudio.snuttev.dao.model.LectureEvaluation
-import com.wafflestudio.snuttev.dao.model.SemesterLecture
-import com.wafflestudio.snuttev.dao.repository.LectureEvaluationRepository
-import com.wafflestudio.snuttev.dao.repository.LectureRepository
-import com.wafflestudio.snuttev.dao.repository.SemesterLectureRepository
+import com.wafflestudio.snuttev.domain.evaluation.model.LectureEvaluation
+import com.wafflestudio.snuttev.domain.evaluation.repository.LectureEvaluationRepository
+import com.wafflestudio.snuttev.domain.lecture.repository.SemesterLectureRepository
+import com.wafflestudio.snuttev.domain.lecture.repository.LectureRepository
+import com.wafflestudio.snuttev.domain.lecture.model.Lecture
+import com.wafflestudio.snuttev.domain.lecture.model.SemesterLecture
 import org.assertj.core.api.BDDAssertions.then
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase

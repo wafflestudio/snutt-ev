@@ -6,8 +6,9 @@ plugins {
     kotlin("jvm") version "1.5.10"
     kotlin("plugin.spring") version "1.5.10"
     kotlin("plugin.jpa") version "1.5.10"
-    kotlin("plugin.allopen") version "1.3.71"
-    kotlin("plugin.noarg") version "1.3.71"
+    kotlin("plugin.allopen") version "1.5.10"
+    kotlin("plugin.noarg") version "1.5.10"
+    kotlin("kapt") version "1.5.10"
 }
 
 allOpen {
@@ -40,6 +41,13 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("com.h2database:h2")
     testImplementation("org.junit.jupiter:junit-jupiter-api")
+
+    implementation("com.querydsl:querydsl-jpa:4.2.2")
+    kapt("com.querydsl:querydsl-apt:4.2.2:jpa")
+}
+
+sourceSets["main"].withConvention(org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet::class){
+    kotlin.srcDir("$buildDir/generated/source/kapt/main")
 }
 
 tasks.withType<KotlinCompile> {

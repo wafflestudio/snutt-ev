@@ -1,4 +1,4 @@
-package com.wafflestudio.snuttev.dto
+package com.wafflestudio.snuttev.domain.evaluation.dto
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import org.hibernate.validator.constraints.Range

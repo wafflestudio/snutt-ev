@@ -1,11 +1,10 @@
-package com.wafflestudio.snuttev.service
+package com.wafflestudio.snuttev.domain.evaluation.service
 
-import com.wafflestudio.snuttev.dao.model.LectureEvaluation
-import com.wafflestudio.snuttev.dao.model.SemesterLecture
-import com.wafflestudio.snuttev.dao.repository.LectureEvaluationRepository
-import com.wafflestudio.snuttev.dao.repository.LectureRepository
-import com.wafflestudio.snuttev.dao.repository.SemesterLectureRepository
-import com.wafflestudio.snuttev.dto.*
+import com.wafflestudio.snuttev.domain.evaluation.dto.*
+import com.wafflestudio.snuttev.domain.evaluation.model.LectureEvaluation
+import com.wafflestudio.snuttev.domain.evaluation.repository.LectureEvaluationRepository
+import com.wafflestudio.snuttev.domain.lecture.repository.LectureRepository
+import com.wafflestudio.snuttev.domain.lecture.repository.SemesterLectureRepository
 import com.wafflestudio.snuttev.error.LectureNotFoundException
 import com.wafflestudio.snuttev.error.SemesterLectureNotFoundException
 import org.springframework.data.repository.findByIdOrNull
@@ -36,18 +35,6 @@ class EvaluationService(
         )
         lectureEvaluationRepository.save(lectureEvaluation)
         return genLectureEvaluationDto(lectureEvaluation)
-    }
-
-    fun getSemesterLectures(
-        lectureId: Long
-    ): GetSemesterLecturesResponse {
-        val lecture = lectureRepository.findByIdOrNull(lectureId) ?: throw LectureNotFoundException
-
-        return GetSemesterLecturesResponse(
-            lecture.semesterLectures.map {
-                genSemesterLectureDto(it)
-            }
-        )
     }
 
     fun getEvaluationSummaryOfLecture(lectureId: Long): LectureEvaluationSummaryResponse {
@@ -98,16 +85,4 @@ class EvaluationService(
             isReported = lectureEvaluation.isReported,
         )
 
-    private fun genSemesterLectureDto(semesterLecture: SemesterLecture): SemesterLectureDto =
-        SemesterLectureDto(
-            id = semesterLecture.id!!,
-            lectureNumber = semesterLecture.lectureNumber,
-            year = semesterLecture.year,
-            semester = semesterLecture.semester,
-            credit = semesterLecture.credit,
-            extraInfo = semesterLecture.extraInfo,
-            academicYear = semesterLecture.academicYear,
-            category = semesterLecture.category,
-            classification = semesterLecture.classification,
-        )
 }

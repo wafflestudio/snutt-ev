@@ -1,10 +1,10 @@
 package com.wafflestudio.snuttev
 
-import com.wafflestudio.snuttev.common.Semester
-import com.wafflestudio.snuttev.dao.model.Lecture
-import com.wafflestudio.snuttev.dao.model.SemesterLecture
-import com.wafflestudio.snuttev.dao.repository.LectureRepository
-import com.wafflestudio.snuttev.dao.repository.SemesterLectureRepository
+import com.wafflestudio.snuttev.domain.common.Semester
+import com.wafflestudio.snuttev.domain.lecture.model.Lecture
+import com.wafflestudio.snuttev.domain.lecture.model.SemesterLecture
+import com.wafflestudio.snuttev.domain.lecture.repository.LectureRepository
+import com.wafflestudio.snuttev.domain.lecture.repository.SemesterLectureRepository
 import org.springframework.boot.ApplicationArguments
 import org.springframework.boot.ApplicationRunner
 import org.springframework.context.annotation.Profile
@@ -26,7 +26,7 @@ class DataLoader(
             credit = 4,
             academicYear = "3학년",
             category = "",
-            classification = "전선",
+            classification = "전선"
         )
         lectureRepository.save(lecture)
 

@@ -1,9 +1,9 @@
 package com.wafflestudio.snuttev.scheduler.lecture_crawler
 
-import com.wafflestudio.snuttev.dao.model.Lecture
-import com.wafflestudio.snuttev.dao.model.SemesterLecture
-import com.wafflestudio.snuttev.dao.repository.LectureRepository
-import com.wafflestudio.snuttev.dao.repository.SemesterLectureRepository
+import com.wafflestudio.snuttev.domain.lecture.model.Lecture
+import com.wafflestudio.snuttev.domain.lecture.model.SemesterLecture
+import com.wafflestudio.snuttev.domain.lecture.repository.SemesterLectureRepository
+import com.wafflestudio.snuttev.domain.lecture.repository.LectureRepository
 import com.wafflestudio.snuttev.scheduler.lecture_crawler.model.SnuttSemesterLecture
 import com.wafflestudio.snuttev.scheduler.lecture_crawler.repository.SnuttSemesterLectureRepository
 import org.springframework.stereotype.Component
