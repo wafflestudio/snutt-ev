@@ -1,5 +1,7 @@
-package com.wafflestudio.snuttev.dao.model
+package com.wafflestudio.snuttev.domain.lecture.model
 
+import com.wafflestudio.snuttev.domain.common.model.BaseEntity
+import com.wafflestudio.snuttev.domain.evaluation.model.LectureEvaluation
 import javax.persistence.*
 
 @Entity

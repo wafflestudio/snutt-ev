@@ -1,4 +1,4 @@
-package com.wafflestudio.snuttev.dto
+package com.wafflestudio.snuttev.domain.evaluation.dto
 
 import com.fasterxml.jackson.annotation.JsonProperty
 
@@ -35,11 +35,6 @@ data class LectureEvaluationDto(
 
     @JsonProperty("is_reported")
     val isReported: Boolean,
-)
-
-data class GetSemesterLecturesResponse(
-    @JsonProperty("semester_lectures")
-    val semesterLectures: List<SemesterLectureDto>
 )
 
 data class SemesterLectureDto(

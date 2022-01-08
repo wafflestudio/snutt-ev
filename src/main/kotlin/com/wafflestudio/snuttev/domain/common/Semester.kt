@@ -1,4 +1,4 @@
-package com.wafflestudio.snuttev.common
+package com.wafflestudio.snuttev.domain.common
 
 enum class Semester(val value: Int) {
     SPRING(1),

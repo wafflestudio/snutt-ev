@@ -1,6 +1,6 @@
-package com.wafflestudio.snuttev.dao.repository
+package com.wafflestudio.snuttev.domain.evaluation.repository
 
-import com.wafflestudio.snuttev.dao.model.LectureEvaluation
+import com.wafflestudio.snuttev.domain.evaluation.model.LectureEvaluation
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 

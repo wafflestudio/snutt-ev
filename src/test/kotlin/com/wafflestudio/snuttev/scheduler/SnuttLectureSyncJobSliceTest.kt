@@ -1,8 +1,8 @@
 package com.wafflestudio.snuttev.scheduler
 
-import com.wafflestudio.snuttev.common.Semester
-import com.wafflestudio.snuttev.dao.repository.LectureRepository
-import com.wafflestudio.snuttev.dao.repository.SemesterLectureRepository
+import com.wafflestudio.snuttev.domain.common.Semester
+import com.wafflestudio.snuttev.domain.lecture.repository.SemesterLectureRepository
+import com.wafflestudio.snuttev.domain.lecture.repository.LectureRepository
 import com.wafflestudio.snuttev.scheduler.lecture_crawler.SemesterUtils
 import com.wafflestudio.snuttev.scheduler.lecture_crawler.SnuttLectureSyncJobService
 import com.wafflestudio.snuttev.scheduler.lecture_crawler.model.SnuttSemesterLecture
@@ -110,7 +110,7 @@ class SnuttLectureSyncJobSliceTest(
         ),
     )
 
-    val winterSemesterLectures = listOf<SnuttSemesterLecture>(
+    val winterSemesterLectures = listOf(
         makeTestSnuttSemesterLecture(
             year = 2021,
             semester = 4,

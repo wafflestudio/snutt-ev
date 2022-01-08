@@ -1,6 +1,6 @@
-package com.wafflestudio.snuttev.dao.repository
+package com.wafflestudio.snuttev.domain.lecture.repository
 
-import com.wafflestudio.snuttev.dao.model.SemesterLecture
+import com.wafflestudio.snuttev.domain.lecture.model.SemesterLecture
 import org.springframework.data.jpa.repository.JpaRepository
 
 interface SemesterLectureRepository : JpaRepository<SemesterLecture, Long> {
