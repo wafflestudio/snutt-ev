@@ -30,3 +30,32 @@ class Lecture(
     var semesterLectures: MutableList<SemesterLecture> = mutableListOf()
 
 ) : BaseEntity()
+
+
+data class LectureEvaluationSummaryDao(
+    val title: String?,
+
+    val instructor: String?,
+
+    val department: String?,
+
+    val courseNumber: String?,
+
+    val credit: Int?,
+
+    val academicYear: String?,
+
+    val category: String?,
+
+    val classification: String?,
+
+    val avgGradeSatisfaction: Double?,
+
+    val avgTeachingSkill: Double?,
+
+    val avgGains: Double?,
+
+    val avgLifeBalance: Double?,
+
+    val avgRating: Double?,
+)

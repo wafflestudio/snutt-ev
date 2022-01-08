@@ -5,10 +5,7 @@ import com.wafflestudio.snuttev.dao.model.SemesterLecture
 import com.wafflestudio.snuttev.dao.repository.LectureEvaluationRepository
 import com.wafflestudio.snuttev.dao.repository.LectureRepository
 import com.wafflestudio.snuttev.dao.repository.SemesterLectureRepository
-import com.wafflestudio.snuttev.dto.CreateEvaluationRequest
-import com.wafflestudio.snuttev.dto.GetSemesterLecturesResponse
-import com.wafflestudio.snuttev.dto.LectureEvaluationDto
-import com.wafflestudio.snuttev.dto.SemesterLectureDto
+import com.wafflestudio.snuttev.dto.*
 import com.wafflestudio.snuttev.error.LectureNotFoundException
 import com.wafflestudio.snuttev.error.SemesterLectureNotFoundException
 import org.springframework.data.repository.findByIdOrNull
@@ -18,7 +15,7 @@ import org.springframework.stereotype.Service
 class EvaluationService(
     private val semesterLectureRepository: SemesterLectureRepository,
     private val lectureEvaluationRepository: LectureEvaluationRepository,
-    private val lectureRepository: LectureRepository
+    private val lectureRepository: LectureRepository,
 ) {
     fun createEvaluation(
         userId: String,
@@ -53,9 +50,36 @@ class EvaluationService(
         )
     }
 
-    fun getLectureEvaluationsOfLecture(lectureId: Long): List<LectureEvaluationDto> {
-        val result = lectureRepository.getById(lectureId).semesterLectures.flatMap { it.lectureEvaluations }
-        return result.map { genLectureEvaluationDto(it) }
+    fun getEvaluationSummaryOfLecture(lectureId: Long): LectureEvaluationSummaryResponse {
+        val lectureEvaluationSummaryDao = lectureRepository.findLectureWithAvgEvById(lectureId) ?: throw LectureNotFoundException
+
+        return LectureEvaluationSummaryResponse(
+            id = lectureId,
+            title = lectureEvaluationSummaryDao.title,
+            instructor = lectureEvaluationSummaryDao.instructor,
+            department = lectureEvaluationSummaryDao.department,
+            courseNumber = lectureEvaluationSummaryDao.courseNumber,
+            credit = lectureEvaluationSummaryDao.credit,
+            academicYear = lectureEvaluationSummaryDao.academicYear,
+            category = lectureEvaluationSummaryDao.category,
+            classification = lectureEvaluationSummaryDao.classification,
+            summary = LectureEvaluationSummary(
+                avgGradeSatisfaction = lectureEvaluationSummaryDao.avgGradeSatisfaction,
+                avgTeachingSkill = lectureEvaluationSummaryDao.avgTeachingSkill,
+                avgGains = lectureEvaluationSummaryDao.avgGains,
+                avgLifeBalance = lectureEvaluationSummaryDao.avgLifeBalance,
+                avgRating = lectureEvaluationSummaryDao.avgRating,
+            ),
+        )
+    }
+
+    fun getEvaluationsOfLecture(lectureId: Long): LectureEvaluationsResponse {
+        val lecture = lectureRepository.findByIdOrNull(lectureId) ?: throw LectureNotFoundException
+
+        val lectureEvaluations = lecture.semesterLectures.flatMap { it.lectureEvaluations }
+        return LectureEvaluationsResponse(
+            lectureEvaluations.map { genLectureEvaluationDto(it) },
+        )
     }
 
     private fun genLectureEvaluationDto(lectureEvaluation: LectureEvaluation): LectureEvaluationDto =
