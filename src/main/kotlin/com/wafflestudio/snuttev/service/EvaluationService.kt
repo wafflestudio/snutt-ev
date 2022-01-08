@@ -48,7 +48,7 @@ class EvaluationService(
 
         return GetSemesterLecturesResponse(
             lecture.semesterLectures.map {
-                genSemesterLecture(it)
+                genSemesterLectureDto(it)
             }
         )
     }
@@ -74,7 +74,7 @@ class EvaluationService(
             isReported = lectureEvaluation.isReported,
         )
 
-    private fun genSemesterLecture(semesterLecture: SemesterLecture): SemesterLectureDto =
+    private fun genSemesterLectureDto(semesterLecture: SemesterLecture): SemesterLectureDto =
         SemesterLectureDto(
             id = semesterLecture.id!!,
             lectureNumber = semesterLecture.lectureNumber,
