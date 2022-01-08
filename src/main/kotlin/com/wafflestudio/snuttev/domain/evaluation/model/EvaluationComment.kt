@@ -28,4 +28,4 @@ class EvaluationComment(
     @Column(nullable = false)
     val isReported: Boolean = false,
 
-    ) : BaseEntity()
+) : BaseEntity()
