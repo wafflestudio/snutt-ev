@@ -1,13 +1,6 @@
-spring:
-  profiles:
-    active: test
-
----
+spring.profiles.default: test
 
 spring:
-  config:
-    activate:
-      on-profile: test
   datasource:
     url: jdbc:mysql://localhost:3306/snutt?serverTimezone=UTC
     username: snutt
@@ -17,4 +10,7 @@ spring:
     hibernate:
       ddl-auto: create
     show-sql: true
-    
+    properties:
+      hibernate:
+        format_sql: true
+        use_sql_comments: true

@@ -1,31 +1,29 @@
 package com.wafflestudio.snuttev.controller
 
-import com.fasterxml.jackson.annotation.JsonProperty
-import com.wafflestudio.snuttev.dao.model.Lecture
 import com.wafflestudio.snuttev.service.EvaluationService
 import com.wafflestudio.snuttev.service.LectureEvaluationDto
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
 import javax.validation.constraints.NotBlank
-import javax.validation.constraints.NotNull
 
 @RestController
 class EvaluationController(
     private val evaluationService: EvaluationService
 ) {
 
-    @PostMapping("/v1/evaluations/")
+    @PostMapping("/v1/semester-lectures/{id}/evaluations")
     fun createEvaluation(
-        @RequestAttribute(value = "UserId") userId: String,
-        @RequestBody @Valid createEvaluationRequest: CreateEvaluationRequest
+        @PathVariable(value = "id") semesterLectureId: Long,
+        @RequestBody @Valid createEvaluationRequest: CreateEvaluationRequest,
+        @RequestAttribute(value = "UserId") userId: String
     ): ResponseEntity<LectureEvaluationDto?> {
-        return evaluationService.createEvaluation(userId, createEvaluationRequest)?.let {
+        return evaluationService.createEvaluation(userId, semesterLectureId, createEvaluationRequest)?.let {
             ResponseEntity.ok(it)
         } ?: ResponseEntity.notFound().build()
     }
 
-    @GetMapping("/v1/lectures/{id}/evaluations/")
+    @GetMapping("/v1/semester-lectures/{id}/evaluations")
     fun getLectureEvaluation(
         @PathVariable(value = "id") lectureId: Long
     ): ResponseEntity<List<LectureEvaluationDto>> {
@@ -36,10 +34,6 @@ class EvaluationController(
 }
 
 data class CreateEvaluationRequest(
-    @JsonProperty("semester_lecture_id")
-    @field:NotNull
-    val semesterLectureId: Long,
-
     @field:NotBlank
     val content: String
 )

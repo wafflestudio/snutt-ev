@@ -1,13 +1,6 @@
-spring:
-  profiles:
-    active: local
-
----
+spring.profiles.default: local
 
 spring:
-  config:
-    activate:
-      on-profile: local
   datasource:
     url: jdbc:mysql://localhost:3306/snutt?serverTimezone=UTC
     username: snutt
@@ -15,41 +8,60 @@ spring:
   jpa:
     generate-ddl: true
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        use_sql_comments: true
   data:
     mongodb:
       host: localhost
       port: 27017
       authentication-database: admin
       database: snutt
-  #      username: snutt
-  #      password: snutt
 
 ---
 
+spring.config.activate.on-profile: dev
+
+secretNames: dev/snutt-ev
+
 spring:
-  config:
-    activate:
-      on-profile: dev
   datasource:
-    url: jdbc:mysql://wafflestudio-mysql-202107.caxwrw8c4qqq.ap-northeast-2.rds.amazonaws.com/snutt?serverTimezone=UTC
-    username: snutt
-    password: 237044526e3441d2b7cac45ece763d1a
+    url:
+    username:
+    password:
   jpa:
     generate-ddl: true
     hibernate:
       ddl-auto: update
   data:
     mongodb:
-      host: snutt-mongo-dev.wafflestudio.com
-      port: 27017
-      authentication-database: admin
-      database: snutt
+      host:
+      port:
+      authentication-database:
+      database:
 
 ---
 
+spring.config.activate.on-profile: prod
+
+secretNames: prod/snutt-ev
+
 spring:
-  config:
-    activate:
-      on-profile: prod
+  datasource:
+    url:
+    username:
+    password:
+  jpa:
+    generate-ddl: false
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+  data:
+    mongodb:
+      host:
+      port:
+      authentication-database:
+      database:
