@@ -3,8 +3,8 @@ package com.wafflestudio.snuttev.error
 import org.springframework.http.HttpStatus
 
 enum class ErrorType(
-        val code: Int,
-        val httpStatus: HttpStatus
+    val code: Int,
+    val httpStatus: HttpStatus,
 ) {
     // 401
     UNAUTHORIZED(21001, HttpStatus.UNAUTHORIZED),
