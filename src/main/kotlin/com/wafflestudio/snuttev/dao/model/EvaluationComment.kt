@@ -9,17 +9,22 @@ class EvaluationComment(
     @JoinColumn(name = "evaluation_id")
     val evaluation: LectureEvaluation,
 
+    @Column(nullable = false)
     val userId: String,
 
     @Column(columnDefinition = "longtext")
     val content: String,
 
+    @Column(nullable = false)
     val likeCount: Long = 0,
 
+    @Column(nullable = false)
     val dislikeCount: Long = 0,
 
+    @Column(nullable = false)
     val isHidden: Boolean = false,
 
-    val isReported: Boolean = false
+    @Column(nullable = false)
+    val isReported: Boolean = false,
 
 ) : BaseEntity()

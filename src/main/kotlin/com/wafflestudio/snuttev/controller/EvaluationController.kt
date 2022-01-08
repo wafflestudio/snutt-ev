@@ -1,11 +1,11 @@
 package com.wafflestudio.snuttev.controller
 
+import com.wafflestudio.snuttev.dto.CreateEvaluationRequest
+import com.wafflestudio.snuttev.dto.LectureEvaluationDto
 import com.wafflestudio.snuttev.service.EvaluationService
-import com.wafflestudio.snuttev.service.LectureEvaluationDto
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
-import javax.validation.constraints.NotBlank
 
 @RestController
 class EvaluationController(
@@ -32,8 +32,3 @@ class EvaluationController(
         }
     }
 }
-
-data class CreateEvaluationRequest(
-    @field:NotBlank
-    val content: String
-)

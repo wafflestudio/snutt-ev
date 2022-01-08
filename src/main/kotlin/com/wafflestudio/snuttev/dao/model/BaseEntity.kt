@@ -1,10 +1,7 @@
 package com.wafflestudio.snuttev.dao.model
 
 import java.time.LocalDateTime
-import javax.persistence.GeneratedValue
-import javax.persistence.GenerationType
-import javax.persistence.Id
-import javax.persistence.MappedSuperclass
+import javax.persistence.*
 
 @MappedSuperclass
 open class BaseEntity (
@@ -13,8 +10,10 @@ open class BaseEntity (
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     open val id: Long? = null,
 
+    @Column(nullable = false)
     open val createdAt: LocalDateTime = LocalDateTime.now(),
 
-    open val updatedAt: LocalDateTime? = LocalDateTime.now()
+    @Column(nullable = false)
+    open val updatedAt: LocalDateTime? = LocalDateTime.now(),
 
 )

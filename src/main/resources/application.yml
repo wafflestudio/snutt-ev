@@ -20,6 +20,11 @@ spring:
       port: 27017
       authentication-database: admin
       database: snutt
+  jackson:
+    default-property-inclusion: non_null
+    deserialization:
+      fail-on-unknown-properties: false
+      fail-on-null-for-primitives: true
 
 ---
 
