@@ -31,7 +31,7 @@ jobs:
 
       - name: Initiate Database
         run: |
-          mysql -uroot -h127.0.0.1 -proot -e 'CREATE USER 'snutt'@'%' IDENTIFIED BY "wafflestudio"'
+          mysql -uroot -h127.0.0.1 -proot -e 'CREATE USER 'snutt'@'%' IDENTIFIED BY 'wafflestudio''
           mysql -uroot -h127.0.0.1 -proot -e 'CREATE DATABASE snutt'
           mysql -uroot -h127.0.0.1 -proot -e 'GRANT ALL PRIVILEGES ON snutt.* TO 'snutt'@'%'
 
