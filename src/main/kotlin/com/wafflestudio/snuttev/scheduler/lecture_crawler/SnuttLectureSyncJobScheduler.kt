@@ -13,6 +13,7 @@ class SnuttLectureSyncJobScheduler(private val service: SnuttLectureSyncJobServi
     @PostConstruct
     @Profile("local")
     fun fetchAll() {
+        print("local??===")
         service.migrateAllLectureDataFromSnutt()
     }
 

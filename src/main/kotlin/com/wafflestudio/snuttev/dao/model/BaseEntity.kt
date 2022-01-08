@@ -11,10 +11,10 @@ open class BaseEntity (
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long? = null,
+    open val id: Long? = null,
 
-    val createdAt: LocalDateTime = LocalDateTime.now(),
+    open val createdAt: LocalDateTime = LocalDateTime.now(),
 
-    val updatedAt: LocalDateTime? = LocalDateTime.now()
+    open val updatedAt: LocalDateTime? = LocalDateTime.now()
 
 )

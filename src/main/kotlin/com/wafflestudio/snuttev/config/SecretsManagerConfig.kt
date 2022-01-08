@@ -8,9 +8,11 @@ import org.springframework.beans.factory.config.BeanFactoryPostProcessor
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory
 import org.springframework.context.EnvironmentAware
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Profile
 import org.springframework.core.env.Environment
 
 @Configuration
+@Profile("dev | prod")
 class SecretsManagerConfig : EnvironmentAware, BeanFactoryPostProcessor {
     private lateinit var env: Environment
 
@@ -33,6 +35,8 @@ class SecretsManagerConfig : EnvironmentAware, BeanFactoryPostProcessor {
     fun getSecretString(secretName: String, region: String): String {
         val client = AWSSecretsManagerClientBuilder.standard().withRegion(region).build()
         val request = GetSecretValueRequest().withSecretId(secretName)
-        return client.getSecretValue(request).secretString
+        val str = client.getSecretValue(request).secretString
+        print("secret string $str")
+        return str
     }
 }

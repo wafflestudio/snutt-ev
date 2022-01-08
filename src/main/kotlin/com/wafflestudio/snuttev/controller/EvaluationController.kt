@@ -14,17 +14,18 @@ class EvaluationController(
     private val evaluationService: EvaluationService
 ) {
 
-    @PostMapping("/v1/lectures/evaluations/")
+    @PostMapping("/v1/semester-lectures/{id}/evaluations")
     fun createEvaluation(
-        @RequestAttribute(value = "UserId") userId: String,
-        @RequestBody @Valid createEvaluationRequest: CreateEvaluationRequest
+        @PathVariable(value = "id") semesterLectureId: Long,
+        @RequestBody @Valid createEvaluationRequest: CreateEvaluationRequest,
+        @RequestAttribute(value = "UserId") userId: String
     ): ResponseEntity<LectureEvaluationDto?> {
-        return evaluationService.createEvaluation(userId, createEvaluationRequest)?.let {
+        return evaluationService.createEvaluation(userId, semesterLectureId, createEvaluationRequest)?.let {
             ResponseEntity.ok(it)
         } ?: ResponseEntity.notFound().build()
     }
 
-    @GetMapping("/v1/lectures/{id}/evaluations/")
+    @GetMapping("/v1/semester-lectures/{id}/evaluations")
     fun getLectureEvaluation(
         @PathVariable(value = "id") lectureId: Long
     ): ResponseEntity<List<LectureEvaluationDto>> {
@@ -35,10 +36,6 @@ class EvaluationController(
 }
 
 data class CreateEvaluationRequest(
-    @JsonProperty("semester_lecture_id")
-    @field:NotNull
-    val semesterLectureId: Long,
-
     @field:NotBlank
     val content: String
 )
