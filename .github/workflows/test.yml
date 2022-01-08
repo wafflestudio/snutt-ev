@@ -9,6 +9,16 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_USER: snutt
+          MYSQL_PASSWORD: wafflestudio
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: snutt
+        ports:
+          - 3306
 
     steps:
       - name: Checkout
