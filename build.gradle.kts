@@ -42,8 +42,8 @@ dependencies {
     testImplementation("com.h2database:h2")
     testImplementation("org.junit.jupiter:junit-jupiter-api")
 
-    implementation("com.querydsl:querydsl-jpa:4.2.2")
-    kapt("com.querydsl:querydsl-apt:4.2.2:jpa")
+    implementation("com.querydsl:querydsl-jpa")
+    kapt("com.querydsl:querydsl-apt::jpa")
 }
 
 sourceSets["main"].withConvention(org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet::class){
