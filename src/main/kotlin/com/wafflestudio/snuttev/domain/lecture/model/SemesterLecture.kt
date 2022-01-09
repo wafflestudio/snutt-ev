@@ -24,8 +24,7 @@ class SemesterLecture(
     @Column(name = "extra_info", columnDefinition = "longtext")
     var extraInfo: String = "",
 
-    @Column(name = "academic_year")
-    var academicYear: String,
+    var grade: String,
 
     var category: String,
 

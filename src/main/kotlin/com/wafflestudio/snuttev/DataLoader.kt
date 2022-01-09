@@ -24,7 +24,7 @@ class DataLoader(
             department = "컴퓨터공학부",
             courseNumber = "M1522.002400",
             credit = 4,
-            academicYear = "3학년",
+            grade = "3학년",
             category = "",
             classification = "전선",
         )
@@ -36,7 +36,7 @@ class DataLoader(
             year = 2019,
             semester = Semester.AUTUMN.value,
             credit = 4,
-            academicYear = "3학년",
+            grade = "3학년",
             category = "",
             classification = "전필",
         )

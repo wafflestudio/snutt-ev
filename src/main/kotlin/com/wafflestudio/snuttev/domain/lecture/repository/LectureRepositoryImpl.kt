@@ -15,7 +15,7 @@ class LectureRepositoryImpl(private val queryFactory: JPAQueryFactory) : Lecture
         val builder = BooleanBuilder()
         if (!request.credit.isNullOrEmpty()) builder.and(lecture.credit.`in`(request.credit))
         if (!request.instructor.isNullOrEmpty()) builder.and(lecture.instructor.`in`(request.instructor))
-        if (!request.academicYear.isNullOrEmpty()) builder.and(lecture.academicYear.`in`(request.academicYear))
+        if (!request.grade.isNullOrEmpty()) builder.and(lecture.grade.`in`(request.grade))
         if (!request.classification.isNullOrEmpty()) builder.and(lecture.classification.`in`(request.classification))
         if (!request.category.isNullOrEmpty()) builder.and(lecture.category.`in`(request.category))
         if (!request.department.isNullOrEmpty()) builder.and(lecture.department.`in`(request.department))
@@ -26,16 +26,16 @@ class LectureRepositoryImpl(private val queryFactory: JPAQueryFactory) : Lecture
                 keyword == "전공" -> orBuilder.or(lecture.classification.`in`(listOf("전선", "전필")))
                 keyword == "체육" -> orBuilder.or(lecture.category.eq("체육"))
                 keyword in listOf("석박", "대학원") -> {
-                    orBuilder.or(lecture.academicYear.`in`(listOf("석사", "박사", "석박사통합")))
+                    orBuilder.or(lecture.grade.`in`(listOf("석사", "박사", "석박사통합")))
                 }
                 keyword in listOf("학부", "학사") -> {
-                    orBuilder.or(lecture.academicYear.notIn(listOf("석사", "박사", "석박사통합")))
+                    orBuilder.or(lecture.grade.notIn(listOf("석사", "박사", "석박사통합")))
                 }
                 keyword.hasKorean() -> {
                     orBuilder.or(lecture.title.like(fuzzyKeyword))
                     orBuilder.or(lecture.category.like(fuzzyKeyword))
                     orBuilder.or(lecture.instructor.eq(keyword))
-                    orBuilder.or(lecture.academicYear.eq(keyword))
+                    orBuilder.or(lecture.grade.eq(keyword))
                     orBuilder.or(lecture.classification.eq(keyword))
                     when (keyword.last()) {
                         '과', '부' -> {

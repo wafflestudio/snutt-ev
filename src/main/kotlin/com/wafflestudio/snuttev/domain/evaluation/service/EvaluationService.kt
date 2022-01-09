@@ -47,7 +47,7 @@ class EvaluationService(
             department = lectureEvaluationSummaryDao.department,
             courseNumber = lectureEvaluationSummaryDao.courseNumber,
             credit = lectureEvaluationSummaryDao.credit,
-            academicYear = lectureEvaluationSummaryDao.academicYear,
+            grade = lectureEvaluationSummaryDao.grade,
             category = lectureEvaluationSummaryDao.category,
             classification = lectureEvaluationSummaryDao.classification,
             summary = LectureEvaluationSummary(

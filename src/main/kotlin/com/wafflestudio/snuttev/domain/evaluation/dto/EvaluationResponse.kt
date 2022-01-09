@@ -53,7 +53,7 @@ data class SemesterLectureDto(
     val extraInfo: String,
 
     @JsonProperty("academic_year")
-    val academicYear: String,
+    val grade: String,
 
     val category: String,
 
@@ -74,8 +74,7 @@ data class LectureEvaluationSummaryResponse(
 
     val credit: Int?,
 
-    @JsonProperty("academic_year")
-    val academicYear: String?,
+    val grade: String?,
 
     val category: String?,
 

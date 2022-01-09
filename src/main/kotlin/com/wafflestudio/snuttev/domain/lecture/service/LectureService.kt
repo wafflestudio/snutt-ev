@@ -39,7 +39,7 @@ class LectureService(private val lectureRepository: LectureRepository) {
             semester = semesterLecture.semester,
             credit = semesterLecture.credit,
             extraInfo = semesterLecture.extraInfo,
-            academicYear = semesterLecture.academicYear,
+            grade = semesterLecture.grade,
             category = semesterLecture.category,
             classification = semesterLecture.classification,
         )
