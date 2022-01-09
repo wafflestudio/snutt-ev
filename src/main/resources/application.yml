@@ -1,6 +1,14 @@
 spring.profiles.default: local
 
 spring:
+  jackson:
+    deserialization:
+      fail-on-unknown-properties: false
+      fail-on-null-for-primitives: true
+
+---
+
+spring:
   config:
     activate:
       on-profile: local
@@ -23,10 +31,6 @@ spring:
       port: 27017
       authentication-database: admin
       database: snutt
-  jackson:
-    deserialization:
-      fail-on-unknown-properties: false
-      fail-on-null-for-primitives: true
 
 ---
 
