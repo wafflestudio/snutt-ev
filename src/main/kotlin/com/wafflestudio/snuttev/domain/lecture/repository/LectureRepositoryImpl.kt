@@ -14,7 +14,6 @@ class LectureRepositoryImpl(private val queryFactory: JPAQueryFactory) : Lecture
     override fun searchLectures(request: SearchLectureRequest, pageable: Pageable): Page<Lecture> {
         val builder = BooleanBuilder()
         if (!request.credit.isNullOrEmpty()) builder.and(lecture.credit.`in`(request.credit))
-        if (!request.instructor.isNullOrEmpty()) builder.and(lecture.instructor.`in`(request.instructor))
         if (!request.academicYear.isNullOrEmpty()) builder.and(lecture.academicYear.`in`(request.academicYear))
         if (!request.classification.isNullOrEmpty()) builder.and(lecture.classification.`in`(request.classification))
         if (!request.category.isNullOrEmpty()) builder.and(lecture.category.`in`(request.category))
