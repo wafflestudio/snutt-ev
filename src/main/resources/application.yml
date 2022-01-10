@@ -1,9 +1,6 @@
 spring.profiles.default: local
 
 spring:
-  config:
-    activate:
-      on-profile: local
   datasource:
     url: jdbc:mysql://localhost:3306/snutt?serverTimezone=UTC
     username: snutt
