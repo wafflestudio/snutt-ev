@@ -72,7 +72,7 @@ class SnuttLectureSyncJobService(
         return snuttSemesterLectures.map {
             val lecture = mergedLecturesMap[lectureKeyOf(it)]!!
             existingSemesterLecturesMap[semesterLectureKeyOf(it)]?.apply {
-                this.grade = it.academic_year
+                this.academicYear = it.academic_year
                 this.category = it.category
                 this.classification = it.classification
                 this.extraInfo = it.remark
@@ -90,7 +90,7 @@ class SnuttLectureSyncJobService(
 
         return newSnuttSemesterLectures.associate {
             lectureKeyOf(it) to (originalLecturesMap[lectureKeyOf(it)]?.apply {
-                this.grade = it.academic_year
+                this.academicYear = it.academic_year
                 this.credit = it.credit
                 this.classification = it.classification
                 this.category = it.category

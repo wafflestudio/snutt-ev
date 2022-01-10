@@ -20,7 +20,8 @@ class Lecture(
 
     var credit: Int,
 
-    var grade: String,
+    @Column(name = "academic_year")
+    var academicYear: String,
 
     var category: String,
 
@@ -43,7 +44,7 @@ data class LectureEvaluationSummaryDao(
 
     val credit: Int?,
 
-    val grade: String?,
+    val academicYear: String?,
 
     val category: String?,
 
