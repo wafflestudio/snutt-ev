@@ -40,7 +40,7 @@ class LectureRepositoryImpl(private val queryFactory: JPAQueryFactory) : Lecture
                 semesterLecture.credit.isIn(request.credit),
                 semesterLecture.academicYear.isIn(request.academicYear),
                 semesterLecture.classification.isIn(request.classification),
-                lecture.department.isIn(request.department),
+                semesterLecture.lecture.department.isIn(request.department),
                 semesterLecture.category.isIn(request.category),
                 extractCriteriaFromQuery(request.query)
             ).offset(pageable.offset).limit(pageable.pageSize.toLong()).fetchResults()
