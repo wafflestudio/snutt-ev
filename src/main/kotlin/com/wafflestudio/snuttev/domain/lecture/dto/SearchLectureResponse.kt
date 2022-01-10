@@ -5,7 +5,7 @@ import com.querydsl.core.annotations.QueryProjection
 import com.wafflestudio.snuttev.domain.lecture.model.Lecture
 import com.wafflestudio.snuttev.domain.lecture.model.SemesterLecture
 
-data class SearchLectureResponse @QueryProjection constructor(
+data class SearchLectureResponse (
     val id: Long?,
     @JsonProperty("classification") val classification: String?,
     @JsonProperty("department") val department: String?,
