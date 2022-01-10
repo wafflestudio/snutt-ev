@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController
 class LectureController(private val lectureService: LectureService) {
     @GetMapping("/v1/lectures")
     fun getLectures(@ModelAttribute params: SearchLectureRequest): Page<SearchLectureResponse> {
-        return lectureService.search(params).map { SearchLectureResponse(it) }
+        return lectureService.search(params)
     }
 
     @GetMapping("/v1/lectures/{id}/semester-lectures")

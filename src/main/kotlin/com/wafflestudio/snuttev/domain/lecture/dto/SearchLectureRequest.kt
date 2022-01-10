@@ -1,7 +1,5 @@
 package com.wafflestudio.snuttev.domain.lecture.dto
 
-import com.fasterxml.jackson.annotation.JsonProperty
-
 data class SearchLectureRequest (
     val query: String? = null,
     val classification: List<String>? = null,
@@ -9,5 +7,7 @@ data class SearchLectureRequest (
     val academicYear: List<String>? = null,
     val department: List<String>? = null,
     val category: List<String>? = null,
+    val year: Int? = null,
+    val semester: Int? = null,
     val page: Int = 0,
 )

@@ -1,10 +1,16 @@
 package com.wafflestudio.snuttev.domain.lecture.repository
 
 import com.querydsl.core.BooleanBuilder
+import com.querydsl.core.types.Predicate
+import com.querydsl.core.types.dsl.BooleanExpression
+import com.querydsl.core.types.dsl.NumberPath
+import com.querydsl.core.types.dsl.StringPath
 import com.querydsl.jpa.impl.JPAQueryFactory
 import com.wafflestudio.snuttev.domain.lecture.dto.SearchLectureRequest
 import com.wafflestudio.snuttev.domain.lecture.model.Lecture
 import com.wafflestudio.snuttev.domain.lecture.model.QLecture.lecture
+import com.wafflestudio.snuttev.domain.lecture.model.QSemesterLecture.semesterLecture
+import com.wafflestudio.snuttev.domain.lecture.model.SemesterLecture
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
@@ -12,13 +18,50 @@ import org.springframework.data.domain.Pageable
 
 class LectureRepositoryImpl(private val queryFactory: JPAQueryFactory) : LectureRepositoryCustom {
     override fun searchLectures(request: SearchLectureRequest, pageable: Pageable): Page<Lecture> {
+        val queryResult = queryFactory.selectFrom(lecture).where(
+            lecture.credit.isIn(request.credit),
+            lecture.academicYear.isIn(request.academicYear),
+            lecture.classification.isIn(request.classification),
+            lecture.department.isIn(request.department),
+            lecture.category.isIn(request.category),
+            extractCriteriaFromQuery(request.query)
+        ).offset(pageable.offset).limit(pageable.pageSize.toLong()).fetchResults()
+        val content = queryResult.results
+        val total: Long = queryResult.total
+
+        return PageImpl(content, pageable, total)
+    }
+
+    override fun searchSemesterLectures(request: SearchLectureRequest, pageable: Pageable): Page<SemesterLecture> {
+        val queryResult =
+            queryFactory.selectFrom(semesterLecture).innerJoin(semesterLecture.lecture, lecture).fetchJoin().where(
+                request.year?.let { semesterLecture.year.eq(it) },
+                request.semester?.let { semesterLecture.semester.eq(it) },
+                semesterLecture.credit.isIn(request.credit),
+                semesterLecture.academicYear.isIn(request.academicYear),
+                semesterLecture.classification.isIn(request.classification),
+                lecture.department.isIn(request.department),
+                semesterLecture.category.isIn(request.category),
+                extractCriteriaFromQuery(request.query)
+            ).offset(pageable.offset).limit(pageable.pageSize.toLong()).fetchResults()
+        val content = queryResult.results
+        val total: Long = queryResult.total
+
+        return PageImpl(content, pageable, total)
+    }
+
+    private fun StringPath.isIn(tags: List<String>?): BooleanExpression? {
+        return if (!tags.isNullOrEmpty()) this.`in`(tags) else null
+    }
+
+    private fun NumberPath<Int>.isIn(tags: List<Int>?): BooleanExpression? {
+        return if (!tags.isNullOrEmpty()) this.`in`(tags) else null
+    }
+
+    private fun extractCriteriaFromQuery(query: String?): Predicate? {
         val builder = BooleanBuilder()
-        if (!request.credit.isNullOrEmpty()) builder.and(lecture.credit.`in`(request.credit))
-        if (!request.academicYear.isNullOrEmpty()) builder.and(lecture.academicYear.`in`(request.academicYear))
-        if (!request.classification.isNullOrEmpty()) builder.and(lecture.classification.`in`(request.classification))
-        if (!request.category.isNullOrEmpty()) builder.and(lecture.category.`in`(request.category))
-        if (!request.department.isNullOrEmpty()) builder.and(lecture.department.`in`(request.department))
-        request.query?.split(' ')?.forEach { keyword ->
+        query?.split(' ')?.forEach { keyword ->
+            // 소개원실 -> %소%개%원%실%
             val fuzzyKeyword = keyword.fold("%") { acc, c -> "$acc$c%" }
             val orBuilder = BooleanBuilder()
             when {
@@ -53,12 +96,7 @@ class LectureRepositoryImpl(private val queryFactory: JPAQueryFactory) : Lecture
             }
             builder.and(orBuilder.value)
         }
-        val queryResult = queryFactory.selectFrom(lecture).where(builder.value)
-            .offset(pageable.offset).limit(pageable.pageSize.toLong()).fetchResults()
-        val content = queryResult.results
-        val total: Long = queryResult.total
-
-        return PageImpl(content, pageable, total)
+        return builder.value
     }
 
     private fun Char.isHangul(): Boolean {

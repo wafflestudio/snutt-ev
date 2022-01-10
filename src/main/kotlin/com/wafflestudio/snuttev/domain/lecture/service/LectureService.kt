@@ -3,7 +3,7 @@ package com.wafflestudio.snuttev.domain.lecture.service
 import com.wafflestudio.snuttev.domain.evaluation.dto.SemesterLectureDto
 import com.wafflestudio.snuttev.domain.lecture.dto.GetSemesterLecturesResponse
 import com.wafflestudio.snuttev.domain.lecture.dto.SearchLectureRequest
-import com.wafflestudio.snuttev.domain.lecture.model.Lecture
+import com.wafflestudio.snuttev.domain.lecture.dto.SearchLectureResponse
 import com.wafflestudio.snuttev.domain.lecture.model.SemesterLecture
 import com.wafflestudio.snuttev.domain.lecture.repository.LectureRepository
 import com.wafflestudio.snuttev.error.LectureNotFoundException
@@ -14,9 +14,14 @@ import org.springframework.stereotype.Service
 
 @Service
 class LectureService(private val lectureRepository: LectureRepository) {
-    fun search(searchLectureRequest: SearchLectureRequest): Page<Lecture> {
-        val pageable = PageRequest.of(searchLectureRequest.page, 20)
-        return lectureRepository.searchLectures(searchLectureRequest, pageable)
+    fun search(request: SearchLectureRequest): Page<SearchLectureResponse> {
+        val pageable = PageRequest.of(request.page, 20)
+        return when {
+            (request.year == null && request.semester == null) -> {
+                lectureRepository.searchLectures(request, pageable).map { SearchLectureResponse(it) }
+            }
+            else -> lectureRepository.searchSemesterLectures(request, pageable).map { SearchLectureResponse(it) }
+        }
     }
 
     fun getSemesterLectures(
