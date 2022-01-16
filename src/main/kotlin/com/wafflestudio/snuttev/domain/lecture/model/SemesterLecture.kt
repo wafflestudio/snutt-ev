@@ -31,7 +31,4 @@ class SemesterLecture(
 
     var classification: String,
 
-    @OneToMany(mappedBy = "semesterLecture")
-    var lectureEvaluations: MutableList<LectureEvaluation> = mutableListOf()
-
 ) : BaseEntity()

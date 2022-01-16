@@ -5,9 +5,10 @@ import com.wafflestudio.snuttev.domain.evaluation.model.LectureEvaluationWithSem
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
-import javax.persistence.NamedNativeQuery
 
 interface LectureEvaluationRepository : JpaRepository<LectureEvaluation, Long> {
+
+    fun existsBySemesterLectureIdAndUserIdAndIsHiddenFalse(semesterLectureId: Long, userId: String): Boolean
 
     @Query("select count(le.id) from LectureEvaluation le inner join le.semesterLecture sl where sl.lecture.id = :lectureId")
     fun countByLectureId(lectureId: Long): Long

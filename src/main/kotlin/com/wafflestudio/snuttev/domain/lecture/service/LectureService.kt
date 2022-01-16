@@ -6,14 +6,18 @@ import com.wafflestudio.snuttev.domain.lecture.dto.SearchLectureRequest
 import com.wafflestudio.snuttev.domain.lecture.model.Lecture
 import com.wafflestudio.snuttev.domain.lecture.model.SemesterLecture
 import com.wafflestudio.snuttev.domain.lecture.repository.LectureRepository
+import com.wafflestudio.snuttev.domain.lecture.repository.SemesterLectureRepository
 import com.wafflestudio.snuttev.error.LectureNotFoundException
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
-import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 
 @Service
-class LectureService(private val lectureRepository: LectureRepository) {
+class LectureService(
+    private val lectureRepository: LectureRepository,
+    private val semesterLectureRepository: SemesterLectureRepository,
+) {
+
     fun search(searchLectureRequest: SearchLectureRequest): Page<Lecture> {
         val pageable = PageRequest.of(searchLectureRequest.page, 20)
         return lectureRepository.searchLectures(searchLectureRequest, pageable)
@@ -22,10 +26,13 @@ class LectureService(private val lectureRepository: LectureRepository) {
     fun getSemesterLectures(
         lectureId: Long
     ): GetSemesterLecturesResponse {
-        val lecture = lectureRepository.findByIdOrNull(lectureId) ?: throw LectureNotFoundException
+        val semesterLectures = semesterLectureRepository.findAllByLectureIdOrderByYearDescSemesterDesc(lectureId)
+        if (semesterLectures.isEmpty()) {
+            throw LectureNotFoundException
+        }
 
         return GetSemesterLecturesResponse(
-            lecture.semesterLectures.map {
+            semesterLectures.map {
                 genSemesterLectureDto(it)
             }
         )

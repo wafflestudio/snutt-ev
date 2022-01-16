@@ -6,4 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository
 interface SemesterLectureRepository : JpaRepository<SemesterLecture, Long> {
     fun findAllByYearAndSemester(year: Int, semester: Int): List<SemesterLecture>
 
+    fun findAllByLectureIdOrderByYearDescSemesterDesc(lectureId: Long): List<SemesterLecture>
 }
