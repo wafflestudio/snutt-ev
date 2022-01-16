@@ -14,6 +14,10 @@ spring:
       hibernate:
         format_sql: true
         use_sql_comments: true
+  redis:
+    host: localhost
+    port: 6379
+    ttl: 5m
   data:
     mongodb:
       host: localhost
@@ -40,6 +44,11 @@ spring:
     generate-ddl: true
     hibernate:
       ddl-auto: update
+  redis:
+    host:
+    port:
+    database:
+    ttl: 5m
   data:
     mongodb:
       host:
@@ -63,6 +72,11 @@ spring:
     hibernate:
       ddl-auto: none
     show-sql: false
+  redis:
+    host:
+    port:
+    database:
+    ttl: 10m
   data:
     mongodb:
       host:

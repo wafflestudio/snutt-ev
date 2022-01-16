@@ -39,7 +39,7 @@ class LectureEvaluation(
     val dislikeCount: Long = 0,
 
     @Column(nullable = false)
-    val isHidden: Boolean = false,
+    var isHidden: Boolean = false,
 
     @Column(nullable = false)
     val isReported: Boolean = false,
