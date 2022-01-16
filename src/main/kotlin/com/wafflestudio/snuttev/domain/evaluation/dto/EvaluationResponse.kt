@@ -117,27 +117,35 @@ data class CursorPaginationResponse(
 data class LectureEvaluationWithSemesterDto(
     val id: Long,
 
+    @JsonProperty("user_id")
     val userId: String,
 
     val content: String,
 
-    val gradeSatisfaction: Double = 0.0,
+    @JsonProperty("grade_satisfaction")
+    val gradeSatisfaction: Double,
 
-    val teachingSkill: Double = 0.0,
+    @JsonProperty("teaching_skill")
+    val teachingSkill: Double,
 
-    val gains: Double = 0.0,
+    val gains: Double,
 
-    val lifeBalance: Double = 0.0,
+    @JsonProperty("life_balance")
+    val lifeBalance: Double,
 
-    val rating: Double = 0.0,
+    val rating: Double,
 
-    val likeCount: Long = 0,
+    @JsonProperty("like_count")
+    val likeCount: Long,
 
-    val dislikeCount: Long = 0,
+    @JsonProperty("dislike_count")
+    val dislikeCount: Long,
 
-    val isHidden: Boolean = false,
+    @JsonProperty("is_hidden")
+    val isHidden: Boolean,
 
-    val isReported: Boolean = false,
+    @JsonProperty("is_reported")
+    val isReported: Boolean,
 
     val year: Int,
 
