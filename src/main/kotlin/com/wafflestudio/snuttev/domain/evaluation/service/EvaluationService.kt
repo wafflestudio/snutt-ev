@@ -15,6 +15,7 @@ import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import java.lang.NumberFormatException
 import java.math.BigInteger
+import javax.transaction.Transactional
 
 @Service
 class EvaluationService(
@@ -158,16 +159,17 @@ class EvaluationService(
         )
     }
 
+    @Transactional
     fun deleteLectureEvaluation(
         userId: String,
         lectureEvaluationId: Long,
     ) {
-        val lectureEvaluation = lectureEvaluationRepository.findByIdOrNull(lectureEvaluationId) ?: throw LectureEvaluationNotFoundException
+        val lectureEvaluation = lectureEvaluationRepository.findByIdAndIsHiddenFalse(lectureEvaluationId) ?: throw LectureEvaluationNotFoundException
         if (lectureEvaluation.userId != userId) {
             throw NotMyLectureEvaluationException
         }
 
-        lectureEvaluationRepository.deleteById(lectureEvaluationId)
+        lectureEvaluation.isHidden = true
     }
 
     @Cacheable("tag-recommended-evaluations")
