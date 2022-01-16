@@ -21,7 +21,7 @@ class EvaluationService(
     private val lectureEvaluationRepository: LectureEvaluationRepository,
     private val lectureRepository: LectureRepository,
 ) {
-    private val defaultPageSize = 20
+    private val defaultPageSize = 3
 
     fun createEvaluation(
         userId: String,
