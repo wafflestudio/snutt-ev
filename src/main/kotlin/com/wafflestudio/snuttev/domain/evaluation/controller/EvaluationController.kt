@@ -29,8 +29,9 @@ class EvaluationController(
 
     @GetMapping("/v1/lectures/{id}/evaluations")
     fun getLectureEvaluations(
-        @PathVariable(value = "id") lectureId: Long
-    ): LectureEvaluationsResponse {
-        return evaluationService.getEvaluationsOfLecture(lectureId)
+        @PathVariable(value = "id") lectureId: Long,
+        @RequestParam("cursor") cursor: String?,
+    ): CursorPaginationResponse {
+        return evaluationService.getEvaluationsOfLecture(lectureId, cursor)
     }
 }

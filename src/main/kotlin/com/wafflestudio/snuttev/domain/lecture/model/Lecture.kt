@@ -34,6 +34,8 @@ class Lecture(
 
 
 data class LectureEvaluationSummaryDao(
+    val id: Long?,
+
     val title: String?,
 
     val instructor: String?,

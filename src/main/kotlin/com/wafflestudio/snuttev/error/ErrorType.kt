@@ -6,6 +6,9 @@ enum class ErrorType(
     val code: Int,
     val httpStatus: HttpStatus,
 ) {
+    // 400
+    WRONG_CURSOR_FORMAT(20001, HttpStatus.BAD_REQUEST),
+
     // 401
     UNAUTHORIZED(21001, HttpStatus.UNAUTHORIZED),
 

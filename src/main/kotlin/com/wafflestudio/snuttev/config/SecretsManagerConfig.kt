@@ -35,6 +35,8 @@ class SecretsManagerConfig : EnvironmentAware, BeanFactoryPostProcessor {
     fun getSecretString(secretName: String, region: String): String {
         val client = AWSSecretsManagerClientBuilder.standard().withRegion(region).build()
         val request = GetSecretValueRequest().withSecretId(secretName)
-        return client.getSecretValue(request).secretString
+        val str = client.getSecretValue(request).secretString
+        print("secret string $str")
+        return str
     }
 }
