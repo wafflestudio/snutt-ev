@@ -150,4 +150,7 @@ data class LectureEvaluationWithSemesterDto(
     val year: Int,
 
     val semester: Int,
+
+    @JsonProperty("is_modifiable")
+    val isModifiable: Boolean,
 )

@@ -6,6 +6,7 @@ import com.wafflestudio.snuttev.domain.evaluation.model.LectureEvaluationWithSem
 import com.wafflestudio.snuttev.domain.evaluation.repository.LectureEvaluationRepository
 import com.wafflestudio.snuttev.domain.lecture.repository.LectureRepository
 import com.wafflestudio.snuttev.domain.lecture.repository.SemesterLectureRepository
+import com.wafflestudio.snuttev.error.EvaluationAlreadyExistsException
 import com.wafflestudio.snuttev.error.LectureNotFoundException
 import com.wafflestudio.snuttev.error.SemesterLectureNotFoundException
 import com.wafflestudio.snuttev.error.WrongCursorFormatException
@@ -29,6 +30,10 @@ class EvaluationService(
         createEvaluationRequest: CreateEvaluationRequest
     ): LectureEvaluationDto {
         val semesterLecture = semesterLectureRepository.findByIdOrNull(semesterLectureId) ?: throw SemesterLectureNotFoundException
+
+        if (lectureEvaluationRepository.existsBySemesterLectureIdAndUserIdAndIsHiddenFalse(semesterLectureId, userId)) {
+            throw EvaluationAlreadyExistsException
+        }
 
         val lectureEvaluation = LectureEvaluation(
             semesterLecture = semesterLecture,
@@ -70,7 +75,7 @@ class EvaluationService(
         )
     }
 
-    fun getEvaluationsOfLecture(lectureId: Long, cursor: String?): CursorPaginationResponse {
+    fun getEvaluationsOfLecture(userId: String, lectureId: Long, cursor: String?): CursorPaginationResponse {
         val pageable = PageRequest.of(0, defaultPageSize)
         val lectureEvaluationsCount = lectureEvaluationRepository.countByLectureId(lectureId)
 
@@ -120,7 +125,7 @@ class EvaluationService(
         } ?: true
 
         return CursorPaginationResponse(
-            content = lectureEvaluationsWithSemester.map { genLectureEvaluationWithSemesterDto(it) },
+            content = lectureEvaluationsWithSemester.map { genLectureEvaluationWithSemesterDto(userId, it) },
             cursor = nextCursor,
             size = defaultPageSize,
             last = isLast,
@@ -144,7 +149,10 @@ class EvaluationService(
             isReported = lectureEvaluation.isReported,
         )
 
-    private fun genLectureEvaluationWithSemesterDto(lectureEvaluationWithSemester: LectureEvaluationWithSemester): LectureEvaluationWithSemesterDto =
+    private fun genLectureEvaluationWithSemesterDto(
+        userId: String,
+        lectureEvaluationWithSemester: LectureEvaluationWithSemester,
+    ): LectureEvaluationWithSemesterDto =
         LectureEvaluationWithSemesterDto(
             id = lectureEvaluationWithSemester.id,
             userId = lectureEvaluationWithSemester.userId,
@@ -160,5 +168,6 @@ class EvaluationService(
             isReported = lectureEvaluationWithSemester.isReported,
             year = lectureEvaluationWithSemester.year,
             semester = lectureEvaluationWithSemester.semester,
+            isModifiable = lectureEvaluationWithSemester.userId == userId,
         )
 }

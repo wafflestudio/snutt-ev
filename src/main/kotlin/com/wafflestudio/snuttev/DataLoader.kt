@@ -5,6 +5,11 @@ import com.wafflestudio.snuttev.domain.lecture.model.Lecture
 import com.wafflestudio.snuttev.domain.lecture.model.SemesterLecture
 import com.wafflestudio.snuttev.domain.lecture.repository.LectureRepository
 import com.wafflestudio.snuttev.domain.lecture.repository.SemesterLectureRepository
+import com.wafflestudio.snuttev.domain.tag.model.Tag
+import com.wafflestudio.snuttev.domain.tag.model.TagGroup
+import com.wafflestudio.snuttev.domain.tag.model.TagValueType
+import com.wafflestudio.snuttev.domain.tag.repository.TagGroupRepository
+import com.wafflestudio.snuttev.domain.tag.repository.TagRepository
 import org.springframework.boot.ApplicationArguments
 import org.springframework.boot.ApplicationRunner
 import org.springframework.context.annotation.Profile
@@ -14,7 +19,9 @@ import org.springframework.stereotype.Component
 @Profile("local")
 class DataLoader(
     private val lectureRepository: LectureRepository,
-    private val semesterLectureRepository: SemesterLectureRepository
+    private val semesterLectureRepository: SemesterLectureRepository,
+    private val tagGroupRepository: TagGroupRepository,
+    private val tagRepository: TagRepository,
 ) : ApplicationRunner {
 
     override fun run(args: ApplicationArguments?) {
@@ -30,16 +37,150 @@ class DataLoader(
         )
         lectureRepository.save(lecture)
 
-        val semesterLecture = SemesterLecture(
-            lecture = lecture,
-            lectureNumber = "001",
-            year = 2019,
-            semester = Semester.AUTUMN.value,
-            credit = 4,
-            academicYear = "3학년",
-            category = "",
-            classification = "전필",
+        val semesterLectures = listOf(
+            SemesterLecture(
+                lecture = lecture,
+                lectureNumber = "001",
+                year = 2019,
+                semester = Semester.AUTUMN.value,
+                credit = 4,
+                academicYear = "3학년",
+                category = "",
+                classification = "전필",
+            ),
+            SemesterLecture(
+                lecture = lecture,
+                lectureNumber = "001",
+                year = 2019,
+                semester = Semester.SPRING.value,
+                credit = 4,
+                academicYear = "3학년",
+                category = "",
+                classification = "전필",
+            ),
+            SemesterLecture(
+                lecture = lecture,
+                lectureNumber = "001",
+                year = 2020,
+                semester = Semester.AUTUMN.value,
+                credit = 4,
+                academicYear = "3학년",
+                category = "",
+                classification = "전필",
+            ),
+            SemesterLecture(
+                lecture = lecture,
+                lectureNumber = "001",
+                year = 2020,
+                semester = Semester.SPRING.value,
+                credit = 4,
+                academicYear = "3학년",
+                category = "",
+                classification = "전필",
+            ),
         )
-        semesterLectureRepository.save(semesterLecture)
+        semesterLectureRepository.saveAll(semesterLectures)
+
+        val mainTagGroup = TagGroup(
+            name = "main",
+            ordering = -1,
+        )
+        val academicYearTagGroup = TagGroup(
+            name = "학년",
+            ordering = 1,
+        )
+        val creditTagGroup = TagGroup(
+            name = "학점",
+            ordering = 2,
+        )
+        val tagGroups = listOf(
+            mainTagGroup,
+            academicYearTagGroup,
+            creditTagGroup,
+        )
+        tagGroupRepository.saveAll(tagGroups)
+        val tags = listOf(
+            Tag(
+                tagGroup = mainTagGroup,
+                name = "추천",
+                ordering = 1,
+                valueType = TagValueType.LOGIC,
+            ),
+            Tag(
+                tagGroup = mainTagGroup,
+                name = "명강",
+                ordering = 2,
+                valueType = TagValueType.LOGIC,
+            ),
+            Tag(
+                tagGroup = mainTagGroup,
+                name = "꿀강",
+                ordering = 3,
+                valueType = TagValueType.LOGIC,
+            ),
+            Tag(
+                tagGroup = mainTagGroup,
+                name = "고진감래",
+                ordering = 4,
+                valueType = TagValueType.LOGIC,
+            ),
+            Tag(
+                tagGroup = academicYearTagGroup,
+                name = "1학년",
+                ordering = 1,
+                valueType = TagValueType.INT,
+                intValue = 1
+            ),
+            Tag(
+                tagGroup = academicYearTagGroup,
+                name = "2학년",
+                ordering = 2,
+                valueType = TagValueType.INT,
+                intValue = 2,
+            ),
+            Tag(
+                tagGroup = academicYearTagGroup,
+                name = "3학년",
+                ordering = 3,
+                valueType = TagValueType.INT,
+                intValue = 3,
+            ),
+            Tag(
+                tagGroup = academicYearTagGroup,
+                name = "4학년",
+                ordering = 4,
+                valueType = TagValueType.INT,
+                intValue = 4,
+            ),
+            Tag(
+                tagGroup = creditTagGroup,
+                name = "1학점",
+                ordering = 1,
+                valueType = TagValueType.INT,
+                intValue = 1,
+            ),
+            Tag(
+                tagGroup = creditTagGroup,
+                name = "2학점",
+                ordering = 2,
+                valueType = TagValueType.INT,
+                intValue = 2,
+            ),
+            Tag(
+                tagGroup = creditTagGroup,
+                name = "3학점",
+                ordering = 3,
+                valueType = TagValueType.INT,
+                intValue = 3,
+            ),
+            Tag(
+                tagGroup = creditTagGroup,
+                name = "4학점",
+                ordering = 4,
+                valueType = TagValueType.INT,
+                intValue = 4,
+            ),
+        )
+        tagRepository.saveAll(tags)
     }
 }
