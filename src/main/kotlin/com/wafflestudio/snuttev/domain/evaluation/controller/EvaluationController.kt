@@ -34,4 +34,21 @@ class EvaluationController(
     ): CursorPaginationResponse {
         return evaluationService.getEvaluationsOfLecture(userId, lectureId, cursor)
     }
+
+    @GetMapping("/v1/tags/main/{id}/evaluations")
+    fun getMainTagEvaluations(
+        @PathVariable(value = "id") tagId: Long,
+        @RequestAttribute(value = "UserId") userId: String,
+    ): CursorPaginationResponse {
+        return evaluationService.getMainTagEvaluations(userId, tagId)
+    }
+
+    @DeleteMapping("/v1/evaluations/{id}")
+    fun deleteLectureEvaluation(
+        @PathVariable(value = "id") evaluationId: Long,
+        @RequestAttribute(value = "UserId") userId: String,
+    ) {
+        return evaluationService.deleteLectureEvaluation(userId, evaluationId)
+    }
+
 }

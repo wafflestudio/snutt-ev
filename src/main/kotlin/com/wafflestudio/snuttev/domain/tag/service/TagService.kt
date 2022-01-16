@@ -19,7 +19,7 @@ class TagService(
     }
 
     fun getSearchTags(): SearchTagResponse {
-        val tagGroups = tagGroupRepository.findAllByNameNot(name = "main")
+        val tagGroups = tagGroupRepository.findAllByNameNotOrderByOrdering(name = "main")
         return SearchTagResponse(
             tagGroups = tagGroups.map { genTagGroupDto(it) }
         )
@@ -30,7 +30,7 @@ class TagService(
             id = tagGroup.id!!,
             name = tagGroup.name,
             ordering = tagGroup.ordering,
-            tags = tagGroup.tags.map { genTagDto(it) }
+            tags = tagGroup.tags.map { genTagDto(it) },
         )
     }
 

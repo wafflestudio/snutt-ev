@@ -6,10 +6,10 @@ import com.wafflestudio.snuttev.domain.evaluation.model.LectureEvaluationWithSem
 import com.wafflestudio.snuttev.domain.evaluation.repository.LectureEvaluationRepository
 import com.wafflestudio.snuttev.domain.lecture.repository.LectureRepository
 import com.wafflestudio.snuttev.domain.lecture.repository.SemesterLectureRepository
-import com.wafflestudio.snuttev.error.EvaluationAlreadyExistsException
-import com.wafflestudio.snuttev.error.LectureNotFoundException
-import com.wafflestudio.snuttev.error.SemesterLectureNotFoundException
-import com.wafflestudio.snuttev.error.WrongCursorFormatException
+import com.wafflestudio.snuttev.domain.tag.repository.TagRepository
+import com.wafflestudio.snuttev.error.*
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
@@ -21,7 +21,11 @@ class EvaluationService(
     private val semesterLectureRepository: SemesterLectureRepository,
     private val lectureEvaluationRepository: LectureEvaluationRepository,
     private val lectureRepository: LectureRepository,
+    private val tagRepository: TagRepository,
 ) {
+    @Autowired
+    private lateinit var self: EvaluationService
+
     private val defaultPageSize = 3
 
     fun createEvaluation(
@@ -131,6 +135,59 @@ class EvaluationService(
             last = isLast,
             totalCount = lectureEvaluationsCount,
         )
+    }
+
+    fun getMainTagEvaluations(
+        userId: String,
+        tagId: Long,
+    ): CursorPaginationResponse {
+        val tag = tagRepository.findByIdOrNull(tagId) ?: throw TagNotFoundException
+        val lectureEvaluationsWithSemester = when (tag.name) {
+            "추천" -> self.getLectureEvaluationsWithSemesterFromTagRecommended()
+            "명강" -> self.getLectureEvaluationsWithSemesterFromTagFine()
+            "꿀강" -> self.getLectureEvaluationsWithSemesterFromTagHoney()
+            "고진감래" -> self.getLectureEvaluationsWithSemesterFromTagPainsGains()
+            else -> throw WrongMainTagException
+        }
+
+        return CursorPaginationResponse(
+            content = lectureEvaluationsWithSemester.map { genLectureEvaluationWithSemesterDto(userId, it) },
+            cursor = null,
+            size = defaultPageSize,
+            last = true,
+        )
+    }
+
+    fun deleteLectureEvaluation(
+        userId: String,
+        lectureEvaluationId: Long,
+    ) {
+        val lectureEvaluation = lectureEvaluationRepository.findByIdOrNull(lectureEvaluationId) ?: throw LectureEvaluationNotFoundException
+        if (lectureEvaluation.userId != userId) {
+            throw NotMyLectureEvaluationException
+        }
+
+        lectureEvaluationRepository.deleteById(lectureEvaluationId)
+    }
+
+    @Cacheable("tag-recommended-evaluations")
+    fun getLectureEvaluationsWithSemesterFromTagRecommended(): List<LectureEvaluationWithSemester> {
+        return emptyList()
+    }
+
+    @Cacheable("tag-fine-evaluations")
+    fun getLectureEvaluationsWithSemesterFromTagFine(): List<LectureEvaluationWithSemester> {
+        return emptyList()
+    }
+
+    @Cacheable("tag-honey-evaluations")
+    fun getLectureEvaluationsWithSemesterFromTagHoney(): List<LectureEvaluationWithSemester> {
+        return emptyList()
+    }
+
+    @Cacheable("tag-painsgains-evaluations")
+    fun getLectureEvaluationsWithSemesterFromTagPainsGains(): List<LectureEvaluationWithSemester> {
+        return emptyList()
     }
 
     private fun genLectureEvaluationDto(lectureEvaluation: LectureEvaluation): LectureEvaluationDto =

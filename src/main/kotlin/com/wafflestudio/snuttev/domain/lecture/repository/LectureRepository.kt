@@ -17,7 +17,7 @@ interface LectureRepository : JpaRepository<Lecture, Long?>, LectureRepositoryCu
         sl.lecture.credit, sl.lecture.academicYear, sl.lecture.category, sl.lecture.classification, 
         avg(le.gradeSatisfaction), avg(le.teachingSkill),
         avg(le.gains), avg(le.lifeBalance), avg(le.rating)) 
-        from LectureEvaluation le right join le.semesterLecture sl where sl.lecture.id = :id
+        from LectureEvaluation le right join le.semesterLecture sl on le.isHidden = false where sl.lecture.id = :id
     """
     )
     fun findLectureWithAvgEvById(id: Long): LectureEvaluationSummaryDao
