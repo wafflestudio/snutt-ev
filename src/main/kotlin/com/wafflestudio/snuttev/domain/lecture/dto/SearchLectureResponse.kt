@@ -15,27 +15,6 @@ data class SearchLectureResponse(
     @JsonProperty("credit") val credit: Int,
     @JsonProperty("instructor") val instructor: String,
     @JsonProperty("category") val category: String?,
-){
-    constructor(lecture: Lecture): this(
-        lecture.id,
-        lecture.classification,
-        lecture.department,
-        lecture.academicYear,
-        lecture.courseNumber,
-        lecture.title,
-        lecture.credit,
-        lecture.instructor,
-        lecture.category
-    )
-    constructor(semesterLecture: SemesterLecture): this(
-        semesterLecture.lecture.id,
-        semesterLecture.classification,
-        semesterLecture.lecture.department,
-        semesterLecture.academicYear,
-        semesterLecture.lecture.courseNumber,
-        semesterLecture.lecture.title,
-        semesterLecture.credit,
-        semesterLecture.lecture.instructor,
-        semesterLecture.category
-    )
-}
+    @JsonProperty("rating") val rating: Double? = 0.0,
+)
+

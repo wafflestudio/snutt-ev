@@ -1,6 +1,8 @@
 package com.wafflestudio.snuttev.domain.lecture.model
 
 import com.wafflestudio.snuttev.domain.common.model.BaseEntity
+import com.wafflestudio.snuttev.domain.evaluation.model.LectureEvaluation
+import com.wafflestudio.snuttev.domain.tag.model.Tag
 import javax.persistence.*
 import javax.validation.constraints.NotBlank
 
@@ -27,6 +29,9 @@ class Lecture(
 
     var classification: String,
 
+    @OneToMany(mappedBy = "lecture")
+    @OrderBy("ordering ASC")
+    val semesterLectures: List<SemesterLecture> = listOf()
 ) : BaseEntity()
 
 

@@ -1,6 +1,12 @@
 package com.wafflestudio.snuttev.domain.lecture.dto
 
 data class SearchLectureRequest (
+    val query: String,
+    val tags: List<Long>,
+    val page: Int = 0
+)
+
+data class SearchQuery (
     val query: String? = null,
     val classification: List<String>? = null,
     val credit: List<Int>? = null,
@@ -9,5 +15,4 @@ data class SearchLectureRequest (
     val category: List<String>? = null,
     val year: Int? = null,
     val semester: Int? = null,
-    val page: Int = 0,
 )

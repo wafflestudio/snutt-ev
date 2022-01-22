@@ -1,8 +1,7 @@
 package com.wafflestudio.snuttev.domain.lecture.controller
 
-import com.wafflestudio.snuttev.domain.lecture.dto.GetSemesterLecturesResponse
-import com.wafflestudio.snuttev.domain.lecture.dto.SearchLectureRequest
-import com.wafflestudio.snuttev.domain.lecture.dto.SearchLectureResponse
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.wafflestudio.snuttev.domain.lecture.dto.*
 import com.wafflestudio.snuttev.domain.lecture.service.LectureService
 import org.springframework.data.domain.Page
 import org.springframework.web.bind.annotation.GetMapping
@@ -13,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 class LectureController(
     private val lectureService: LectureService,
+    private val objectMapper: ObjectMapper
 ) {
 
     @GetMapping("/v1/lectures")
