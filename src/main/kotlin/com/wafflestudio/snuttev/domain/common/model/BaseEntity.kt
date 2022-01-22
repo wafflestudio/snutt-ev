@@ -1,5 +1,6 @@
 package com.wafflestudio.snuttev.domain.common.model
 
+import org.hibernate.annotations.UpdateTimestamp
 import java.time.LocalDateTime
 import javax.persistence.*
 
@@ -13,6 +14,7 @@ open class BaseEntity (
     @Column(nullable = false)
     open val createdAt: LocalDateTime = LocalDateTime.now(),
 
+    @field:UpdateTimestamp
     @Column(nullable = false)
     open val updatedAt: LocalDateTime? = LocalDateTime.now(),
 

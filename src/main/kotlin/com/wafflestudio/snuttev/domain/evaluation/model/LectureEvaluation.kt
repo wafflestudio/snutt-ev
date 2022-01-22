@@ -39,9 +39,39 @@ class LectureEvaluation(
     val dislikeCount: Long = 0,
 
     @Column(nullable = false)
-    val isHidden: Boolean = false,
+    var isHidden: Boolean = false,
 
     @Column(nullable = false)
     val isReported: Boolean = false,
 
 ) : BaseEntity()
+
+data class LectureEvaluationWithSemester(
+    val id: Long,
+
+    val userId: String,
+
+    val content: String,
+
+    val gradeSatisfaction: Double = 0.0,
+
+    val teachingSkill: Double = 0.0,
+
+    val gains: Double = 0.0,
+
+    val lifeBalance: Double = 0.0,
+
+    val rating: Double = 0.0,
+
+    val likeCount: Long = 0,
+
+    val dislikeCount: Long = 0,
+
+    val isHidden: Boolean = false,
+
+    val isReported: Boolean = false,
+
+    val year: Int,
+
+    val semester: Int,
+)

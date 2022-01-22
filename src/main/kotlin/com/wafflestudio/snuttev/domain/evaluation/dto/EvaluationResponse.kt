@@ -101,6 +101,56 @@ data class LectureEvaluationSummary(
     val avgRating: Double?,
 )
 
-data class LectureEvaluationsResponse(
-    val evaluations: List<LectureEvaluationDto>,
+data class CursorPaginationResponse(
+    val content: List<Any>,
+
+    val cursor: String?,
+
+    val size: Int,
+
+    val last: Boolean,
+
+    @JsonProperty("total_count")
+    val totalCount: Long? = null
+)
+
+data class LectureEvaluationWithSemesterDto(
+    val id: Long,
+
+    @JsonProperty("user_id")
+    val userId: String,
+
+    val content: String,
+
+    @JsonProperty("grade_satisfaction")
+    val gradeSatisfaction: Double,
+
+    @JsonProperty("teaching_skill")
+    val teachingSkill: Double,
+
+    val gains: Double,
+
+    @JsonProperty("life_balance")
+    val lifeBalance: Double,
+
+    val rating: Double,
+
+    @JsonProperty("like_count")
+    val likeCount: Long,
+
+    @JsonProperty("dislike_count")
+    val dislikeCount: Long,
+
+    @JsonProperty("is_hidden")
+    val isHidden: Boolean,
+
+    @JsonProperty("is_reported")
+    val isReported: Boolean,
+
+    val year: Int,
+
+    val semester: Int,
+
+    @JsonProperty("is_modifiable")
+    val isModifiable: Boolean,
 )

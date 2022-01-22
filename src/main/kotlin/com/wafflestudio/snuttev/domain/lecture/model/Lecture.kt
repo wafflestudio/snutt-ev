@@ -27,13 +27,12 @@ class Lecture(
 
     var classification: String,
 
-    @OneToMany(mappedBy = "lecture")
-    var semesterLectures: MutableList<SemesterLecture> = mutableListOf()
-
 ) : BaseEntity()
 
 
 data class LectureEvaluationSummaryDao(
+    val id: Long?,
+
     val title: String?,
 
     val instructor: String?,
