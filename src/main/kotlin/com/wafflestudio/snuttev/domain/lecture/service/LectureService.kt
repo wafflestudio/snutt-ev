@@ -1,7 +1,6 @@
 package com.wafflestudio.snuttev.domain.lecture.service
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.wafflestudio.snuttev.domain.common.dto.PaginationResponse
 import com.wafflestudio.snuttev.domain.evaluation.dto.SemesterLectureDto
 import com.wafflestudio.snuttev.domain.lecture.dto.GetSemesterLecturesResponse
 import com.wafflestudio.snuttev.domain.lecture.dto.SearchLectureRequest
@@ -25,16 +24,15 @@ class LectureService(
     private val tagRepository: TagRepository,
     private val objectMapper: ObjectMapper
 ) {
-    fun search(param: SearchLectureRequest): PaginationResponse<SearchLectureResponse> {
+    fun search(param: SearchLectureRequest): Page<SearchLectureResponse> {
         val request = mappingTagsToLectureProperty(param)
         val pageable = PageRequest.of(param.page, 20)
-        val result = when {
+        return when {
             (request.year == null && request.semester == null) -> {
                 lectureRepository.searchLectures(request, pageable)
             }
             else -> lectureRepository.searchSemesterLectures(request, pageable)
         }
-        return PaginationResponse(result)
     }
 
     fun getSemesterLectures(
