@@ -51,7 +51,7 @@ interface LectureEvaluationRepository : JpaRepository<LectureEvaluation, Long> {
         le.likeCount, le.dislikeCount, le.isHidden, le.isReported, sl.year, sl.semester) 
         from LectureEvaluation le inner join le.semesterLecture sl where le.isHidden = false 
         and sl.lecture.id in ( 
-            select sl1.lecture.id from LectureEvaluation le1 inner join SemesterLecture sl1 on le1.semesterLecture.id = sl1.id 
+            select sl1.lecture.id from LectureEvaluation le1 inner join SemesterLecture sl1 on le1.semesterLecture.id = sl1.id and le1.isHidden = false 
             group by sl1.lecture.id having avg(le1.rating) >= 4.0 
         ) 
         order by le.id desc
@@ -65,7 +65,7 @@ interface LectureEvaluationRepository : JpaRepository<LectureEvaluation, Long> {
         le.likeCount, le.dislikeCount, le.isHidden, le.isReported, sl.year, sl.semester) 
         from LectureEvaluation le inner join le.semesterLecture sl where le.isHidden = false 
         and sl.lecture.id in ( 
-            select sl1.lecture.id from LectureEvaluation le1 inner join SemesterLecture sl1 on le1.semesterLecture.id = sl1.id 
+            select sl1.lecture.id from LectureEvaluation le1 inner join SemesterLecture sl1 on le1.semesterLecture.id = sl1.id and le1.isHidden = false 
             group by sl1.lecture.id having avg(le1.rating) >= 4.0 
         ) 
         and le.id < :cursorId 
@@ -78,7 +78,7 @@ interface LectureEvaluationRepository : JpaRepository<LectureEvaluation, Long> {
         select 1 
         from lecture_evaluation le inner join semester_lecture sl on le.semester_lecture_id = sl.id where le.is_hidden = false 
         and sl.lecture_id in ( 
-            select sl1.lecture_id from lecture_evaluation le1 inner join semester_lecture sl1 on le1.semester_lecture_id = sl1.id 
+            select sl1.lecture_id from lecture_evaluation le1 inner join semester_lecture sl1 on le1.semester_lecture_id = sl1.id and le1.is_hidden = false 
             group by sl1.lecture_id having avg(le1.rating) >= 4.0 
         ) 
         and le.id < :cursorId 
@@ -93,7 +93,7 @@ interface LectureEvaluationRepository : JpaRepository<LectureEvaluation, Long> {
         le.likeCount, le.dislikeCount, le.isHidden, le.isReported, sl.year, sl.semester) 
         from LectureEvaluation le inner join le.semesterLecture sl where le.isHidden = false 
         and sl.lecture.id in ( 
-            select sl1.lecture.id from LectureEvaluation le1 inner join SemesterLecture sl1 on le1.semesterLecture.id = sl1.id 
+            select sl1.lecture.id from LectureEvaluation le1 inner join SemesterLecture sl1 on le1.semesterLecture.id = sl1.id and le1.isHidden = false 
             group by sl1.lecture.id having avg(le1.teachingSkill) >= 4.0 and avg(le1.gains) >= 4.0 
         ) 
         order by le.id desc
@@ -107,7 +107,7 @@ interface LectureEvaluationRepository : JpaRepository<LectureEvaluation, Long> {
         le.likeCount, le.dislikeCount, le.isHidden, le.isReported, sl.year, sl.semester) 
         from LectureEvaluation le inner join le.semesterLecture sl where le.isHidden = false 
         and sl.lecture.id in ( 
-            select sl1.lecture.id from LectureEvaluation le1 inner join SemesterLecture sl1 on le1.semesterLecture.id = sl1.id 
+            select sl1.lecture.id from LectureEvaluation le1 inner join SemesterLecture sl1 on le1.semesterLecture.id = sl1.id and le1.isHidden = false 
             group by sl1.lecture.id having avg(le1.teachingSkill) >= 4.0 and avg(le1.gains) >= 4.0 
         ) 
         and le.id < :cursorId 
@@ -120,7 +120,7 @@ interface LectureEvaluationRepository : JpaRepository<LectureEvaluation, Long> {
         select 1 
         from lecture_evaluation le inner join semester_lecture sl on le.semester_lecture_id = sl.id where le.is_hidden = false 
         and sl.lecture_id in ( 
-            select sl1.lecture_id from lecture_evaluation le1 inner join semester_lecture sl1 on le1.semester_lecture_id = sl1.id 
+            select sl1.lecture_id from lecture_evaluation le1 inner join semester_lecture sl1 on le1.semester_lecture_id = sl1.id and le1.is_hidden = false 
             group by sl1.lecture_id having avg(le1.teaching_skill) >= 4.0 and avg(le1.gains) >= 4.0 
         ) 
         and le.id < :cursorId 
@@ -135,7 +135,7 @@ interface LectureEvaluationRepository : JpaRepository<LectureEvaluation, Long> {
         le.likeCount, le.dislikeCount, le.isHidden, le.isReported, sl.year, sl.semester) 
         from LectureEvaluation le inner join le.semesterLecture sl where le.isHidden = false 
         and sl.lecture.id in ( 
-            select sl1.lecture.id from LectureEvaluation le1 inner join SemesterLecture sl1 on le1.semesterLecture.id = sl1.id 
+            select sl1.lecture.id from LectureEvaluation le1 inner join SemesterLecture sl1 on le1.semesterLecture.id = sl1.id and le1.isHidden = false 
             group by sl1.lecture.id having avg(le1.gradeSatisfaction) >= 4.0 and avg(le1.lifeBalance) >= 4.0 
         ) 
         order by le.id desc
@@ -149,7 +149,7 @@ interface LectureEvaluationRepository : JpaRepository<LectureEvaluation, Long> {
         le.likeCount, le.dislikeCount, le.isHidden, le.isReported, sl.year, sl.semester) 
         from LectureEvaluation le inner join le.semesterLecture sl where le.isHidden = false 
         and sl.lecture.id in ( 
-            select sl1.lecture.id from LectureEvaluation le1 inner join SemesterLecture sl1 on le1.semesterLecture.id = sl1.id 
+            select sl1.lecture.id from LectureEvaluation le1 inner join SemesterLecture sl1 on le1.semesterLecture.id = sl1.id and le1.isHidden = false 
             group by sl1.lecture.id having avg(le1.gradeSatisfaction) >= 4.0 and avg(le1.lifeBalance) >= 4.0 
         ) 
         and le.id < :cursorId 
@@ -162,7 +162,7 @@ interface LectureEvaluationRepository : JpaRepository<LectureEvaluation, Long> {
         select 1 
         from lecture_evaluation le inner join semester_lecture sl on le.semester_lecture_id = sl.id where le.is_hidden = false 
         and sl.lecture_id in ( 
-            select sl1.lecture_id from lecture_evaluation le1 inner join semester_lecture sl1 on le1.semester_lecture_id = sl1.id 
+            select sl1.lecture_id from lecture_evaluation le1 inner join semester_lecture sl1 on le1.semester_lecture_id = sl1.id and le1.is_hidden = false 
             group by sl1.lecture_id having avg(le1.grade_satisfaction) >= 4.0 and avg(le1.life_balance) >= 4.0 
         ) 
         and le.id < :cursorId 
@@ -177,7 +177,7 @@ interface LectureEvaluationRepository : JpaRepository<LectureEvaluation, Long> {
         le.likeCount, le.dislikeCount, le.isHidden, le.isReported, sl.year, sl.semester) 
         from LectureEvaluation le inner join le.semesterLecture sl where le.isHidden = false 
         and sl.lecture.id in ( 
-            select sl1.lecture.id from LectureEvaluation le1 inner join SemesterLecture sl1 on le1.semesterLecture.id = sl1.id 
+            select sl1.lecture.id from LectureEvaluation le1 inner join SemesterLecture sl1 on le1.semesterLecture.id = sl1.id and le1.isHidden = false 
             group by sl1.lecture.id having avg(le1.lifeBalance) < 2.0 and avg(le1.gains) >= 4.0 
         ) 
         order by le.id desc
@@ -191,7 +191,7 @@ interface LectureEvaluationRepository : JpaRepository<LectureEvaluation, Long> {
         le.likeCount, le.dislikeCount, le.isHidden, le.isReported, sl.year, sl.semester) 
         from LectureEvaluation le inner join le.semesterLecture sl where le.isHidden = false 
         and sl.lecture.id in ( 
-            select sl1.lecture.id from LectureEvaluation le1 inner join SemesterLecture sl1 on le1.semesterLecture.id = sl1.id 
+            select sl1.lecture.id from LectureEvaluation le1 inner join SemesterLecture sl1 on le1.semesterLecture.id = sl1.id and le1.isHidden = false 
             group by sl1.lecture.id having avg(le1.lifeBalance) < 2.0 and avg(le1.gains) >= 4.0 
         ) 
         and le.id < :cursorId 
@@ -204,7 +204,7 @@ interface LectureEvaluationRepository : JpaRepository<LectureEvaluation, Long> {
         select 1 
         from lecture_evaluation le inner join semester_lecture sl on le.semester_lecture_id = sl.id where le.is_hidden = false 
         and sl.lecture_id in ( 
-            select sl1.lecture_id from lecture_evaluation le1 inner join semester_lecture sl1 on le1.semester_lecture_id = sl1.id 
+            select sl1.lecture_id from lecture_evaluation le1 inner join semester_lecture sl1 on le1.semester_lecture_id = sl1.id and le1.is_hidden = false 
             group by sl1.lecture_id having avg(le1.life_balance) < 2.0 and avg(le1.gains) >= 4.0 
         ) 
         and le.id < :cursorId 
