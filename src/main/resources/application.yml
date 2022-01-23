@@ -28,6 +28,14 @@ spring:
     deserialization:
       fail-on-unknown-properties: false
       fail-on-null-for-primitives: true
+springdoc:
+  api-docs:
+    groups:
+      enabled: true
+  swagger-ui:
+    path: /swagger-ui.html
+    display-request-duration: true
+    groups-order: DESC
 
 ---
 

@@ -31,7 +31,7 @@ class EvaluationController(
         @PathVariable(value = "id") lectureId: Long,
         @RequestParam("cursor") cursor: String?,
         @RequestAttribute(value = "UserId") userId: String,
-    ): CursorPaginationResponse {
+    ): CursorPaginationForLectureEvaluationWithSemesterResponse {
         return evaluationService.getEvaluationsOfLecture(userId, lectureId, cursor)
     }
 
@@ -39,7 +39,7 @@ class EvaluationController(
     fun getMainTagEvaluations(
         @PathVariable(value = "id") tagId: Long,
         @RequestAttribute(value = "UserId") userId: String,
-    ): CursorPaginationResponse {
+    ): CursorPaginationForLectureEvaluationWithSemesterResponse {
         return evaluationService.getMainTagEvaluations(userId, tagId)
     }
 
