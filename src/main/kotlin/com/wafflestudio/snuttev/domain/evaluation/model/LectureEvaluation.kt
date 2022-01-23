@@ -1,5 +1,6 @@
 package com.wafflestudio.snuttev.domain.evaluation.model
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.wafflestudio.snuttev.domain.common.model.BaseEntity
 import com.wafflestudio.snuttev.domain.lecture.model.SemesterLecture
 import javax.persistence.*
@@ -18,19 +19,19 @@ class LectureEvaluation(
     val content: String,
 
     @Column(nullable = false)
-    val gradeSatisfaction: Double = 0.0,
+    val gradeSatisfaction: Double,
 
     @Column(nullable = false)
-    val teachingSkill: Double = 0.0,
+    val teachingSkill: Double,
 
     @Column(nullable = false)
-    val gains: Double = 0.0,
+    val gains: Double,
 
     @Column(nullable = false)
-    val lifeBalance: Double = 0.0,
+    val lifeBalance: Double,
 
     @Column(nullable = false)
-    val rating: Double = 0.0,
+    val rating: Double,
 
     @Column(nullable = false)
     val likeCount: Long = 0,
@@ -47,31 +48,35 @@ class LectureEvaluation(
 ) : BaseEntity()
 
 data class LectureEvaluationWithSemester(
-    val id: Long,
+    val id: Long? = null,
 
-    val userId: String,
+    val userId: String? = null,
 
-    val content: String,
+    val content: String? = null,
 
-    val gradeSatisfaction: Double = 0.0,
+    val gradeSatisfaction: Double? = null,
 
-    val teachingSkill: Double = 0.0,
+    val teachingSkill: Double? = null,
 
-    val gains: Double = 0.0,
+    val gains: Double? = null,
 
-    val lifeBalance: Double = 0.0,
+    val lifeBalance: Double? = null,
 
-    val rating: Double = 0.0,
+    val rating: Double? = null,
 
-    val likeCount: Long = 0,
+    val likeCount: Long? = null,
 
-    val dislikeCount: Long = 0,
+    val dislikeCount: Long? = null,
 
-    val isHidden: Boolean = false,
+    @get:JsonProperty("isHidden")
+    @field:JsonProperty("isHidden")
+    val isHidden: Boolean? = null,
 
-    val isReported: Boolean = false,
+    @get:JsonProperty("isReported")
+    @field:JsonProperty("isReported")
+    val isReported: Boolean? = null,
 
-    val year: Int,
+    val year: Int? = null,
 
-    val semester: Int,
+    val semester: Int? = null,
 )

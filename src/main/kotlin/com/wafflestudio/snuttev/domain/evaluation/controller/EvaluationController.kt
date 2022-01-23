@@ -38,9 +38,10 @@ class EvaluationController(
     @GetMapping("/v1/tags/main/{id}/evaluations")
     fun getMainTagEvaluations(
         @PathVariable(value = "id") tagId: Long,
+        @RequestParam("cursor") cursor: String?,
         @RequestAttribute(value = "UserId") userId: String,
     ): CursorPaginationForLectureEvaluationWithSemesterResponse {
-        return evaluationService.getMainTagEvaluations(userId, tagId)
+        return evaluationService.getMainTagEvaluations(userId, tagId, cursor)
     }
 
     @DeleteMapping("/v1/evaluations/{id}")

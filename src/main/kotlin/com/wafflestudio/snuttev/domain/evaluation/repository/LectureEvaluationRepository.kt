@@ -44,4 +44,46 @@ interface LectureEvaluationRepository : JpaRepository<LectureEvaluation, Long> {
     """, nativeQuery = true
     )
     fun existsByLectureIdLessThan(lectureId: Long, cursorYear: Int, cursorSemester: Int, cursorId: Long): Int?
+
+    @Query("""
+        select new com.wafflestudio.snuttev.domain.evaluation.model.LectureEvaluationWithSemester(
+        le.id, le.userId, le.content, le.gradeSatisfaction, le.teachingSkill, le.gains, le.lifeBalance, le.rating, 
+        le.likeCount, le.dislikeCount, le.isHidden, le.isReported, sl.year, sl.semester) 
+        from LectureEvaluation le inner join le.semesterLecture sl where le.isHidden = false 
+        and sl.lecture.id in ( 
+            select sl1.lecture.id from LectureEvaluation le1 inner join SemesterLecture sl1 on le1.semesterLecture.id = sl1.id 
+            group by sl1.lecture.id having avg(le1.rating) >= 4.0 
+        ) 
+        order by le.id desc
+    """
+    )
+    fun findByLecturesRecommendedOrderByDesc(pageable: Pageable): List<LectureEvaluationWithSemester>
+
+    @Query("""
+        select new com.wafflestudio.snuttev.domain.evaluation.model.LectureEvaluationWithSemester(
+        le.id, le.userId, le.content, le.gradeSatisfaction, le.teachingSkill, le.gains, le.lifeBalance, le.rating, 
+        le.likeCount, le.dislikeCount, le.isHidden, le.isReported, sl.year, sl.semester) 
+        from LectureEvaluation le inner join le.semesterLecture sl where le.isHidden = false 
+        and sl.lecture.id in ( 
+            select sl1.lecture.id from LectureEvaluation le1 inner join SemesterLecture sl1 on le1.semesterLecture.id = sl1.id 
+            group by sl1.lecture.id having avg(le1.rating) >= 4.0 
+        ) 
+        and le.id < :cursorId 
+        order by le.id desc
+    """
+    )
+    fun findByLecturesRecommendedLessThanOrderByDesc(cursorId: Long, pageable: Pageable): List<LectureEvaluationWithSemester>
+
+    @Query("""
+        select 1 
+        from lecture_evaluation le inner join semester_lecture sl on le.semester_lecture_id = sl.id where le.is_hidden = false 
+        and sl.lecture_id in ( 
+            select sl1.lecture_id from lecture_evaluation le1 inner join semester_lecture sl1 on le1.semester_lecture_id = sl1.id 
+            group by sl1.lecture_id having avg(le1.rating) >= 4.0 
+        ) 
+        and le.id < :cursorId 
+        limit 1
+    """, nativeQuery = true
+    )
+    fun existsByLecturesRecommendedLessThan(cursorId: Long): Int?
 }
