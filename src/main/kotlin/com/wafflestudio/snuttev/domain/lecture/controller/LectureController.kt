@@ -11,8 +11,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 class LectureController(
-    private val lectureService: LectureService,
-    private val objectMapper: ObjectMapper
+    private val lectureService: LectureService
 ) {
 
     @GetMapping("/v1/lectures")

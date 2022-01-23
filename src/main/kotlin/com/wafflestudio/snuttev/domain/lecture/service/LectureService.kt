@@ -21,8 +21,7 @@ import org.springframework.stereotype.Service
 class LectureService(
     private val lectureRepository: LectureRepository,
     private val semesterLectureRepository: SemesterLectureRepository,
-    private val tagRepository: TagRepository,
-    private val objectMapper: ObjectMapper
+    private val tagRepository: TagRepository
 ) {
     fun search(param: SearchLectureRequest): Page<SearchLectureResponse> {
         val request = mappingTagsToLectureProperty(param)
