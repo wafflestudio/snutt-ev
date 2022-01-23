@@ -21,7 +21,7 @@ class SwaggerConfig {
         return OpenAPI().info(Info()
                 .title("Snutt Evaluation Service API definition")
                 .description("""
-                    Responses 의 user_id는 Snutt 서버에 의해, 아래와 같은 DTO로 변환됩니다.
+                    Responses 의 "user_id" 는 /ev-service/* 를 routing하는 환경에서 실제로는 아래와 같은 schema로 변환됩니다.
                     
                     "user": {
                         "is_admin": false,
