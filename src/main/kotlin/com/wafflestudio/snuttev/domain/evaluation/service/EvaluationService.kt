@@ -216,28 +216,64 @@ class EvaluationService(
 
     @Cacheable("tag-fine-evaluations")
     fun getLectureEvaluationsWithSemesterFromTagFine(cursorId: Long?, pageable: Pageable): CursorPaginationForLectureEvaluationWithSemesterDto {
+        val lectureEvaluationsWithSemester = cursorId?.let {
+            lectureEvaluationRepository.findByLecturesFineLessThanOrderByDesc(cursorId, pageable)
+        } ?: lectureEvaluationRepository.findByLecturesFineOrderByDesc(pageable)
+
+        val lastLectureEvaluationWithSemester = lectureEvaluationsWithSemester.lastOrNull()
+
+        val nextCursor = lastLectureEvaluationWithSemester?.id?.toString()
+
+        val isLast = lastLectureEvaluationWithSemester?.let {
+            lectureEvaluationRepository.existsByLecturesFineLessThan(it.id!!) == null
+        } ?: true
+
         return CursorPaginationForLectureEvaluationWithSemesterDto(
-            lectureEvaluationsWithSemester = emptyList(),
-            cursor = null,
-            last = true,
+            lectureEvaluationsWithSemester = lectureEvaluationsWithSemester,
+            cursor = nextCursor,
+            last = isLast,
         )
     }
 
     @Cacheable("tag-honey-evaluations")
     fun getLectureEvaluationsWithSemesterFromTagHoney(cursorId: Long?, pageable: Pageable): CursorPaginationForLectureEvaluationWithSemesterDto {
+        val lectureEvaluationsWithSemester = cursorId?.let {
+            lectureEvaluationRepository.findByLecturesHoneyLessThanOrderByDesc(cursorId, pageable)
+        } ?: lectureEvaluationRepository.findByLecturesHoneyOrderByDesc(pageable)
+
+        val lastLectureEvaluationWithSemester = lectureEvaluationsWithSemester.lastOrNull()
+
+        val nextCursor = lastLectureEvaluationWithSemester?.id?.toString()
+
+        val isLast = lastLectureEvaluationWithSemester?.let {
+            lectureEvaluationRepository.existsByLecturesHoneyLessThan(it.id!!) == null
+        } ?: true
+
         return CursorPaginationForLectureEvaluationWithSemesterDto(
-            lectureEvaluationsWithSemester = emptyList(),
-            cursor = null,
-            last = true,
+            lectureEvaluationsWithSemester = lectureEvaluationsWithSemester,
+            cursor = nextCursor,
+            last = isLast,
         )
     }
 
     @Cacheable("tag-painsgains-evaluations")
     fun getLectureEvaluationsWithSemesterFromTagPainsGains(cursorId: Long?, pageable: Pageable): CursorPaginationForLectureEvaluationWithSemesterDto {
+        val lectureEvaluationsWithSemester = cursorId?.let {
+            lectureEvaluationRepository.findByLecturesPainsGainsLessThanOrderByDesc(cursorId, pageable)
+        } ?: lectureEvaluationRepository.findByLecturesPainsGainsOrderByDesc(pageable)
+
+        val lastLectureEvaluationWithSemester = lectureEvaluationsWithSemester.lastOrNull()
+
+        val nextCursor = lastLectureEvaluationWithSemester?.id?.toString()
+
+        val isLast = lastLectureEvaluationWithSemester?.let {
+            lectureEvaluationRepository.existsByLecturesPainsGainsLessThan(it.id!!) == null
+        } ?: true
+
         return CursorPaginationForLectureEvaluationWithSemesterDto(
-            lectureEvaluationsWithSemester = emptyList(),
-            cursor = null,
-            last = true,
+            lectureEvaluationsWithSemester = lectureEvaluationsWithSemester,
+            cursor = nextCursor,
+            last = isLast,
         )
     }
 
