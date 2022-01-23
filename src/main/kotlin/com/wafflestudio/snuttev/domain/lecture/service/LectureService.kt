@@ -58,7 +58,7 @@ class LectureService(
                 TagValueType.LOGIC -> ""
             }
         })
-        val (year, semester) = tagMap["semester"]?.filterIsInstance<String>()?.let {
+        val (year, semester) = tagMap["학기"]?.filterIsInstance<String>()?.let {
             if (it.size != 1) throw WrongSearchTagException
             val pair = it[0].split(",")
             if (pair.size != 2) throw WrongSearchTagException
@@ -66,10 +66,10 @@ class LectureService(
         } ?: Pair(null, null)
         return SearchQuery(
             query = request.query,
-            classification = tagMap["classification"]?.filterIsInstance<String>(),
+            classification = tagMap["구분"]?.filterIsInstance<String>(),
             credit = tagMap["학점"]?.filterIsInstance<Int>(),
             academicYear = tagMap["학년"]?.filterIsInstance<String>(),
-            department = tagMap["category"]?.filterIsInstance<String>(),
+            department = tagMap["학과"]?.filterIsInstance<String>(),
             year = year,
             semester = semester
         )
