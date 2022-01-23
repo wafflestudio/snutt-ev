@@ -6,14 +6,13 @@ import org.springframework.data.domain.Page
 data class PaginationResponse<T>(
     val content: List<T>,
 
-    @JsonProperty("next_page")
-    val nextPage: Int,
+    val page: Int,
 
     val size: Int,
 
     val last: Boolean,
 
-    @JsonProperty("total_count")
+    @JsonProperty("total_pages")
     val totalPages: Int,
 
     @JsonProperty("total_count")
@@ -21,7 +20,7 @@ data class PaginationResponse<T>(
 ) {
     constructor(page: Page<T>) : this(
         content = page.content,
-        nextPage = page.number + 1,
+        page = page.number,
         size = page.size,
         last = page.isLast,
         totalPages = page.totalPages,
