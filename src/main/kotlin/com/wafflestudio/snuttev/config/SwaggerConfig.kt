@@ -18,7 +18,7 @@ class SwaggerConfig {
     @Bean
     fun openAPI(): OpenAPI {
         return OpenAPI().info(Info()
-                .title("Snutt Evaluation Service API definition")
+                .title("Snutt Lecture Evaluation Service API definition")
                 .description("""
                     Responses 의 "user_id" 는 /ev-service/* 를 routing하는 환경에서 실제로는 아래와 같은 schema로 변환됩니다.
                     
