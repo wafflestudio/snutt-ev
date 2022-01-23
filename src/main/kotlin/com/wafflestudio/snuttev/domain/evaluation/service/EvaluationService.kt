@@ -80,7 +80,7 @@ class EvaluationService(
         )
     }
 
-    fun getEvaluationsOfLecture(userId: String, lectureId: Long, cursor: String?): CursorPaginationResponse {
+    fun getEvaluationsOfLecture(userId: String, lectureId: Long, cursor: String?): CursorPaginationForLectureEvaluationWithSemesterResponse {
         val pageable = PageRequest.of(0, defaultPageSize)
         val lectureEvaluationsCount = lectureEvaluationRepository.countByLectureId(lectureId)
 
@@ -129,7 +129,7 @@ class EvaluationService(
             lectureEvaluationRepository.existsByLectureIdLessThan(lectureId, it.year, it.semester, it.id) == null
         } ?: true
 
-        return CursorPaginationResponse(
+        return CursorPaginationForLectureEvaluationWithSemesterResponse(
             content = lectureEvaluationsWithSemester.map { genLectureEvaluationWithSemesterDto(userId, it) },
             cursor = nextCursor,
             size = defaultPageSize,
@@ -141,7 +141,7 @@ class EvaluationService(
     fun getMainTagEvaluations(
         userId: String,
         tagId: Long,
-    ): CursorPaginationResponse {
+    ): CursorPaginationForLectureEvaluationWithSemesterResponse {
         val tag = tagRepository.findByIdOrNull(tagId) ?: throw TagNotFoundException
         val lectureEvaluationsWithSemester = when (tag.name) {
             "추천" -> self.getLectureEvaluationsWithSemesterFromTagRecommended()
@@ -151,7 +151,7 @@ class EvaluationService(
             else -> throw WrongMainTagException
         }
 
-        return CursorPaginationResponse(
+        return CursorPaginationForLectureEvaluationWithSemesterResponse(
             content = lectureEvaluationsWithSemester.map { genLectureEvaluationWithSemesterDto(userId, it) },
             cursor = null,
             size = defaultPageSize,

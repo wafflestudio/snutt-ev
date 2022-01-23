@@ -28,3 +28,15 @@ data class PaginationResponse<T>(
         totalCount = page.totalElements
     )
 }
+
+abstract class CursorPaginationResponse (
+    open val content: List<Any>,
+
+    open val cursor: String?,
+
+    open val size: Int,
+
+    open val last: Boolean,
+
+    open val totalCount: Long? = null
+)
