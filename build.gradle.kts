@@ -38,6 +38,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     runtimeOnly("mysql:mysql-connector-java")
     implementation("com.amazonaws:aws-java-sdk-secretsmanager:1.11.965")
+    implementation("org.springdoc:springdoc-openapi-ui:1.6.4")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("com.h2database:h2")

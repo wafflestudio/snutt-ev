@@ -15,7 +15,7 @@ class RedisConfig(
 ) {
 
     @Bean
-    fun cacheManager(connectionFactory: RedisConnectionFactory): CacheManager{
+    fun cacheManager(connectionFactory: RedisConnectionFactory): CacheManager {
         val redisCacheConfiguration = RedisCacheConfiguration.defaultCacheConfig().entryTtl(redisTtl)
         return RedisCacheManager.RedisCacheManagerBuilder.fromConnectionFactory(connectionFactory)
                 .cacheDefaults(redisCacheConfiguration).build()

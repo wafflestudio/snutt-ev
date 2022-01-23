@@ -10,6 +10,7 @@ import javax.persistence.EntityManager
 class QueryFactoryConfig(
     private val em: EntityManager
 ) {
+
     @Bean
     fun queryFactory(): JPAQueryFactory? {
         return JPAQueryFactory(em)

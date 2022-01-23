@@ -1,6 +1,7 @@
 package com.wafflestudio.snuttev.domain.evaluation.dto
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.wafflestudio.snuttev.domain.common.dto.CursorPaginationResponse
 
 
 data class LectureEvaluationDto(
@@ -101,18 +102,18 @@ data class LectureEvaluationSummary(
     val avgRating: Double?,
 )
 
-data class CursorPaginationResponse(
-    val content: List<Any>,
+data class CursorPaginationForLectureEvaluationWithSemesterResponse(
+    override val content: List<LectureEvaluationWithSemesterDto>,
 
-    val cursor: String?,
+    override val cursor: String?,
 
-    val size: Int,
+    override val size: Int,
 
-    val last: Boolean,
+    override val last: Boolean,
 
     @JsonProperty("total_count")
-    val totalCount: Long? = null
-)
+    override val totalCount: Long? = null
+): CursorPaginationResponse(content, cursor, size, last, totalCount)
 
 data class LectureEvaluationWithSemesterDto(
     val id: Long,
