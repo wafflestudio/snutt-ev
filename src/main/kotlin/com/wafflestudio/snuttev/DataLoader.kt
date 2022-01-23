@@ -84,14 +84,17 @@ class DataLoader(
         val mainTagGroup = TagGroup(
             name = "main",
             ordering = -1,
+            valueType = TagValueType.LOGIC,
         )
         val academicYearTagGroup = TagGroup(
             name = "학년",
             ordering = 1,
+            valueType = TagValueType.STRING,
         )
         val creditTagGroup = TagGroup(
             name = "학점",
             ordering = 2,
+            valueType = TagValueType.INT,
         )
         val tagGroups = listOf(
             mainTagGroup,
@@ -104,80 +107,68 @@ class DataLoader(
                 tagGroup = mainTagGroup,
                 name = "추천",
                 ordering = 1,
-                valueType = TagValueType.LOGIC,
             ),
             Tag(
                 tagGroup = mainTagGroup,
                 name = "명강",
                 ordering = 2,
-                valueType = TagValueType.LOGIC,
             ),
             Tag(
                 tagGroup = mainTagGroup,
                 name = "꿀강",
                 ordering = 3,
-                valueType = TagValueType.LOGIC,
             ),
             Tag(
                 tagGroup = mainTagGroup,
                 name = "고진감래",
                 ordering = 4,
-                valueType = TagValueType.LOGIC,
             ),
             Tag(
                 tagGroup = academicYearTagGroup,
                 name = "1학년",
                 ordering = 1,
-                valueType = TagValueType.INT,
-                intValue = 1
+                stringValue = "1학년"
             ),
             Tag(
                 tagGroup = academicYearTagGroup,
                 name = "2학년",
                 ordering = 2,
-                valueType = TagValueType.INT,
-                intValue = 2,
+                stringValue = "2학년"
             ),
             Tag(
                 tagGroup = academicYearTagGroup,
                 name = "3학년",
                 ordering = 3,
-                valueType = TagValueType.INT,
-                intValue = 3,
+                stringValue = "3학년"
             ),
             Tag(
                 tagGroup = academicYearTagGroup,
                 name = "4학년",
                 ordering = 4,
-                valueType = TagValueType.INT,
-                intValue = 4,
+                stringValue = "4학년"
             ),
             Tag(
                 tagGroup = creditTagGroup,
                 name = "1학점",
                 ordering = 1,
-                valueType = TagValueType.INT,
                 intValue = 1,
             ),
             Tag(
                 tagGroup = creditTagGroup,
                 name = "2학점",
                 ordering = 2,
-                valueType = TagValueType.INT,
                 intValue = 2,
             ),
             Tag(
                 tagGroup = creditTagGroup,
                 name = "3학점",
                 ordering = 3,
-                valueType = TagValueType.INT,
                 intValue = 3,
             ),
             Tag(
                 tagGroup = creditTagGroup,
                 name = "4학점",
                 ordering = 4,
-                valueType = TagValueType.INT,
                 intValue = 4,
             ),
         )

@@ -17,10 +17,6 @@ class Tag(
     @Column(nullable = false)
     val ordering: Int,
 
-    @Column(name = "value_type", nullable = false)
-    @Enumerated(EnumType.STRING)
-    val valueType: TagValueType,
-
     @Column(name = "int_value")
     val intValue: Int? = null,
 
@@ -28,9 +24,3 @@ class Tag(
     val stringValue: String? = null,
 
 ) : BaseEntity()
-
-enum class TagValueType {
-    INT,
-    STRING,
-    LOGIC,
-}

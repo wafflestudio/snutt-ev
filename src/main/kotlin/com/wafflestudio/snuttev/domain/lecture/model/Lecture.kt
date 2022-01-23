@@ -27,6 +27,8 @@ class Lecture(
 
     var classification: String,
 
+    @OneToMany(mappedBy = "lecture")
+    val semesterLectures: List<SemesterLecture> = listOf()
 ) : BaseEntity()
 
 
