@@ -1,11 +1,10 @@
 package com.wafflestudio.snuttev.domain.lecture.service
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.wafflestudio.snuttev.domain.evaluation.dto.SemesterLectureDto
 import com.wafflestudio.snuttev.domain.lecture.dto.GetSemesterLecturesResponse
 import com.wafflestudio.snuttev.domain.lecture.dto.SearchLectureRequest
-import com.wafflestudio.snuttev.domain.lecture.dto.SearchQuery
 import com.wafflestudio.snuttev.domain.lecture.dto.SearchLectureResponse
+import com.wafflestudio.snuttev.domain.lecture.dto.SearchQuery
 import com.wafflestudio.snuttev.domain.lecture.model.SemesterLecture
 import com.wafflestudio.snuttev.domain.lecture.repository.LectureRepository
 import com.wafflestudio.snuttev.domain.lecture.repository.SemesterLectureRepository
@@ -70,6 +69,7 @@ class LectureService(
             credit = tagMap["학점"]?.filterIsInstance<Int>(),
             academicYear = tagMap["학년"]?.filterIsInstance<String>(),
             department = tagMap["학과"]?.filterIsInstance<String>(),
+            category = tagMap["교양분류"]?.filterIsInstance<String>(),
             year = year,
             semester = semester
         )
