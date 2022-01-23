@@ -12,18 +12,14 @@ data class PaginationResponse<T>(
 
     val last: Boolean,
 
-    @JsonProperty("total_pages")
-    val totalPages: Int,
-
     @JsonProperty("total_count")
-    val totalCount: Long
+    val totalCount: Long? = null
 ) {
     constructor(page: Page<T>) : this(
         content = page.content,
         page = page.number,
         size = page.size,
         last = page.isLast,
-        totalPages = page.totalPages,
         totalCount = page.totalElements
     )
 }
