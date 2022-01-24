@@ -97,7 +97,8 @@ class LectureRepositoryImpl(private val queryFactory: JPAQueryFactory) : Lecture
 
     private fun extractCriteriaFromQuery(query: String?): Predicate? {
         val builder = BooleanBuilder()
-        query?.split(' ')?.forEach { keyword ->
+        if(query.isNullOrBlank()) return builder.value
+        query.split(' ').forEach { keyword ->
             // 소개원실 -> %소%개%원%실%
             val fuzzyKeyword = keyword.fold("%") { acc, c -> "$acc$c%" }
             val orBuilder = BooleanBuilder()
