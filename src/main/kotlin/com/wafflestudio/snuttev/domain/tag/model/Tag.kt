@@ -11,7 +11,7 @@ class Tag(
     @JoinColumn(name = "tag_group_id")
     val tagGroup: TagGroup,
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     val name: String,
 
     @Column(nullable = false)
