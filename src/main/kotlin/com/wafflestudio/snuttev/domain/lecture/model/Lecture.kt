@@ -1,5 +1,6 @@
 package com.wafflestudio.snuttev.domain.lecture.model
 
+import com.fasterxml.jackson.annotation.JsonValue
 import com.wafflestudio.snuttev.domain.common.model.BaseEntity
 import javax.persistence.*
 import javax.validation.constraints.NotBlank
@@ -25,10 +26,15 @@ class Lecture(
 
     var category: String,
 
+    @Enumerated(EnumType.STRING)
     var classification: String,
 
 ) : BaseEntity()
 
+enum class LectureClassification(@get:JsonValue val value: String) {
+    LIBERAL_EDUCATION("교양")
+
+}
 
 data class LectureEvaluationSummaryDao(
     val id: Long?,
