@@ -3,10 +3,7 @@ package com.wafflestudio.snuttev.domain.lecture.controller
 import com.wafflestudio.snuttev.domain.common.dto.PaginationResponse
 import com.wafflestudio.snuttev.domain.lecture.dto.*
 import com.wafflestudio.snuttev.domain.lecture.service.LectureService
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.ModelAttribute
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @RestController
 class LectureController(
@@ -23,5 +20,13 @@ class LectureController(
         @PathVariable(value = "id") lectureId: Long,
     ): LectureAndSemesterLecturesResponse {
         return lectureService.getSemesterLectures(lectureId)
+    }
+
+    @GetMapping("/v1/lectures/id")
+    fun getLectureId(
+        @RequestParam("course_number") courseNumber: String,
+        @RequestParam("instructor") instructor: String,
+    ): LectureIdResponse {
+        return lectureService.getLectureIdFromCourseNumber(courseNumber, instructor)
     }
 }

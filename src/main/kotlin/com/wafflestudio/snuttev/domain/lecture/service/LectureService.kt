@@ -3,6 +3,7 @@ package com.wafflestudio.snuttev.domain.lecture.service
 import com.wafflestudio.snuttev.domain.evaluation.dto.SemesterLectureDto
 import com.wafflestudio.snuttev.domain.lecture.dto.LectureAndSemesterLecturesResponse
 import com.wafflestudio.snuttev.domain.lecture.dto.LectureDto
+import com.wafflestudio.snuttev.domain.lecture.dto.LectureIdResponse
 import com.wafflestudio.snuttev.domain.lecture.dto.SearchLectureRequest
 import com.wafflestudio.snuttev.domain.lecture.model.SemesterLecture
 import com.wafflestudio.snuttev.domain.lecture.model.SemesterLectureWithLecture
@@ -57,6 +58,11 @@ class LectureService(
                 genSemesterLectureDto(it)
             },
         )
+    }
+
+    fun getLectureIdFromCourseNumber(courseNumber: String, instructor: String): LectureIdResponse {
+        val lecture = lectureRepository.findByCourseNumberAndInstructor(courseNumber, instructor) ?: throw LectureNotFoundException
+        return LectureIdResponse(lecture.id!!)
     }
 
     private fun mappingTagsToLectureProperty(request: SearchLectureRequest): SearchQueryDto {
