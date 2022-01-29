@@ -85,9 +85,9 @@ class EvaluationService(
     }
 
     fun getEvaluationsOfLecture(
-            userId: String,
-            lectureId: Long,
-            cursor: String?,
+        userId: String,
+        lectureId: Long,
+        cursor: String?,
     ): CursorPaginationResponse<LectureEvaluationWithSemesterDto> {
         val pageable = PageRequest.of(0, defaultPageSize)
         val lectureEvaluationsCount = lectureEvaluationRepository.countByLectureId(lectureId)
