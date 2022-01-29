@@ -1,7 +1,10 @@
 package com.wafflestudio.snuttev.domain.lecture.service
 
 import com.wafflestudio.snuttev.domain.evaluation.dto.SemesterLectureDto
-import com.wafflestudio.snuttev.domain.lecture.dto.*
+import com.wafflestudio.snuttev.domain.lecture.dto.LectureAndSemesterLecturesResponse
+import com.wafflestudio.snuttev.domain.lecture.dto.LectureDto
+import com.wafflestudio.snuttev.domain.lecture.dto.LectureIdResponse
+import com.wafflestudio.snuttev.domain.lecture.dto.SearchLectureRequest
 import com.wafflestudio.snuttev.domain.lecture.model.SemesterLectureWithLecture
 import com.wafflestudio.snuttev.domain.lecture.repository.LectureRepository
 import com.wafflestudio.snuttev.domain.lecture.repository.SemesterLectureRepository
@@ -106,7 +109,7 @@ class LectureService(
             department = tagMap["학과"]?.filterIsInstance<String>(),
             category = tagMap["교양분류"]?.filterIsInstance<String>(),
             year = year,
-            semester = semester
+            semester = semester,
         )
     }
 

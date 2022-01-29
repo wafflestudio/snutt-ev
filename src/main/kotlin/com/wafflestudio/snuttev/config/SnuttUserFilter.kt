@@ -1,4 +1,4 @@
-package com.wafflestudio
+package com.wafflestudio.snuttev.config
 
 import javax.servlet.Filter
 import javax.servlet.FilterChain

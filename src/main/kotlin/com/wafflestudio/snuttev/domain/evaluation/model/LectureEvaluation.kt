@@ -12,37 +12,37 @@ class LectureEvaluation(
     @JoinColumn(name = "semester_lecture_id")
     var semesterLecture: SemesterLecture,
 
-    @Column(nullable = false)
+    @Column(name = "user_id", nullable = false)
     val userId: String,
 
-    @Column(columnDefinition = "longtext")
+    @Column(columnDefinition = "longtext", nullable = false)
     val content: String,
 
-    @Column(nullable = false)
+    @Column(name = "grade_satisfaction", nullable = false)
     val gradeSatisfaction: Double,
 
-    @Column(nullable = false)
+    @Column(name = "teaching_skill", nullable = false)
     val teachingSkill: Double,
 
     @Column(nullable = false)
     val gains: Double,
 
-    @Column(nullable = false)
+    @Column(name = "life_balance", nullable = false)
     val lifeBalance: Double,
 
     @Column(nullable = false)
     val rating: Double,
 
-    @Column(nullable = false)
+    @Column(name = "like_count", nullable = false)
     val likeCount: Long = 0,
 
-    @Column(nullable = false)
+    @Column(name = "dislike_count", nullable = false)
     val dislikeCount: Long = 0,
 
-    @Column(nullable = false)
+    @Column(name = "is_hidden", nullable = false)
     var isHidden: Boolean = false,
 
-    @Column(nullable = false)
+    @Column(name = "is_reported", nullable = false)
     val isReported: Boolean = false,
 
 ) : BaseEntity()

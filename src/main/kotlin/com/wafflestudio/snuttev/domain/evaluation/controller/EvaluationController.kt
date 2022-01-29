@@ -61,4 +61,13 @@ class EvaluationController(
         return evaluationService.deleteLectureEvaluation(userId, evaluationId)
     }
 
+    @PostMapping("/v1/evaluations/{id}/report")
+    fun reportLectureEvaluation(
+        @PathVariable(value = "id") evaluationId: Long,
+        @RequestBody @Valid createEvaluationReportRequest: CreateEvaluationReportRequest,
+        @RequestAttribute(value = "UserId") userId: String,
+    ): EvaluationReportDto {
+        return evaluationService.reportLectureEvaluation(userId, evaluationId, createEvaluationReportRequest)
+    }
+
 }

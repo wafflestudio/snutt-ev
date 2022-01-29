@@ -36,7 +36,6 @@ class DataLoader(
             classification = "전선",
         )
         lectureRepository.save(lecture)
-
         val semesterLectures = listOf(
             SemesterLecture(
                 lecture = lecture,
@@ -81,6 +80,41 @@ class DataLoader(
         )
         semesterLectureRepository.saveAll(semesterLectures)
 
+        val lecture2 = Lecture(
+            title = "심리학개론",
+            instructor = "박형생",
+            department = "심리학과",
+            courseNumber = "045.012",
+            credit = 3,
+            academicYear = "1학년",
+            category = "인간과 사회",
+            classification = "교양",
+        )
+        lectureRepository.save(lecture2)
+        val semesterLectures2 = listOf(
+            SemesterLecture(
+                lecture = lecture,
+                lectureNumber = "001",
+                year = 2021,
+                semester = Semester.WINTER.value,
+                credit = 3,
+                academicYear = "1학년",
+                category = "인간과 사회",
+                classification = "교양",
+            ),
+            SemesterLecture(
+                lecture = lecture,
+                lectureNumber = "001",
+                year = 2021,
+                semester = Semester.AUTUMN.value,
+                credit = 3,
+                academicYear = "1학년",
+                category = "인간과 사회",
+                classification = "교양",
+            ),
+        )
+        semesterLectureRepository.saveAll(semesterLectures2)
+
         val mainTagGroup = TagGroup(
             name = "main",
             ordering = -1,
@@ -105,69 +139,87 @@ class DataLoader(
         val tags = listOf(
             Tag(
                 tagGroup = mainTagGroup,
-                name = "추천",
+                name = "최신",
+                description = "최근 등록된 강의평",
                 ordering = 1,
             ),
             Tag(
                 tagGroup = mainTagGroup,
-                name = "명강",
+                name = "추천",
+                description = "학우들의 추천 강의",
                 ordering = 2,
             ),
             Tag(
                 tagGroup = mainTagGroup,
-                name = "꿀강",
+                name = "명강",
+                description = "졸업하기 전에 꼭 한 번 들어볼 만한 강의",
                 ordering = 3,
             ),
             Tag(
                 tagGroup = mainTagGroup,
-                name = "고진감래",
+                name = "꿀강",
+                description = "수업 부담이 크지 않고, 성적도 잘 주는 강의",
                 ordering = 4,
+            ),
+            Tag(
+                tagGroup = mainTagGroup,
+                name = "고진감래",
+                description = "공과 시간을 들인 만큼 거두는 것이 많은 강의",
+                ordering = 5,
             ),
             Tag(
                 tagGroup = academicYearTagGroup,
                 name = "1학년",
+                description = null,
                 ordering = 1,
                 stringValue = "1학년"
             ),
             Tag(
                 tagGroup = academicYearTagGroup,
                 name = "2학년",
+                description = null,
                 ordering = 2,
                 stringValue = "2학년"
             ),
             Tag(
                 tagGroup = academicYearTagGroup,
                 name = "3학년",
+                description = null,
                 ordering = 3,
                 stringValue = "3학년"
             ),
             Tag(
                 tagGroup = academicYearTagGroup,
                 name = "4학년",
+                description = null,
                 ordering = 4,
                 stringValue = "4학년"
             ),
             Tag(
                 tagGroup = creditTagGroup,
                 name = "1학점",
+                description = null,
                 ordering = 1,
                 intValue = 1,
             ),
             Tag(
                 tagGroup = creditTagGroup,
                 name = "2학점",
+                description = null,
                 ordering = 2,
                 intValue = 2,
             ),
             Tag(
                 tagGroup = creditTagGroup,
                 name = "3학점",
+                description = null,
                 ordering = 3,
                 intValue = 3,
             ),
             Tag(
                 tagGroup = creditTagGroup,
                 name = "4학점",
+                description = null,
                 ordering = 4,
                 intValue = 4,
             ),

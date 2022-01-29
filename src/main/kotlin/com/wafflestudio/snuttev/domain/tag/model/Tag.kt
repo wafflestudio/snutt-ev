@@ -14,6 +14,8 @@ class Tag(
     @Column(nullable = false)
     val name: String,
 
+    val description: String?,
+
     @Column(nullable = false)
     val ordering: Int,
 
