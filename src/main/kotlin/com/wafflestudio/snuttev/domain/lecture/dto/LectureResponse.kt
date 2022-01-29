@@ -60,3 +60,30 @@ data class LectureAndSemesterLecturesResponse(
 data class LectureIdResponse(
     val id: Long,
 )
+
+data class LectureTakenByUserResponse(
+    val id: Long,
+
+    val title: String?,
+
+    val instructor: String?,
+
+    val department: String?,
+
+    @JsonProperty("course_number")
+    val courseNumber: String?,
+
+    val credit: Int?,
+
+    @JsonProperty("academic_year")
+    val academicYear: String?,
+
+    val category: String?,
+
+    val classification: String?,
+
+    @JsonProperty("taken_year")
+    val takenYear: Int,
+    @JsonProperty("taken_semester")
+    val takenSemester: Int
+)
