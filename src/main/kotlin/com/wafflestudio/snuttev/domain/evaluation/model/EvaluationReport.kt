@@ -4,7 +4,8 @@ import com.wafflestudio.snuttev.domain.common.model.BaseEntity
 import javax.persistence.*
 
 @Entity
-class EvaluationComment(
+@Table(uniqueConstraints = [UniqueConstraint(columnNames = ["lecture_evaluation_id", "user_id"])])
+class EvaluationReport(
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "lecture_evaluation_id")
@@ -13,19 +14,10 @@ class EvaluationComment(
     @Column(name = "user_id", nullable = false)
     val userId: String,
 
-    @Column(columnDefinition = "longtext")
+    @Column(columnDefinition = "longtext", nullable = false)
     val content: String,
-
-    @Column(name = "like_count", nullable = false)
-    val likeCount: Long = 0,
-
-    @Column(name = "dislike_count", nullable = false)
-    val dislikeCount: Long = 0,
 
     @Column(name = "is_hidden", nullable = false)
     val isHidden: Boolean = false,
-
-    @Column(name = "is_reported", nullable = false)
-    val isReported: Boolean = false,
 
 ) : BaseEntity()

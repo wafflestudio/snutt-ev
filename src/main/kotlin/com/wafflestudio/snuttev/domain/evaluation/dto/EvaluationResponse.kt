@@ -201,3 +201,18 @@ data class LectureEvaluationWithSemesterAndTitleDto(
 data class LectureEvaluationsResponse(
     val evaluations: List<LectureEvaluationWithSemesterDto>,
 )
+
+data class EvaluationReportDto(
+    val id: Long,
+
+    @JsonProperty("lecture_evaluation_id")
+    val lectureEvaluationId: Long,
+
+    @JsonProperty("user_id")
+    val userId: String,
+
+    val content: String,
+
+    @JsonProperty("is_hidden")
+    val isHidden: Boolean,
+)

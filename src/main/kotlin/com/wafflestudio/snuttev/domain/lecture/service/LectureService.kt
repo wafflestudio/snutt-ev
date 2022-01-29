@@ -5,7 +5,6 @@ import com.wafflestudio.snuttev.domain.lecture.dto.LectureAndSemesterLecturesRes
 import com.wafflestudio.snuttev.domain.lecture.dto.LectureDto
 import com.wafflestudio.snuttev.domain.lecture.dto.LectureIdResponse
 import com.wafflestudio.snuttev.domain.lecture.dto.SearchLectureRequest
-import com.wafflestudio.snuttev.domain.lecture.model.SemesterLecture
 import com.wafflestudio.snuttev.domain.lecture.model.SemesterLectureWithLecture
 import com.wafflestudio.snuttev.domain.lecture.repository.LectureRepository
 import com.wafflestudio.snuttev.domain.lecture.repository.SemesterLectureRepository
