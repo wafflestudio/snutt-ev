@@ -8,6 +8,9 @@ import org.springframework.data.jpa.repository.Query
 interface LectureRepository : JpaRepository<Lecture, Long?>, LectureRepositoryCustom {
     fun findByCourseNumberAndInstructor(courseNumber: String, instructor: String): Lecture?
 
+    @Query("SELECT l FROM Lecture AS l WHERE CONCAT(l.courseNumber,l.instructor) IN :lectureKeys")
+    fun findAllByLectureKeys(lectureKeys: Set<String>): List<Lecture>
+
     @Query("""
         select new com.wafflestudio.snuttev.domain.lecture.model.LectureEvaluationSummaryDao(
         sl.lecture.id, sl.lecture.title, sl.lecture.instructor, sl.lecture.department, sl.lecture.courseNumber, 

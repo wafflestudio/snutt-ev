@@ -1,10 +1,7 @@
 package com.wafflestudio.snuttev.domain.lecture.service
 
 import com.wafflestudio.snuttev.domain.evaluation.dto.SemesterLectureDto
-import com.wafflestudio.snuttev.domain.lecture.dto.LectureAndSemesterLecturesResponse
-import com.wafflestudio.snuttev.domain.lecture.dto.LectureDto
-import com.wafflestudio.snuttev.domain.lecture.dto.LectureIdResponse
-import com.wafflestudio.snuttev.domain.lecture.dto.SearchLectureRequest
+import com.wafflestudio.snuttev.domain.lecture.dto.*
 import com.wafflestudio.snuttev.domain.lecture.model.SemesterLectureWithLecture
 import com.wafflestudio.snuttev.domain.lecture.repository.LectureRepository
 import com.wafflestudio.snuttev.domain.lecture.repository.SemesterLectureRepository
@@ -33,10 +30,33 @@ class LectureService(
         }
     }
 
+    fun getSnuttevLecturesWithSnuttLectureInfos(snuttLectureInfos: List<SnuttLectureInfo>): List<LectureTakenByUserResponse> {
+        val distinctLectures = snuttLectureInfos.associateBy { "${it.courseNumber}${it.instructor}" }
+        val lectureKeys = distinctLectures.keys
+        val snuttevLectures = lectureRepository.findAllByLectureKeys(lectureKeys)
+        return snuttevLectures.filter { distinctLectures["${it.courseNumber}${it.instructor}"] != null }.map {
+            val snuttInfo = distinctLectures["${it.courseNumber}${it.instructor}"]!!
+            LectureTakenByUserResponse(
+                id = it.id!!,
+                title = it.title,
+                instructor = it.instructor,
+                department = it.department,
+                courseNumber = it.courseNumber,
+                credit = it.credit,
+                academicYear = it.academicYear,
+                category = it.category,
+                classification = it.classification,
+                takenYear = snuttInfo.year,
+                takenSemester = snuttInfo.semester,
+            )
+        }
+    }
+
     fun getSemesterLectures(
         lectureId: Long
     ): LectureAndSemesterLecturesResponse {
-        val semesterLecturesWithLecture = semesterLectureRepository.findAllByLectureIdOrderByYearDescSemesterDesc(lectureId)
+        val semesterLecturesWithLecture =
+            semesterLectureRepository.findAllByLectureIdOrderByYearDescSemesterDesc(lectureId)
         if (semesterLecturesWithLecture.isEmpty()) {
             throw LectureNotFoundException
         }
@@ -60,7 +80,8 @@ class LectureService(
     }
 
     fun getLectureIdFromCourseNumber(courseNumber: String, instructor: String): LectureIdResponse {
-        val lecture = lectureRepository.findByCourseNumberAndInstructor(courseNumber, instructor) ?: throw LectureNotFoundException
+        val lecture = lectureRepository.findByCourseNumberAndInstructor(courseNumber, instructor)
+            ?: throw LectureNotFoundException
         return LectureIdResponse(lecture.id!!)
     }
 
@@ -106,7 +127,7 @@ class LectureService(
 
 }
 
-data class SearchQueryDto (
+data class SearchQueryDto(
     val query: String? = null,
     val classification: List<String>? = null,
     val credit: List<Int>? = null,
