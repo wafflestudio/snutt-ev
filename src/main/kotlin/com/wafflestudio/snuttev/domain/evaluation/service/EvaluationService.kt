@@ -122,6 +122,7 @@ class EvaluationService(
                     isReported = it["isReported"] as Boolean,
                     year = it["year"] as Int,
                     semester = it["semester"] as Int,
+                    lectureId = it["lectureId"] as Long,
                 )
             }
         } ?: lectureEvaluationRepository.findByLectureIdOrderByDesc(lectureId, pageable)
@@ -312,7 +313,9 @@ class EvaluationService(
             isReported = lectureEvaluationWithSemester.isReported!!,
             year = lectureEvaluationWithSemester.year!!,
             semester = lectureEvaluationWithSemester.semester!!,
+            lectureId = lectureEvaluationWithSemester.lectureId!!,
             isModifiable = lectureEvaluationWithSemester.userId == userId,
+            isReportable = lectureEvaluationWithSemester.userId != userId,
         )
 }
 
