@@ -82,7 +82,7 @@ data class LectureEvaluationSummaryResponse(
 
     val classification: String?,
 
-    val summary: LectureEvaluationSummary,
+    val evaluation: LectureEvaluationSummary,
 )
 
 data class LectureEvaluationSummary(

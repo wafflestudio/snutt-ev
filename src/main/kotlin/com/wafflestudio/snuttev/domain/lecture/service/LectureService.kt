@@ -2,8 +2,8 @@ package com.wafflestudio.snuttev.domain.lecture.service
 
 import com.wafflestudio.snuttev.domain.evaluation.dto.SemesterLectureDto
 import com.wafflestudio.snuttev.domain.lecture.dto.GetSemesterLecturesResponse
+import com.wafflestudio.snuttev.domain.lecture.dto.LectureDto
 import com.wafflestudio.snuttev.domain.lecture.dto.SearchLectureRequest
-import com.wafflestudio.snuttev.domain.lecture.dto.SearchLectureResponse
 import com.wafflestudio.snuttev.domain.lecture.dto.SearchQuery
 import com.wafflestudio.snuttev.domain.lecture.model.SemesterLecture
 import com.wafflestudio.snuttev.domain.lecture.repository.LectureRepository
@@ -22,7 +22,7 @@ class LectureService(
     private val semesterLectureRepository: SemesterLectureRepository,
     private val tagRepository: TagRepository
 ) {
-    fun search(param: SearchLectureRequest): Page<SearchLectureResponse> {
+    fun search(param: SearchLectureRequest): Page<LectureDto> {
         val request = mappingTagsToLectureProperty(param)
         val pageable = PageRequest.of(param.page, 20)
         return when {

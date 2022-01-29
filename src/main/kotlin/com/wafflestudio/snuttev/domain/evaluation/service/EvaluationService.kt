@@ -74,7 +74,7 @@ class EvaluationService(
             academicYear = lectureEvaluationSummaryDao.academicYear,
             category = lectureEvaluationSummaryDao.category,
             classification = lectureEvaluationSummaryDao.classification,
-            summary = LectureEvaluationSummary(
+            evaluation = LectureEvaluationSummary(
                 avgGradeSatisfaction = lectureEvaluationSummaryDao.avgGradeSatisfaction,
                 avgTeachingSkill = lectureEvaluationSummaryDao.avgTeachingSkill,
                 avgGains = lectureEvaluationSummaryDao.avgGains,

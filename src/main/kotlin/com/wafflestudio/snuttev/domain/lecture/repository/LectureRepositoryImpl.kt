@@ -8,7 +8,8 @@ import com.querydsl.core.types.dsl.NumberPath
 import com.querydsl.core.types.dsl.StringPath
 import com.querydsl.jpa.impl.JPAQueryFactory
 import com.wafflestudio.snuttev.domain.evaluation.model.QLectureEvaluation.lectureEvaluation
-import com.wafflestudio.snuttev.domain.lecture.dto.SearchLectureResponse
+import com.wafflestudio.snuttev.domain.lecture.dto.LectureDto
+import com.wafflestudio.snuttev.domain.lecture.dto.LectureEvaluationSimpleSummary
 import com.wafflestudio.snuttev.domain.lecture.dto.SearchQuery
 import com.wafflestudio.snuttev.domain.lecture.model.QLecture.lecture
 import com.wafflestudio.snuttev.domain.lecture.model.QSemesterLecture.semesterLecture
@@ -18,20 +19,23 @@ import org.springframework.data.domain.Pageable
 
 
 class LectureRepositoryImpl(private val queryFactory: JPAQueryFactory) : LectureRepositoryCustom {
-    override fun searchLectures(request: SearchQuery, pageable: Pageable): Page<SearchLectureResponse> {
+    override fun searchLectures(request: SearchQuery, pageable: Pageable): Page<LectureDto> {
         val queryResult = queryFactory.select(
             Projections.constructor(
-                SearchLectureResponse::class.java,
+                LectureDto::class.java,
                 lecture.id,
-                lecture.classification,
-                lecture.department,
-                lecture.academicYear,
-                lecture.courseNumber,
                 lecture.title,
-                lecture.credit,
                 lecture.instructor,
+                lecture.department,
+                lecture.courseNumber,
+                lecture.credit,
+                lecture.academicYear,
                 lecture.category,
-                lectureEvaluation.rating.avg()
+                lecture.classification,
+                Projections.constructor(
+                    LectureEvaluationSimpleSummary::class.java,
+                    lectureEvaluation.rating.avg(),
+                ),
             )
         ).from(lecture)
             .leftJoin(lecture.semesterLectures, semesterLecture)
@@ -51,21 +55,24 @@ class LectureRepositoryImpl(private val queryFactory: JPAQueryFactory) : Lecture
         return PageImpl(content, pageable, total)
     }
 
-    override fun searchSemesterLectures(request: SearchQuery, pageable: Pageable): Page<SearchLectureResponse> {
+    override fun searchSemesterLectures(request: SearchQuery, pageable: Pageable): Page<LectureDto> {
         val queryResult =
             queryFactory.select(
                 Projections.constructor(
-                    SearchLectureResponse::class.java,
+                    LectureDto::class.java,
                     lecture.id,
-                    semesterLecture.classification,
-                    lecture.department,
-                    semesterLecture.academicYear,
-                    lecture.courseNumber,
                     lecture.title,
-                    semesterLecture.credit,
                     lecture.instructor,
-                    semesterLecture.category,
-                    lectureEvaluation.rating.avg()
+                    lecture.department,
+                    lecture.courseNumber,
+                    lecture.credit,
+                    lecture.academicYear,
+                    lecture.category,
+                    lecture.classification,
+                    Projections.constructor(
+                        LectureEvaluationSimpleSummary::class.java,
+                        lectureEvaluation.rating.avg(),
+                    ),
                 )
             ).from(semesterLecture)
                 .innerJoin(semesterLecture.lecture, lecture)
