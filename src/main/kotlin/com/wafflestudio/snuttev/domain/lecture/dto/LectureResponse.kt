@@ -84,6 +84,7 @@ data class LectureTakenByUserResponse(
 
     @JsonProperty("taken_year")
     val takenYear: Int,
+
     @JsonProperty("taken_semester")
     val takenSemester: Int
 )

@@ -39,7 +39,7 @@ class LectureController(
         @RequestParam("snutt_lecture_info") snuttLectureInfoString: String? = "",
     ): ListResponse<LectureTakenByUserResponse> {
         val snuttLectureInfos: List<SnuttLectureInfo> =
-            objectMapper.readValue(snuttLectureInfoString?:"")
+            objectMapper.readValue(snuttLectureInfoString ?: "")
         return ListResponse(lectureService.getSnuttevLecturesWithSnuttLectureInfos(snuttLectureInfos))
     }
 }
