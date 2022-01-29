@@ -3,8 +3,10 @@ package com.wafflestudio.snuttev.domain.evaluation.service
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import com.wafflestudio.snuttev.domain.common.dto.CursorPaginationResponse
 import com.wafflestudio.snuttev.domain.evaluation.dto.*
+import com.wafflestudio.snuttev.domain.evaluation.model.EvaluationReport
 import com.wafflestudio.snuttev.domain.evaluation.model.LectureEvaluation
 import com.wafflestudio.snuttev.domain.evaluation.model.LectureEvaluationWithLecture
+import com.wafflestudio.snuttev.domain.evaluation.repository.EvaluationReportRepository
 import com.wafflestudio.snuttev.domain.evaluation.repository.LectureEvaluationRepository
 import com.wafflestudio.snuttev.domain.lecture.repository.LectureRepository
 import com.wafflestudio.snuttev.domain.lecture.repository.SemesterLectureRepository
@@ -27,6 +29,7 @@ class EvaluationService(
     private val lectureEvaluationRepository: LectureEvaluationRepository,
     private val lectureRepository: LectureRepository,
     private val tagRepository: TagRepository,
+    private val evaluationReportRepository: EvaluationReportRepository,
 ) {
     @Autowired
     private lateinit var self: EvaluationService
@@ -203,6 +206,29 @@ class EvaluationService(
         lectureEvaluation.isHidden = true
     }
 
+    fun reportLectureEvaluation(
+        userId: String,
+        lectureEvaluationId: Long,
+        createEvaluationReportRequest: CreateEvaluationReportRequest,
+    ): EvaluationReportDto {
+        val lectureEvaluation = lectureEvaluationRepository.findByIdAndIsHiddenFalse(lectureEvaluationId) ?: throw LectureEvaluationNotFoundException
+        if (lectureEvaluation.userId == userId) {
+            throw MyLectureEvaluationException
+        }
+
+        if (evaluationReportRepository.existsByLectureEvaluationIdAndUserId(lectureEvaluationId, userId)) {
+            throw EvaluationReportAlreadyExistsException
+        }
+
+        val evaluationReport = EvaluationReport(
+            lectureEvaluation = lectureEvaluation,
+            userId = userId,
+            content = createEvaluationReportRequest.content,
+        )
+        evaluationReportRepository.save(evaluationReport)
+        return genEvaluationReportDto(evaluationReport)
+    }
+
     @Cacheable("tag-recommended-evaluations")
     fun getLectureEvaluationsWithLectureFromTagRecommended(cursorId: Long?, pageable: Pageable): CursorPaginationForLectureEvaluationWithLectureDto {
         val lectureEvaluationsWithLecture = cursorId?.let {
@@ -350,6 +376,15 @@ class EvaluationService(
             lectureTitle = lectureEvaluationWithLecture.lectureTitle!!,
             isModifiable = lectureEvaluationWithLecture.userId == userId,
             isReportable = lectureEvaluationWithLecture.userId != userId,
+        )
+
+    private fun genEvaluationReportDto(evaluationReport: EvaluationReport): EvaluationReportDto =
+        EvaluationReportDto(
+            id = evaluationReport.id!!,
+            lectureEvaluationId = evaluationReport.lectureEvaluation.id!!,
+            userId = evaluationReport.userId,
+            content = evaluationReport.content,
+            isHidden = evaluationReport.isHidden,
         )
 }
 

@@ -2,6 +2,7 @@ package com.wafflestudio.snuttev.domain.evaluation.dto
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import org.hibernate.validator.constraints.Range
+import javax.validation.constraints.NotBlank
 import javax.validation.constraints.NotNull
 
 data class CreateEvaluationRequest(
@@ -30,4 +31,9 @@ data class CreateEvaluationRequest(
     @field:NotNull
     @field:Range(min = 0, max = 10)
     val rating: Double,
+)
+
+data class CreateEvaluationReportRequest(
+    @field:NotBlank
+    val content: String,
 )

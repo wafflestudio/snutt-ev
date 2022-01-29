@@ -13,3 +13,5 @@ object LectureEvaluationNotFoundException: SnuttException(ErrorType.LECTURE_EVAL
 object NotMyLectureEvaluationException: SnuttException(ErrorType.NOT_MY_LECTURE_EVALUATION)
 object WrongMainTagException: SnuttException(ErrorType.WRONG_MAIN_TAG)
 object WrongSearchTagException: SnuttException(ErrorType.WRONG_SEARCH_TAG)
+object MyLectureEvaluationException: SnuttException(ErrorType.MY_LECTURE_EVALUATION)
+object EvaluationReportAlreadyExistsException: SnuttException(ErrorType.EVALUATION_REPORT_ALREADY_EXISTS)
