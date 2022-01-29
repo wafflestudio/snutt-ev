@@ -36,12 +36,20 @@ class EvaluationController(
         return evaluationService.getEvaluationsOfLecture(userId, lectureId, cursor)
     }
 
+    @GetMapping("/v1/lectures/{id}/evaluations/users/me")
+    fun getLectureEvaluationsOfMe(
+        @PathVariable(value = "id") lectureId: Long,
+        @RequestAttribute(value = "UserId") userId: String,
+    ): LectureEvaluationsResponse {
+        return evaluationService.getMyEvaluationsOfLecture(userId, lectureId)
+    }
+
     @GetMapping("/v1/tags/main/{id}/evaluations")
     fun getMainTagEvaluations(
         @PathVariable(value = "id") tagId: Long,
         @RequestParam("cursor") cursor: String?,
         @RequestAttribute(value = "UserId") userId: String,
-    ): CursorPaginationResponse<LectureEvaluationWithSemesterDto> {
+    ): CursorPaginationResponse<LectureEvaluationWithSemesterAndTitleDto> {
         return evaluationService.getMainTagEvaluations(userId, tagId, cursor)
     }
 
