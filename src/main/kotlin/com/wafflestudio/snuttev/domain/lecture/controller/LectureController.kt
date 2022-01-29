@@ -1,6 +1,5 @@
 package com.wafflestudio.snuttev.domain.lecture.controller
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.wafflestudio.snuttev.domain.common.dto.PaginationResponse
 import com.wafflestudio.snuttev.domain.lecture.dto.*
 import com.wafflestudio.snuttev.domain.lecture.service.LectureService
@@ -15,7 +14,7 @@ class LectureController(
 ) {
 
     @GetMapping("/v1/lectures")
-    fun getLectures(@ModelAttribute params: SearchLectureRequest): PaginationResponse<SearchLectureResponse> {
+    fun getLectures(@ModelAttribute params: SearchLectureRequest): PaginationResponse<LectureDto> {
         return PaginationResponse(lectureService.search(params))
     }
 

@@ -2,9 +2,8 @@ package com.wafflestudio.snuttev.domain.lecture.service
 
 import com.wafflestudio.snuttev.domain.evaluation.dto.SemesterLectureDto
 import com.wafflestudio.snuttev.domain.lecture.dto.GetSemesterLecturesResponse
+import com.wafflestudio.snuttev.domain.lecture.dto.LectureDto
 import com.wafflestudio.snuttev.domain.lecture.dto.SearchLectureRequest
-import com.wafflestudio.snuttev.domain.lecture.dto.SearchLectureResponse
-import com.wafflestudio.snuttev.domain.lecture.dto.SearchQuery
 import com.wafflestudio.snuttev.domain.lecture.model.SemesterLecture
 import com.wafflestudio.snuttev.domain.lecture.repository.LectureRepository
 import com.wafflestudio.snuttev.domain.lecture.repository.SemesterLectureRepository
@@ -22,7 +21,7 @@ class LectureService(
     private val semesterLectureRepository: SemesterLectureRepository,
     private val tagRepository: TagRepository
 ) {
-    fun search(param: SearchLectureRequest): Page<SearchLectureResponse> {
+    fun search(param: SearchLectureRequest): Page<LectureDto> {
         val request = mappingTagsToLectureProperty(param)
         val pageable = PageRequest.of(param.page, 20)
         return when {
@@ -48,7 +47,7 @@ class LectureService(
         )
     }
 
-    private fun mappingTagsToLectureProperty(request: SearchLectureRequest): SearchQuery {
+    private fun mappingTagsToLectureProperty(request: SearchLectureRequest): SearchQueryDto {
         val tags = tagRepository.getTagsWithTagGroupByTagsIdIsIn(request.tags)
         val tagMap: Map<String, List<Any>> = tags.groupBy({ it.tagGroup.name }, {
             when (it.tagGroup.valueType) {
@@ -63,7 +62,7 @@ class LectureService(
             if (pair.size != 2) throw WrongSearchTagException
             Pair(pair[0].toInt(), pair[1].toInt())
         } ?: Pair(null, null)
-        return SearchQuery(
+        return SearchQueryDto(
             query = request.query,
             classification = tagMap["구분"]?.filterIsInstance<String>(),
             credit = tagMap["학점"]?.filterIsInstance<Int>(),
@@ -89,3 +88,14 @@ class LectureService(
         )
 
 }
+
+data class SearchQueryDto (
+    val query: String? = null,
+    val classification: List<String>? = null,
+    val credit: List<Int>? = null,
+    val academicYear: List<String>? = null,
+    val department: List<String>? = null,
+    val category: List<String>? = null,
+    val year: Int? = null,
+    val semester: Int? = null,
+)
