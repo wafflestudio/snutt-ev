@@ -47,7 +47,7 @@ class LectureEvaluation(
 
 ) : BaseEntity()
 
-data class LectureEvaluationWithSemester(
+data class LectureEvaluationWithLecture(
     val id: Long? = null,
 
     val userId: String? = null,
@@ -81,4 +81,6 @@ data class LectureEvaluationWithSemester(
     val semester: Int? = null,
 
     val lectureId: Long? = null,
+
+    val lectureTitle: String? = null,
 )

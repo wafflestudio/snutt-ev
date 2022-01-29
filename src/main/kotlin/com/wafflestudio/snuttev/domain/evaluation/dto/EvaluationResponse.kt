@@ -1,7 +1,6 @@
 package com.wafflestudio.snuttev.domain.evaluation.dto
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.wafflestudio.snuttev.domain.common.dto.CursorPaginationResponse
 
 
 data class LectureEvaluationDto(
@@ -147,4 +146,58 @@ data class LectureEvaluationWithSemesterDto(
 
     @JsonProperty("is_reportable")
     val isReportable: Boolean,
+)
+
+data class LectureEvaluationWithSemesterAndTitleDto(
+    val id: Long,
+
+    @JsonProperty("user_id")
+    val userId: String,
+
+    val content: String,
+
+    @JsonProperty("grade_satisfaction")
+    val gradeSatisfaction: Double,
+
+    @JsonProperty("teaching_skill")
+    val teachingSkill: Double,
+
+    val gains: Double,
+
+    @JsonProperty("life_balance")
+    val lifeBalance: Double,
+
+    val rating: Double,
+
+    @JsonProperty("like_count")
+    val likeCount: Long,
+
+    @JsonProperty("dislike_count")
+    val dislikeCount: Long,
+
+    @JsonProperty("is_hidden")
+    val isHidden: Boolean,
+
+    @JsonProperty("is_reported")
+    val isReported: Boolean,
+
+    val year: Int,
+
+    val semester: Int,
+
+    @JsonProperty("lecture_id")
+    val lectureId: Long,
+
+    @JsonProperty("lecture_title")
+    val lectureTitle: String,
+
+    @JsonProperty("is_modifiable")
+    val isModifiable: Boolean,
+
+    @JsonProperty("is_reportable")
+    val isReportable: Boolean,
+)
+
+data class LectureEvaluationsResponse(
+    val evaluations: List<LectureEvaluationWithSemesterDto>,
 )
