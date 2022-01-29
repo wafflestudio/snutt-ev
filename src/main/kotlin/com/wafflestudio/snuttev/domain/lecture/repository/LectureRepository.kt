@@ -6,10 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 
 interface LectureRepository : JpaRepository<Lecture, Long?>, LectureRepositoryCustom {
-    fun findByCourseNumberAndInstructor(
-        courseNumber: String?,
-        instructor: String,
-    ): Lecture?
+    fun findByCourseNumberAndInstructor(courseNumber: String, instructor: String): Lecture?
 
     @Query("""
         select new com.wafflestudio.snuttev.domain.lecture.model.LectureEvaluationSummaryDao(

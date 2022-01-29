@@ -56,3 +56,7 @@ data class LectureAndSemesterLecturesResponse(
     @JsonProperty("semester_lectures")
     val semesterLectures: List<SemesterLectureDto>
 )
+
+data class LectureIdResponse(
+    val id: Long,
+)
