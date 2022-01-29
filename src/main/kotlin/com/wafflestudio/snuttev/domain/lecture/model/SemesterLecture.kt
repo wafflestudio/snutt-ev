@@ -34,3 +34,33 @@ class SemesterLecture(
     @OneToMany(mappedBy = "semesterLecture")
     val evaluations: List<LectureEvaluation> = listOf()
 ) : BaseEntity()
+
+data class SemesterLectureWithLecture(
+    val id: Long? = null,
+
+    val lectureNumber: String,
+
+    val year: Int,
+
+    val semester: Int,
+
+    var credit: Int,
+
+    var extraInfo: String,
+
+    var academicYear: String,
+
+    var category: String,
+
+    var classification: String,
+
+    val lectureId: Long,
+
+    val title: String,
+
+    val instructor: String,
+
+    val department: String,
+
+    val courseNumber: String,
+)

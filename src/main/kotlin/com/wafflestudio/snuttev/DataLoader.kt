@@ -46,7 +46,7 @@ class DataLoader(
                 credit = 4,
                 academicYear = "3학년",
                 category = "",
-                classification = "전필",
+                classification = "전선",
             ),
             SemesterLecture(
                 lecture = lecture,
@@ -56,7 +56,7 @@ class DataLoader(
                 credit = 4,
                 academicYear = "3학년",
                 category = "",
-                classification = "전필",
+                classification = "전선",
             ),
             SemesterLecture(
                 lecture = lecture,
@@ -66,7 +66,7 @@ class DataLoader(
                 credit = 4,
                 academicYear = "3학년",
                 category = "",
-                classification = "전필",
+                classification = "전선",
             ),
             SemesterLecture(
                 lecture = lecture,
@@ -76,7 +76,7 @@ class DataLoader(
                 credit = 4,
                 academicYear = "3학년",
                 category = "",
-                classification = "전필",
+                classification = "전선",
             ),
         )
         semesterLectureRepository.saveAll(semesterLectures)

@@ -21,7 +21,7 @@ class LectureController(
     @GetMapping("/v1/lectures/{id}/semester-lectures")
     fun getSemesterLectures(
         @PathVariable(value = "id") lectureId: Long,
-    ): GetSemesterLecturesResponse {
+    ): LectureAndSemesterLecturesResponse {
         return lectureService.getSemesterLectures(lectureId)
     }
 }
