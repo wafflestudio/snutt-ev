@@ -36,7 +36,6 @@ class DataLoader(
             classification = "전선",
         )
         lectureRepository.save(lecture)
-
         val semesterLectures = listOf(
             SemesterLecture(
                 lecture = lecture,
@@ -81,6 +80,41 @@ class DataLoader(
         )
         semesterLectureRepository.saveAll(semesterLectures)
 
+        val lecture2 = Lecture(
+            title = "심리학개론",
+            instructor = "박형생",
+            department = "심리학과",
+            courseNumber = "045.012",
+            credit = 3,
+            academicYear = "1학년",
+            category = "인간과 사회",
+            classification = "교양",
+        )
+        lectureRepository.save(lecture2)
+        val semesterLectures2 = listOf(
+            SemesterLecture(
+                lecture = lecture,
+                lectureNumber = "001",
+                year = 2021,
+                semester = Semester.WINTER.value,
+                credit = 3,
+                academicYear = "1학년",
+                category = "인간과 사회",
+                classification = "교양",
+            ),
+            SemesterLecture(
+                lecture = lecture,
+                lectureNumber = "001",
+                year = 2021,
+                semester = Semester.AUTUMN.value,
+                credit = 3,
+                academicYear = "1학년",
+                category = "인간과 사회",
+                classification = "교양",
+            ),
+        )
+        semesterLectureRepository.saveAll(semesterLectures2)
+
         val mainTagGroup = TagGroup(
             name = "main",
             ordering = -1,
@@ -105,23 +139,28 @@ class DataLoader(
         val tags = listOf(
             Tag(
                 tagGroup = mainTagGroup,
-                name = "추천",
+                name = "최신",
                 ordering = 1,
             ),
             Tag(
                 tagGroup = mainTagGroup,
-                name = "명강",
+                name = "추천",
                 ordering = 2,
             ),
             Tag(
                 tagGroup = mainTagGroup,
-                name = "꿀강",
+                name = "명강",
                 ordering = 3,
             ),
             Tag(
                 tagGroup = mainTagGroup,
-                name = "고진감래",
+                name = "꿀강",
                 ordering = 4,
+            ),
+            Tag(
+                tagGroup = mainTagGroup,
+                name = "고진감래",
+                ordering = 5,
             ),
             Tag(
                 tagGroup = academicYearTagGroup,

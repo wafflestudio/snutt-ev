@@ -110,7 +110,7 @@ class EvaluationService(
                 throw WrongCursorFormatException
             }
 
-            lectureEvaluationRepository.findByLectureIdLessThanOrderByDesc(lectureId, cursorYear, cursorSemester, cursorId, pageable).map {
+            lectureEvaluationRepository.findByLectureIdLessThanOrderByDesc(lectureId, userId, cursorYear, cursorSemester, cursorId, pageable).map {
                 LectureEvaluationWithLecture(
                     id = (it["id"] as BigInteger).toLong(),
                     userId = it["userId"] as String,
@@ -130,7 +130,7 @@ class EvaluationService(
                     lectureTitle = it["lectureTitle"] as String?,
                 )
             }
-        } ?: lectureEvaluationRepository.findByLectureIdOrderByDesc(lectureId, pageable)
+        } ?: lectureEvaluationRepository.findByLectureIdOrderByDesc(lectureId, userId, pageable)
 
         val lastLectureEvaluationWithLecture = lectureEvaluationsWithLecture.lastOrNull()
 
@@ -139,7 +139,7 @@ class EvaluationService(
         }
 
         val isLast = lastLectureEvaluationWithLecture?.let {
-            lectureEvaluationRepository.existsByLectureIdLessThan(lectureId, it.year!!, it.semester!!, it.id!!) == null
+            lectureEvaluationRepository.existsByLectureIdLessThan(lectureId, userId, it.year!!, it.semester!!, it.id!!) == null
         } ?: true
 
         return CursorPaginationResponse(
@@ -175,6 +175,7 @@ class EvaluationService(
         }
 
         val cursorPaginationForLectureEvaluationWithLectureDto = when (tag.name) {
+            "최신" -> self.getLectureEvaluationsWithLectureFromTagRecent(cursorId, pageable)
             "추천" -> self.getLectureEvaluationsWithLectureFromTagRecommended(cursorId, pageable)
             "명강" -> self.getLectureEvaluationsWithLectureFromTagFine(cursorId, pageable)
             "꿀강" -> self.getLectureEvaluationsWithLectureFromTagHoney(cursorId, pageable)
@@ -192,7 +193,7 @@ class EvaluationService(
         )
     }
 
-    @CacheEvict("tag-recommended-evaluations", "tag-fine-evaluations", "tag-honey-evaluations", "tag-painsgains-evaluations", allEntries = true)
+    @CacheEvict("tag-recent-evaluations", "tag-recommended-evaluations", "tag-fine-evaluations", "tag-honey-evaluations", "tag-painsgains-evaluations", allEntries = true)
     @Transactional
     fun deleteLectureEvaluation(
         userId: String,
@@ -227,6 +228,27 @@ class EvaluationService(
         )
         evaluationReportRepository.save(evaluationReport)
         return genEvaluationReportDto(evaluationReport)
+    }
+
+    @Cacheable("tag-recent-evaluations")
+    fun getLectureEvaluationsWithLectureFromTagRecent(cursorId: Long?, pageable: Pageable): CursorPaginationForLectureEvaluationWithLectureDto {
+        val lectureEvaluationsWithLecture = cursorId?.let {
+            lectureEvaluationRepository.findByLecturesRecentLessThanOrderByDesc(cursorId, pageable)
+        } ?: lectureEvaluationRepository.findByLecturesRecentOrderByDesc(pageable)
+
+        val lastLectureEvaluationWithLecture = lectureEvaluationsWithLecture.lastOrNull()
+
+        val nextCursor = lastLectureEvaluationWithLecture?.id?.toString()
+
+        val isLast = lastLectureEvaluationWithLecture?.let {
+            lectureEvaluationRepository.existsByLecturesRecentLessThan(it.id!!) == null
+        } ?: true
+
+        return CursorPaginationForLectureEvaluationWithLectureDto(
+            lectureEvaluationsWithLecture = lectureEvaluationsWithLecture,
+            cursor = nextCursor,
+            last = isLast,
+        )
     }
 
     @Cacheable("tag-recommended-evaluations")
