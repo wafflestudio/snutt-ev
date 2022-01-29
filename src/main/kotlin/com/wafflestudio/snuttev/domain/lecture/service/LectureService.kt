@@ -1,10 +1,7 @@
 package com.wafflestudio.snuttev.domain.lecture.service
 
 import com.wafflestudio.snuttev.domain.evaluation.dto.SemesterLectureDto
-import com.wafflestudio.snuttev.domain.lecture.dto.LectureAndSemesterLecturesResponse
-import com.wafflestudio.snuttev.domain.lecture.dto.LectureDto
-import com.wafflestudio.snuttev.domain.lecture.dto.LectureIdResponse
-import com.wafflestudio.snuttev.domain.lecture.dto.SearchLectureRequest
+import com.wafflestudio.snuttev.domain.lecture.dto.*
 import com.wafflestudio.snuttev.domain.lecture.model.SemesterLectureWithLecture
 import com.wafflestudio.snuttev.domain.lecture.repository.LectureRepository
 import com.wafflestudio.snuttev.domain.lecture.repository.SemesterLectureRepository
@@ -37,7 +34,7 @@ class LectureService(
         val distinctLectures = snuttLectureInfos.associateBy{"${it.courseNumber}${it.instructor}"}
         val lectureKeys = distinctLectures.keys
         val snuttevLectures = lectureRepository.findAllByLectureKeys(lectureKeys)
-        return snuttevLectures.map {
+        return snuttevLectures.filter{ distinctLectures["${it.courseNumber}${it.instructor}"] != null }.map {
             val snuttInfo = distinctLectures["${it.courseNumber}${it.instructor}"]!!
             LectureTakenByUserResponse(
                 id = it.id!!,
