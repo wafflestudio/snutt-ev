@@ -9,6 +9,7 @@ enum class ErrorType(
     // 400
     WRONG_CURSOR_FORMAT(20001, HttpStatus.BAD_REQUEST),
     WRONG_MAIN_TAG(20002, HttpStatus.BAD_REQUEST),
+    WRONG_SEARCH_TAG(20003, HttpStatus.BAD_REQUEST),
 
     // 401
     UNAUTHORIZED(21001, HttpStatus.UNAUTHORIZED),

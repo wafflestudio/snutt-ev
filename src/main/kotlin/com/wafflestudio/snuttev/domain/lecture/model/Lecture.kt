@@ -29,6 +29,8 @@ class Lecture(
     @Enumerated(EnumType.STRING)
     var classification: String,
 
+    @OneToMany(mappedBy = "lecture")
+    val semesterLectures: List<SemesterLecture> = listOf()
 ) : BaseEntity()
 
 enum class LectureClassification(@get:JsonValue val value: String) {

@@ -11,15 +11,11 @@ class Tag(
     @JoinColumn(name = "tag_group_id")
     val tagGroup: TagGroup,
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     val name: String,
 
     @Column(nullable = false)
     val ordering: Int,
-
-    @Column(name = "value_type", nullable = false)
-    @Enumerated(EnumType.STRING)
-    val valueType: TagValueType,
 
     @Column(name = "int_value")
     val intValue: Int? = null,
@@ -28,9 +24,3 @@ class Tag(
     val stringValue: String? = null,
 
 ) : BaseEntity()
-
-enum class TagValueType {
-    INT,
-    STRING,
-    LOGIC,
-}
