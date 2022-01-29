@@ -123,7 +123,8 @@ class EvaluationService(
                     isReported = it["isReported"] as Boolean,
                     year = it["year"] as Int,
                     semester = it["semester"] as Int,
-                    lectureId = it["lectureId"] as Long,
+                    lectureId = (it["lectureId"] as BigInteger).toLong(),
+                    lectureTitle = it["lectureTitle"] as String?,
                 )
             }
         } ?: lectureEvaluationRepository.findByLectureIdOrderByDesc(lectureId, pageable)

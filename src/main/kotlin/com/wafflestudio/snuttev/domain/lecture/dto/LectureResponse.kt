@@ -32,7 +32,27 @@ data class LectureEvaluationSimpleSummary(
     val avgRating: Double?,
 )
 
-data class GetSemesterLecturesResponse(
+data class LectureAndSemesterLecturesResponse(
+    val id: Long,
+
+    val title: String?,
+
+    val instructor: String?,
+
+    val department: String?,
+
+    @JsonProperty("course_number")
+    val courseNumber: String?,
+
+    val credit: Int?,
+
+    @JsonProperty("academic_year")
+    val academicYear: String?,
+
+    val category: String?,
+
+    val classification: String?,
+
     @JsonProperty("semester_lectures")
     val semesterLectures: List<SemesterLectureDto>
 )
