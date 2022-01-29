@@ -17,6 +17,8 @@ data class TagDto(
 
     val name: String,
 
+    val description: String?,
+
     val ordering: Int,
 )
 

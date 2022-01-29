@@ -33,7 +33,7 @@ class LectureEvaluation(
     @Column(nullable = false)
     val rating: Double,
 
-    @Column(name = "life_count", nullable = false)
+    @Column(name = "like_count", nullable = false)
     val likeCount: Long = 0,
 
     @Column(name = "dislike_count", nullable = false)

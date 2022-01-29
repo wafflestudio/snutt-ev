@@ -38,6 +38,7 @@ class TagService(
         TagDto(
             id = tag.id!!,
             name = tag.name,
+            description = tag.description,
             ordering = tag.ordering,
         )
 

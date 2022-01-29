@@ -87,7 +87,7 @@ class LectureService(
             department = tagMap["학과"]?.filterIsInstance<String>(),
             category = tagMap["교양분류"]?.filterIsInstance<String>(),
             year = year,
-            semester = semester
+            semester = semester,
         )
     }
 
