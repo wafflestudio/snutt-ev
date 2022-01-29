@@ -14,7 +14,6 @@ class Tag(
     @Column(nullable = false)
     val name: String,
 
-    @Column(nullable = false)
     val description: String?,
 
     @Column(nullable = false)
