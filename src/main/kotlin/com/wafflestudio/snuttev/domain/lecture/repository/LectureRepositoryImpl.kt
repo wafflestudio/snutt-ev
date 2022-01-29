@@ -10,16 +10,16 @@ import com.querydsl.jpa.impl.JPAQueryFactory
 import com.wafflestudio.snuttev.domain.evaluation.model.QLectureEvaluation.lectureEvaluation
 import com.wafflestudio.snuttev.domain.lecture.dto.LectureDto
 import com.wafflestudio.snuttev.domain.lecture.dto.LectureEvaluationSimpleSummary
-import com.wafflestudio.snuttev.domain.lecture.dto.SearchQuery
 import com.wafflestudio.snuttev.domain.lecture.model.QLecture.lecture
 import com.wafflestudio.snuttev.domain.lecture.model.QSemesterLecture.semesterLecture
+import com.wafflestudio.snuttev.domain.lecture.service.SearchQueryDto
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
 
 
 class LectureRepositoryImpl(private val queryFactory: JPAQueryFactory) : LectureRepositoryCustom {
-    override fun searchLectures(request: SearchQuery, pageable: Pageable): Page<LectureDto> {
+    override fun searchLectures(request: SearchQueryDto, pageable: Pageable): Page<LectureDto> {
         val queryResult = queryFactory.select(
             Projections.constructor(
                 LectureDto::class.java,
@@ -55,7 +55,7 @@ class LectureRepositoryImpl(private val queryFactory: JPAQueryFactory) : Lecture
         return PageImpl(content, pageable, total)
     }
 
-    override fun searchSemesterLectures(request: SearchQuery, pageable: Pageable): Page<LectureDto> {
+    override fun searchSemesterLectures(request: SearchQueryDto, pageable: Pageable): Page<LectureDto> {
         val queryResult =
             queryFactory.select(
                 Projections.constructor(
