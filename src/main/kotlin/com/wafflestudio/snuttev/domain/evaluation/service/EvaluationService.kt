@@ -1,6 +1,7 @@
 package com.wafflestudio.snuttev.domain.evaluation.service
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo
+import com.wafflestudio.snuttev.domain.common.dto.CursorPaginationResponse
 import com.wafflestudio.snuttev.domain.evaluation.dto.*
 import com.wafflestudio.snuttev.domain.evaluation.model.LectureEvaluation
 import com.wafflestudio.snuttev.domain.evaluation.model.LectureEvaluationWithSemester
@@ -87,7 +88,7 @@ class EvaluationService(
             userId: String,
             lectureId: Long,
             cursor: String?,
-    ): CursorPaginationForLectureEvaluationWithSemesterResponse {
+    ): CursorPaginationResponse<LectureEvaluationWithSemesterDto> {
         val pageable = PageRequest.of(0, defaultPageSize)
         val lectureEvaluationsCount = lectureEvaluationRepository.countByLectureId(lectureId)
 
@@ -137,7 +138,7 @@ class EvaluationService(
             lectureEvaluationRepository.existsByLectureIdLessThan(lectureId, it.year!!, it.semester!!, it.id!!) == null
         } ?: true
 
-        return CursorPaginationForLectureEvaluationWithSemesterResponse(
+        return CursorPaginationResponse(
             content = lectureEvaluationsWithSemester.map { genLectureEvaluationWithSemesterDto(userId, it) },
             cursor = nextCursor,
             size = defaultPageSize,
@@ -150,7 +151,7 @@ class EvaluationService(
         userId: String,
         tagId: Long,
         cursor: String?,
-    ): CursorPaginationForLectureEvaluationWithSemesterResponse {
+    ): CursorPaginationResponse<LectureEvaluationWithSemesterDto> {
         val tag = tagRepository.findByIdOrNull(tagId) ?: throw TagNotFoundException
 
         val pageable = PageRequest.of(0, defaultPageSize)
@@ -170,7 +171,7 @@ class EvaluationService(
             else -> throw WrongMainTagException
         }
 
-        return CursorPaginationForLectureEvaluationWithSemesterResponse(
+        return CursorPaginationResponse(
             content = cursorPaginationForLectureEvaluationWithSemesterDto.lectureEvaluationsWithSemester.map {
                 genLectureEvaluationWithSemesterDto(userId, it)
             },

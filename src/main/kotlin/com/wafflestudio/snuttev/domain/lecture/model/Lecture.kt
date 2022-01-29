@@ -26,17 +26,11 @@ class Lecture(
 
     var category: String,
 
-    @Enumerated(EnumType.STRING)
     var classification: String,
 
     @OneToMany(mappedBy = "lecture")
     val semesterLectures: List<SemesterLecture> = listOf()
 ) : BaseEntity()
-
-enum class LectureClassification(@get:JsonValue val value: String) {
-    LIBERAL_EDUCATION("교양")
-
-}
 
 data class LectureEvaluationSummaryDao(
     val id: Long?,

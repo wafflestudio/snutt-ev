@@ -1,5 +1,6 @@
 package com.wafflestudio.snuttev.domain.evaluation.controller
 
+import com.wafflestudio.snuttev.domain.common.dto.CursorPaginationResponse
 import com.wafflestudio.snuttev.domain.evaluation.dto.*
 import com.wafflestudio.snuttev.domain.evaluation.service.EvaluationService
 import org.springframework.web.bind.annotation.*
@@ -31,7 +32,7 @@ class EvaluationController(
         @PathVariable(value = "id") lectureId: Long,
         @RequestParam("cursor") cursor: String?,
         @RequestAttribute(value = "UserId") userId: String,
-    ): CursorPaginationForLectureEvaluationWithSemesterResponse {
+    ): CursorPaginationResponse<LectureEvaluationWithSemesterDto> {
         return evaluationService.getEvaluationsOfLecture(userId, lectureId, cursor)
     }
 
@@ -40,7 +41,7 @@ class EvaluationController(
         @PathVariable(value = "id") tagId: Long,
         @RequestParam("cursor") cursor: String?,
         @RequestAttribute(value = "UserId") userId: String,
-    ): CursorPaginationForLectureEvaluationWithSemesterResponse {
+    ): CursorPaginationResponse<LectureEvaluationWithSemesterDto> {
         return evaluationService.getMainTagEvaluations(userId, tagId, cursor)
     }
 

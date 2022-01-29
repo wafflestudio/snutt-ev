@@ -80,5 +80,5 @@ data class LectureEvaluationWithSemester(
 
     val semester: Int? = null,
 
-    val lectureId: Long?
+    val lectureId: Long? = null,
 )

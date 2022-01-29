@@ -20,7 +20,7 @@ spring:
     ttl: 5m
   data:
     mongodb:
-      host: snutt-mongo-dev.wafflestudio.com
+      host: localhost
       port: 27017
       authentication-database: admin
       database: snutt

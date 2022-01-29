@@ -24,14 +24,15 @@ data class PaginationResponse<T>(
     )
 }
 
-abstract class CursorPaginationResponse (
-    open val content: List<Any>,
+data class CursorPaginationResponse<T> (
+    val content: List<T>,
 
-    open val cursor: String?,
+    val cursor: String?,
 
-    open val size: Int,
+    val size: Int,
 
-    open val last: Boolean,
+    val last: Boolean,
 
-    open val totalCount: Long? = null
+    @JsonProperty("total_count")
+    val totalCount: Long? = null
 )

@@ -102,19 +102,6 @@ data class LectureEvaluationSummary(
     val avgRating: Double?,
 )
 
-data class CursorPaginationForLectureEvaluationWithSemesterResponse(
-    override val content: List<LectureEvaluationWithSemesterDto>,
-
-    override val cursor: String?,
-
-    override val size: Int,
-
-    override val last: Boolean,
-
-    @JsonProperty("total_count")
-    override val totalCount: Long? = null
-): CursorPaginationResponse(content, cursor, size, last, totalCount)
-
 data class LectureEvaluationWithSemesterDto(
     val id: Long,
 
