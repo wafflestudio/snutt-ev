@@ -1,8 +1,8 @@
 package com.wafflestudio.snuttev.domain.lecture.dto
 
 data class SearchLectureRequest (
-    val query: String,
-    val tags: List<Long>,
+    val query: String = "",
+    val tags: List<Long> = listOf(),
     val page: Int = 0
 )
 
