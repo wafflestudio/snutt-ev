@@ -83,4 +83,6 @@ data class LectureEvaluationWithLecture(
     val lectureId: Long? = null,
 
     val lectureTitle: String? = null,
+
+    val lectureInstructor: String? = null,
 )

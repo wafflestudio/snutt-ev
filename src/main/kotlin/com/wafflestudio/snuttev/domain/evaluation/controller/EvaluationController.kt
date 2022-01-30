@@ -49,7 +49,7 @@ class EvaluationController(
         @PathVariable(value = "id") tagId: Long,
         @RequestParam("cursor") cursor: String?,
         @RequestAttribute(value = "UserId") userId: String,
-    ): CursorPaginationResponse<LectureEvaluationWithSemesterAndTitleDto> {
+    ): CursorPaginationResponse<LectureEvaluationWithLectureDto> {
         return evaluationService.getMainTagEvaluations(userId, tagId, cursor)
     }
 
