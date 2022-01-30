@@ -6,6 +6,7 @@ import com.wafflestudio.snuttev.domain.common.dto.ListResponse
 import com.wafflestudio.snuttev.domain.common.dto.PaginationResponse
 import com.wafflestudio.snuttev.domain.lecture.dto.*
 import com.wafflestudio.snuttev.domain.lecture.service.LectureService
+import io.swagger.v3.oas.annotations.Parameter
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -36,7 +37,7 @@ class LectureController(
 
     @GetMapping("/v1/users/me/lectures/latest")
     fun getLecturesTakenByCurrentUser(
-        @RequestParam("snutt_lecture_info") snuttLectureInfoString: String? = "",
+        @Parameter(hidden = true) @RequestParam("snutt_lecture_info") snuttLectureInfoString: String? = "",
     ): ListResponse<LectureTakenByUserResponse> {
         val snuttLectureInfos: List<SnuttLectureInfo> =
             objectMapper.readValue(snuttLectureInfoString ?: "")

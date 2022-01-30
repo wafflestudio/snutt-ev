@@ -11,11 +11,11 @@ open class BaseEntity (
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     open val id: Long? = null,
 
-    @Column(nullable = false)
+    @Column(name = "created_at", nullable = false)
     open val createdAt: LocalDateTime = LocalDateTime.now(),
 
     @field:UpdateTimestamp
-    @Column(nullable = false)
+    @Column(name = "updated_at", nullable = false)
     open val updatedAt: LocalDateTime? = LocalDateTime.now(),
 
 )

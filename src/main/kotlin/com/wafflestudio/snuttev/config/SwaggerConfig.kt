@@ -23,12 +23,10 @@ class SwaggerConfig {
                     Responses 의 "user_id" 는 /ev-service/* 를 routing하는 환경에서 실제로는 아래와 같은 schema로 변환됩니다.
                     
                     "user": {
-                        "is_admin": false,
-                        "reg_date": "2022-01-23T00:00:00.000Z",
-                        "notification_checked_at": "2021-07-24T08:28:34.804Z",
-                        "email": "bdv111@wafflestudio.com",
-                        "local_id": "bdv111",
-                        "fb_name": null
+                        "id": "string",
+                        "email": "string", (nullable)
+                        "local_id": "string", (nullable)
+                        "fb_name": "string" (nullable)
                     }
                 """)
                 .version("v0.0.1")
