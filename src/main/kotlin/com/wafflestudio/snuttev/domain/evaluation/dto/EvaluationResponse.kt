@@ -148,7 +148,7 @@ data class LectureEvaluationWithSemesterDto(
     val isReportable: Boolean,
 )
 
-data class LectureEvaluationWithSemesterAndTitleDto(
+data class LectureEvaluationWithLectureDto(
     val id: Long,
 
     @JsonProperty("user_id")
@@ -185,17 +185,21 @@ data class LectureEvaluationWithSemesterAndTitleDto(
 
     val semester: Int,
 
-    @JsonProperty("lecture_id")
-    val lectureId: Long,
-
-    @JsonProperty("lecture_title")
-    val lectureTitle: String,
+    val lecture: SimpleLectureDto,
 
     @JsonProperty("is_modifiable")
     val isModifiable: Boolean,
 
     @JsonProperty("is_reportable")
     val isReportable: Boolean,
+)
+
+data class SimpleLectureDto(
+    val id: Long,
+
+    val title: String,
+
+    val instructor: String,
 )
 
 data class LectureEvaluationsResponse(

@@ -128,6 +128,7 @@ class EvaluationService(
                     semester = it["semester"] as Int,
                     lectureId = (it["lectureId"] as BigInteger).toLong(),
                     lectureTitle = it["lectureTitle"] as String?,
+                    lectureInstructor = it["lectureInstructor"] as String?,
                 )
             }
         } ?: lectureEvaluationRepository.findByLectureIdOrderByDesc(lectureId, userId, pageable)
@@ -162,7 +163,7 @@ class EvaluationService(
         userId: String,
         tagId: Long,
         cursor: String?,
-    ): CursorPaginationResponse<LectureEvaluationWithSemesterAndTitleDto> {
+    ): CursorPaginationResponse<LectureEvaluationWithLectureDto> {
         val tag = tagRepository.findByIdOrNull(tagId) ?: throw TagNotFoundException
 
         val pageable = PageRequest.of(0, defaultPageSize)
@@ -185,7 +186,7 @@ class EvaluationService(
 
         return CursorPaginationResponse(
             content = cursorPaginationForLectureEvaluationWithLectureDto.lectureEvaluationsWithLecture.map {
-                genLectureEvaluationWithSemesterAndTitleDto(userId, it)
+                genLectureEvaluationWithLectureDto(userId, it)
             },
             cursor = cursorPaginationForLectureEvaluationWithLectureDto.cursor,
             size = defaultPageSize,
@@ -375,11 +376,11 @@ class EvaluationService(
             isReportable = lectureEvaluationWithLecture.userId != userId,
         )
 
-    private fun genLectureEvaluationWithSemesterAndTitleDto(
+    private fun genLectureEvaluationWithLectureDto(
         userId: String,
         lectureEvaluationWithLecture: LectureEvaluationWithLecture,
-    ): LectureEvaluationWithSemesterAndTitleDto =
-        LectureEvaluationWithSemesterAndTitleDto(
+    ): LectureEvaluationWithLectureDto =
+        LectureEvaluationWithLectureDto(
             id = lectureEvaluationWithLecture.id!!,
             userId = lectureEvaluationWithLecture.userId!!,
             content = lectureEvaluationWithLecture.content!!,
@@ -394,8 +395,11 @@ class EvaluationService(
             isReported = lectureEvaluationWithLecture.isReported!!,
             year = lectureEvaluationWithLecture.year!!,
             semester = lectureEvaluationWithLecture.semester!!,
-            lectureId = lectureEvaluationWithLecture.lectureId!!,
-            lectureTitle = lectureEvaluationWithLecture.lectureTitle!!,
+            lecture = SimpleLectureDto(
+                id = lectureEvaluationWithLecture.lectureId!!,
+                title = lectureEvaluationWithLecture.lectureTitle!!,
+                instructor = lectureEvaluationWithLecture.lectureInstructor!!,
+            ),
             isModifiable = lectureEvaluationWithLecture.userId == userId,
             isReportable = lectureEvaluationWithLecture.userId != userId,
         )
