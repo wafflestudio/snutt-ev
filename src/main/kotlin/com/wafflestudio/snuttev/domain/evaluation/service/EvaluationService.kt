@@ -36,7 +36,7 @@ class EvaluationService(
 
     private val defaultPageSize = 3
 
-    @CacheEvict("tag-recent-evaluations")
+    @CacheEvict("tag-recent-evaluations", allEntries = true)
     fun createEvaluation(
         userId: String,
         semesterLectureId: Long,
