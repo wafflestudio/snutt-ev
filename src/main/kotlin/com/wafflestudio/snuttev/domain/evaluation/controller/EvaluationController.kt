@@ -3,6 +3,11 @@ package com.wafflestudio.snuttev.domain.evaluation.controller
 import com.wafflestudio.snuttev.domain.common.dto.CursorPaginationResponse
 import com.wafflestudio.snuttev.domain.evaluation.dto.*
 import com.wafflestudio.snuttev.domain.evaluation.service.EvaluationService
+import com.wafflestudio.snuttev.error.ErrorResponse
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.media.Content
+import io.swagger.v3.oas.annotations.media.Schema
+import io.swagger.v3.oas.annotations.responses.ApiResponse
 import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
 
@@ -11,6 +16,10 @@ class EvaluationController(
     private val evaluationService: EvaluationService,
 ) {
 
+    @Operation(responses = [
+        ApiResponse(responseCode = "200"),
+        ApiResponse(responseCode = "409", description = "29001 EVALUATION_ALREADY_EXISTS", content = [Content(schema = Schema(implementation = ErrorResponse::class))]),
+    ])
     @PostMapping("/v1/semester-lectures/{id}/evaluations")
     fun createEvaluation(
         @PathVariable(value = "id") semesterLectureId: Long,
@@ -27,6 +36,7 @@ class EvaluationController(
         return evaluationService.getEvaluationSummaryOfLecture(lectureId)
     }
 
+    @Operation(description = "해당 강의의 강의평 전체 수를 total_count, 자신의 강의평을 제외한 강의평들을 content로 제공")
     @GetMapping("/v1/lectures/{id}/evaluations")
     fun getLectureEvaluations(
         @PathVariable(value = "id") lectureId: Long,
@@ -61,6 +71,10 @@ class EvaluationController(
         return evaluationService.deleteLectureEvaluation(userId, evaluationId)
     }
 
+    @Operation(responses = [
+        ApiResponse(responseCode = "200"),
+        ApiResponse(responseCode = "409", description = "29003 EVALUATION_REPORT_ALREADY_EXISTS", content = [Content(schema = Schema(implementation = ErrorResponse::class))]),
+    ])
     @PostMapping("/v1/evaluations/{id}/report")
     fun reportLectureEvaluation(
         @PathVariable(value = "id") evaluationId: Long,
