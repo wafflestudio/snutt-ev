@@ -10,6 +10,5 @@ class HealthCheckController {
     @Operation(hidden = true)
     @GetMapping("/health_check")
     fun healthCheck() {
-
     }
 }
