@@ -83,5 +83,4 @@ class EvaluationController(
     ): EvaluationReportDto {
         return evaluationService.reportLectureEvaluation(userId, evaluationId, createEvaluationReportRequest)
     }
-
 }
