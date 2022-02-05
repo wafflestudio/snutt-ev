@@ -30,6 +30,7 @@ class TagService(
             id = tagGroup.id!!,
             name = tagGroup.name,
             ordering = tagGroup.ordering,
+            color = tagGroup.color,
             tags = tagGroup.tags.map { genTagDto(it) },
         )
     }
