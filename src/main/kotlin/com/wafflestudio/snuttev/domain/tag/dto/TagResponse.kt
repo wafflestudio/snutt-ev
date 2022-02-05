@@ -9,6 +9,8 @@ data class TagGroupDto(
 
     val ordering: Int,
 
+    val color: String?,
+
     val tags: List<TagDto>
 )
 

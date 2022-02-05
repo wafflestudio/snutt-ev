@@ -118,16 +118,19 @@ class DataLoader(
         val mainTagGroup = TagGroup(
             name = "main",
             ordering = -1,
+            color = null,
             valueType = TagValueType.LOGIC,
         )
         val academicYearTagGroup = TagGroup(
             name = "학년",
             ordering = 1,
+            color = "#E54459",
             valueType = TagValueType.STRING,
         )
         val creditTagGroup = TagGroup(
             name = "학점",
             ordering = 2,
+            color = "#A6D930",
             valueType = TagValueType.INT,
         )
         val tagGroups = listOf(
