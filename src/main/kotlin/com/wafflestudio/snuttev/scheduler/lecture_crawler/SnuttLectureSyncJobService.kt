@@ -145,7 +145,6 @@ class SnuttLectureSyncJobService(
             snuttSemesterLecture.year,
             snuttSemesterLecture.semester,
             snuttSemesterLecture.courseNumber,
-            snuttSemesterLecture.lectureNumber
         )
     }
 
@@ -154,11 +153,10 @@ class SnuttLectureSyncJobService(
             semesterLecture.year,
             semesterLecture.semester,
             semesterLecture.lecture.courseNumber,
-            semesterLecture.lectureNumber
         )
     }
 
-    private fun semesterLectureKeyOf(year: Int, semester: Int, courseNumber: String, lectureNumber: String): String {
-        return "${year},${semester},${courseNumber},${lectureNumber}"
+    private fun semesterLectureKeyOf(year: Int, semester: Int, courseNumber: String): String {
+        return "${year},${semester},${courseNumber}"
     }
 }

@@ -5,7 +5,7 @@ import com.wafflestudio.snuttev.domain.evaluation.model.LectureEvaluation
 import javax.persistence.*
 
 @Entity
-@Table(uniqueConstraints = [UniqueConstraint(columnNames = ["lecture_id", "lecture_number", "year", "semester"])])
+@Table(uniqueConstraints = [UniqueConstraint(columnNames = ["lecture_id", "year", "semester"])])
 class SemesterLecture(
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
