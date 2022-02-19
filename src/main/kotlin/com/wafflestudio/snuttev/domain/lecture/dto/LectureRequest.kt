@@ -11,7 +11,7 @@ data class SearchLectureRequest(
 data class SnuttLectureInfo(
     val year: Int,
     val semester: Int,
-    val instructor: String,
+    val instructor: String?,
     @JsonProperty("course_number")
-    val courseNumber: String,
+    val courseNumber: String?,
 )
