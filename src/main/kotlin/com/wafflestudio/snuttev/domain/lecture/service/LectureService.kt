@@ -31,7 +31,9 @@ class LectureService(
     }
 
     fun getSnuttevLecturesWithSnuttLectureInfos(snuttLectureInfos: List<SnuttLectureInfo>): List<LectureTakenByUserResponse> {
-        val distinctLectures = snuttLectureInfos.associateBy { "${it.courseNumber}${it.instructor}" }
+        val distinctLectures = snuttLectureInfos
+            .filter { !it.courseNumber.isNullOrEmpty() && !it.instructor.isNullOrEmpty() }
+            .associateBy { "${it.courseNumber}${it.instructor}" }
         val lectureKeys = distinctLectures.keys
         val snuttevLectures = lectureRepository.findAllByLectureKeys(lectureKeys)
         return snuttevLectures.filter { distinctLectures["${it.courseNumber}${it.instructor}"] != null }.map {

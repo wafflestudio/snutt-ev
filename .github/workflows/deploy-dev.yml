@@ -52,9 +52,9 @@ jobs:
         run: |
           aws elasticbeanstalk create-application-version \
             --application-name snutt-ev-server \
-            --version-label $BUILD_NUMBER \
-            --description $BUILD_NUMBER \
+            --version-label dev-$BUILD_NUMBER \
+            --description dev-$BUILD_NUMBER \
             --source-bundle S3Bucket=$S3_BUCKET_NAME,S3Key='deploy-dev.zip'
           aws elasticbeanstalk update-environment \
             --environment-name snutt-ev-server-dev \
-            --version-label $BUILD_NUMBER
+            --version-label dev-$BUILD_NUMBER
