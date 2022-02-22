@@ -40,7 +40,7 @@ class SnuttLectureSyncJobService(
         val latestSnuttSemesterLectures = snuttSemesterLectureRepository.findMongoSemesterLecturesByYearAndSemester(
             targetYear,
             targetSemester.value
-        )
+        ).filter { it.instructor.isNotEmpty() }
         val existingSemesterLectures =
             semesterLectureRepository.findAllByYearAndSemester(targetYear, targetSemester.value)
 
@@ -65,7 +65,7 @@ class SnuttLectureSyncJobService(
         existingSemesterLectures: List<SemesterLecture>
     ): List<SemesterLecture> {
         val mergedLecturesMap: Map<String, Lecture> =
-            extractLecturesFromNewSemesterLecturesAndMergeThemWithOriginal(snuttSemesterLectures)
+            mergeLecturesFromSemesterLecturesWithExistingLectures(snuttSemesterLectures)
         val existingSemesterLecturesMap: Map<String, SemesterLecture> =
             existingSemesterLectures.associateBy { semesterLectureKeyOf(it) }
 
@@ -82,7 +82,7 @@ class SnuttLectureSyncJobService(
         }
     }
 
-    private fun extractLecturesFromNewSemesterLecturesAndMergeThemWithOriginal(
+    private fun mergeLecturesFromSemesterLecturesWithExistingLectures(
         newSnuttSemesterLectures: List<SnuttSemesterLecture>
     ): Map<String, Lecture> {
         val originalLecturesMap = lectureRepository.findAll()
@@ -117,7 +117,6 @@ class SnuttLectureSyncJobService(
     ): SemesterLecture {
         return SemesterLecture(
             lecture,
-            e.lectureNumber,
             e.year,
             e.semester,
             e.credit,

@@ -12,9 +12,6 @@ class SemesterLecture(
     @JoinColumn(name = "lecture_id")
     var lecture: Lecture,
 
-    @Column(name = "lecture_number")
-    val lectureNumber: String,
-
     val year: Int,
 
     val semester: Int,

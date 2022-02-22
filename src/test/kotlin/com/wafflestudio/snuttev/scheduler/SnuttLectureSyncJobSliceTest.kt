@@ -59,7 +59,7 @@ class SnuttLectureSyncJobSliceTest(
         )
     }
 
-    val autumnSemesterLectures = listOf<SnuttSemesterLecture>(
+    val autumnSemesterLectures = listOf(
         makeTestSnuttSemesterLecture(
             year = 2021,
             semester = 3,
@@ -223,7 +223,7 @@ class SnuttLectureSyncJobSliceTest(
 
     @Test
     @Transactional
-    fun `기존에 들어있던 SemesterLecture에 courseNumber, lectureNumber가 같은 semester가 업데이트 된 경우 정상 업데이트 작동 확인`() {
+    fun `기존에 들어있던 SemesterLecture에 courseNumber가 같은 semester가 업데이트 된 경우 정상 업데이트 작동 확인`() {
 
         given(snuttSemesterLectureRepository.findAll()).willReturn(
             listOf(
