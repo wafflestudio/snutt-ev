@@ -177,18 +177,18 @@ class SnuttLectureSyncJobSliceTest(
         snuttLectureSyncJobService.migrateAllLectureDataFromSnutt()
         val lectures = lectureRepository.findAll()
 
-        assertEquals(lectures.size, 11)
+        assertEquals(11, lectures.size)
     }
 
     @Test
     @Transactional
-    fun `snutt 전체 강의 데이터 migration 시에 course번호와 lecture번호가 중복되는 데이터는 중복해 저장하지 않는다`() {
+    fun `snutt 전체 강의 데이터 migration 시에 강의와 학기가 중복되는 데이터는 중복해 저장하지 않는다`() {
         given(snuttSemesterLectureRepository.findAll()).willReturn(autumnSemesterLectures + winterSemesterLectures)
 
         snuttLectureSyncJobService.migrateAllLectureDataFromSnutt()
         val semesterLectures = semesterLectureRepository.findAll()
 
-        assertEquals(semesterLectures.size, 13)
+        assertEquals(12, semesterLectures.size)
     }
 
     @Test
@@ -204,8 +204,8 @@ class SnuttLectureSyncJobSliceTest(
         val lectures = lectureRepository.findAll()
         val semesterLectures = semesterLectureRepository.findAll()
 
-        assertEquals(lectures.size, 5)
-        assertEquals(semesterLectures.size, 6)
+        assertEquals(5, lectures.size )
+        assertEquals(5, semesterLectures.size )
     }
 
     @Test
@@ -218,12 +218,12 @@ class SnuttLectureSyncJobSliceTest(
         snuttLectureSyncJobService.migrateAllLectureDataFromSnutt()
         val semesterLecturesAfter = semesterLectureRepository.findAll()
 
-        assertIterableEquals(semesterLecturesAfter, semesterLecturesBefore)
+        assertIterableEquals(semesterLecturesBefore, semesterLecturesAfter)
     }
 
     @Test
     @Transactional
-    fun `기존에 들어있던 SemesterLecture에 courseNumber가 같은 semester가 업데이트 된 경우 정상 업데이트 작동 확인`() {
+    fun `기존에 들어있던 SemesterLecture에 lecture가 같은 semester가 업데이트 된 경우 정상 업데이트 작동 확인`() {
 
         given(snuttSemesterLectureRepository.findAll()).willReturn(
             listOf(

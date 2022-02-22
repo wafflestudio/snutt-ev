@@ -35,8 +35,6 @@ class SemesterLecture(
 data class SemesterLectureWithLecture(
     val id: Long? = null,
 
-    val lectureNumber: String,
-
     val year: Int,
 
     val semester: Int,

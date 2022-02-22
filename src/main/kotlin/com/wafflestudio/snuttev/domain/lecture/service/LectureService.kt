@@ -115,7 +115,6 @@ class LectureService(
     private fun genSemesterLectureDto(semesterLectureWithLecture: SemesterLectureWithLecture): SemesterLectureDto =
         SemesterLectureDto(
             id = semesterLectureWithLecture.id!!,
-            lectureNumber = semesterLectureWithLecture.lectureNumber,
             year = semesterLectureWithLecture.year,
             semester = semesterLectureWithLecture.semester,
             credit = semesterLectureWithLecture.credit,

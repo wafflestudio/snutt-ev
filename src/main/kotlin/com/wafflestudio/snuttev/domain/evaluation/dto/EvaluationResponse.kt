@@ -40,9 +40,6 @@ data class LectureEvaluationDto(
 data class SemesterLectureDto(
     val id: Long,
 
-    @JsonProperty("lecture_number")
-    val lectureNumber: String,
-
     val year: Int,
 
     val semester: Int,
