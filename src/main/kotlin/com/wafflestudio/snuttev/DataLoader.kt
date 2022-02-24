@@ -39,7 +39,6 @@ class DataLoader(
         val semesterLectures = listOf(
             SemesterLecture(
                 lecture = lecture,
-                lectureNumber = "001",
                 year = 2019,
                 semester = Semester.AUTUMN.value,
                 credit = 4,
@@ -49,7 +48,6 @@ class DataLoader(
             ),
             SemesterLecture(
                 lecture = lecture,
-                lectureNumber = "001",
                 year = 2019,
                 semester = Semester.SPRING.value,
                 credit = 4,
@@ -59,7 +57,6 @@ class DataLoader(
             ),
             SemesterLecture(
                 lecture = lecture,
-                lectureNumber = "001",
                 year = 2020,
                 semester = Semester.AUTUMN.value,
                 credit = 4,
@@ -69,7 +66,6 @@ class DataLoader(
             ),
             SemesterLecture(
                 lecture = lecture,
-                lectureNumber = "001",
                 year = 2020,
                 semester = Semester.SPRING.value,
                 credit = 4,
@@ -94,7 +90,6 @@ class DataLoader(
         val semesterLectures2 = listOf(
             SemesterLecture(
                 lecture = lecture,
-                lectureNumber = "001",
                 year = 2021,
                 semester = Semester.WINTER.value,
                 credit = 3,
@@ -104,7 +99,6 @@ class DataLoader(
             ),
             SemesterLecture(
                 lecture = lecture,
-                lectureNumber = "001",
                 year = 2021,
                 semester = Semester.AUTUMN.value,
                 credit = 3,
