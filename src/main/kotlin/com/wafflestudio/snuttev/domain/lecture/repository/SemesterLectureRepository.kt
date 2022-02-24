@@ -10,7 +10,7 @@ interface SemesterLectureRepository : JpaRepository<SemesterLecture, Long> {
 
     @Query("""
         select new com.wafflestudio.snuttev.domain.lecture.model.SemesterLectureWithLecture( 
-        sl.id, sl.lectureNumber, sl.year, sl.semester, sl.credit, sl.extraInfo, sl.academicYear, sl.category, 
+        sl.id, sl.year, sl.semester, sl.credit, sl.extraInfo, sl.academicYear, sl.category, 
         sl.classification, sl.lecture.id, sl.lecture.title, sl.lecture.instructor, sl.lecture.department, sl.lecture.courseNumber) 
         from SemesterLecture sl 
         where sl.lecture.id = :lectureId 
