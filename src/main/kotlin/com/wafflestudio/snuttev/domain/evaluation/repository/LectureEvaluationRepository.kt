@@ -2,6 +2,7 @@ package com.wafflestudio.snuttev.domain.evaluation.repository
 
 import com.wafflestudio.snuttev.domain.evaluation.model.LectureEvaluation
 import com.wafflestudio.snuttev.domain.evaluation.model.LectureEvaluationWithLecture
+import com.wafflestudio.snuttev.domain.lecture.model.LectureClassification
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
@@ -49,37 +50,41 @@ interface LectureEvaluationRepository : JpaRepository<LectureEvaluation, Long> {
         select new com.wafflestudio.snuttev.domain.evaluation.model.LectureEvaluationWithLecture(
         le.id, le.userId, le.content, le.gradeSatisfaction, le.teachingSkill, le.gains, le.lifeBalance, le.rating, 
         le.likeCount, le.dislikeCount, le.isHidden, le.isReported, sl.year, sl.semester, sl.lecture.id, sl.lecture.title, sl.lecture.instructor) 
-        from LectureEvaluation le inner join le.semesterLecture sl where le.isHidden = false
+        from LectureEvaluation le inner join le.semesterLecture sl where le.isHidden = false 
+        and sl.classification = :classification 
         order by le.id desc
     """
     )
-    fun findByLecturesRecentOrderByDesc(pageable: Pageable): List<LectureEvaluationWithLecture>
+    fun findByLecturesRecentOrderByDesc(classification: LectureClassification, pageable: Pageable): List<LectureEvaluationWithLecture>
 
     @Query("""
         select new com.wafflestudio.snuttev.domain.evaluation.model.LectureEvaluationWithLecture(
         le.id, le.userId, le.content, le.gradeSatisfaction, le.teachingSkill, le.gains, le.lifeBalance, le.rating, 
         le.likeCount, le.dislikeCount, le.isHidden, le.isReported, sl.year, sl.semester, sl.lecture.id, sl.lecture.title, sl.lecture.instructor) 
-        from LectureEvaluation le inner join le.semesterLecture sl where le.isHidden = false
+        from LectureEvaluation le inner join le.semesterLecture sl where le.isHidden = false 
+        and sl.classification = :classification 
         and le.id < :cursorId 
         order by le.id desc
     """
     )
-    fun findByLecturesRecentLessThanOrderByDesc(cursorId: Long, pageable: Pageable): List<LectureEvaluationWithLecture>
+    fun findByLecturesRecentLessThanOrderByDesc(classification: LectureClassification, cursorId: Long, pageable: Pageable): List<LectureEvaluationWithLecture>
 
     @Query("""
         select 1 
         from lecture_evaluation le inner join semester_lecture sl on le.semester_lecture_id = sl.id where le.is_hidden = false 
+        and sl.classification = :#{#classification.value} 
         and le.id < :cursorId 
         limit 1
     """, nativeQuery = true
     )
-    fun existsByLecturesRecentLessThan(cursorId: Long): Int?
+    fun existsByLecturesRecentLessThan(classification: LectureClassification, cursorId: Long): Int?
 
     @Query("""
         select new com.wafflestudio.snuttev.domain.evaluation.model.LectureEvaluationWithLecture(
         le.id, le.userId, le.content, le.gradeSatisfaction, le.teachingSkill, le.gains, le.lifeBalance, le.rating, 
         le.likeCount, le.dislikeCount, le.isHidden, le.isReported, sl.year, sl.semester, sl.lecture.id, sl.lecture.title, sl.lecture.instructor) 
         from LectureEvaluation le inner join le.semesterLecture sl where le.isHidden = false 
+        and sl.classification = :classification 
         and sl.lecture.id in ( 
             select sl1.lecture.id from LectureEvaluation le1 inner join SemesterLecture sl1 on le1.semesterLecture.id = sl1.id and le1.isHidden = false 
             group by sl1.lecture.id having avg(le1.rating) >= 4.0 
@@ -87,13 +92,14 @@ interface LectureEvaluationRepository : JpaRepository<LectureEvaluation, Long> {
         order by le.id desc
     """
     )
-    fun findByLecturesRecommendedOrderByDesc(pageable: Pageable): List<LectureEvaluationWithLecture>
+    fun findByLecturesRecommendedOrderByDesc(classification: LectureClassification, pageable: Pageable): List<LectureEvaluationWithLecture>
 
     @Query("""
         select new com.wafflestudio.snuttev.domain.evaluation.model.LectureEvaluationWithLecture(
         le.id, le.userId, le.content, le.gradeSatisfaction, le.teachingSkill, le.gains, le.lifeBalance, le.rating, 
         le.likeCount, le.dislikeCount, le.isHidden, le.isReported, sl.year, sl.semester, sl.lecture.id, sl.lecture.title, sl.lecture.instructor) 
         from LectureEvaluation le inner join le.semesterLecture sl where le.isHidden = false 
+        and sl.classification = :classification 
         and sl.lecture.id in ( 
             select sl1.lecture.id from LectureEvaluation le1 inner join SemesterLecture sl1 on le1.semesterLecture.id = sl1.id and le1.isHidden = false 
             group by sl1.lecture.id having avg(le1.rating) >= 4.0 
@@ -102,11 +108,12 @@ interface LectureEvaluationRepository : JpaRepository<LectureEvaluation, Long> {
         order by le.id desc
     """
     )
-    fun findByLecturesRecommendedLessThanOrderByDesc(cursorId: Long, pageable: Pageable): List<LectureEvaluationWithLecture>
+    fun findByLecturesRecommendedLessThanOrderByDesc(classification: LectureClassification, cursorId: Long, pageable: Pageable): List<LectureEvaluationWithLecture>
 
     @Query("""
         select 1 
         from lecture_evaluation le inner join semester_lecture sl on le.semester_lecture_id = sl.id where le.is_hidden = false 
+        and sl.classification = :#{#classification.value} 
         and sl.lecture_id in ( 
             select sl1.lecture_id from lecture_evaluation le1 inner join semester_lecture sl1 on le1.semester_lecture_id = sl1.id and le1.is_hidden = false 
             group by sl1.lecture_id having avg(le1.rating) >= 4.0 
@@ -115,13 +122,14 @@ interface LectureEvaluationRepository : JpaRepository<LectureEvaluation, Long> {
         limit 1
     """, nativeQuery = true
     )
-    fun existsByLecturesRecommendedLessThan(cursorId: Long): Int?
+    fun existsByLecturesRecommendedLessThan(classification: LectureClassification, cursorId: Long): Int?
 
     @Query("""
         select new com.wafflestudio.snuttev.domain.evaluation.model.LectureEvaluationWithLecture(
         le.id, le.userId, le.content, le.gradeSatisfaction, le.teachingSkill, le.gains, le.lifeBalance, le.rating, 
         le.likeCount, le.dislikeCount, le.isHidden, le.isReported, sl.year, sl.semester, sl.lecture.id, sl.lecture.title, sl.lecture.instructor) 
         from LectureEvaluation le inner join le.semesterLecture sl where le.isHidden = false 
+        and sl.classification = :classification 
         and sl.lecture.id in ( 
             select sl1.lecture.id from LectureEvaluation le1 inner join SemesterLecture sl1 on le1.semesterLecture.id = sl1.id and le1.isHidden = false 
             group by sl1.lecture.id having avg(le1.teachingSkill) >= 4.0 and avg(le1.gains) >= 4.0 
@@ -129,13 +137,14 @@ interface LectureEvaluationRepository : JpaRepository<LectureEvaluation, Long> {
         order by le.id desc
     """
     )
-    fun findByLecturesFineOrderByDesc(pageable: Pageable): List<LectureEvaluationWithLecture>
+    fun findByLecturesFineOrderByDesc(classification: LectureClassification, pageable: Pageable): List<LectureEvaluationWithLecture>
 
     @Query("""
         select new com.wafflestudio.snuttev.domain.evaluation.model.LectureEvaluationWithLecture(
         le.id, le.userId, le.content, le.gradeSatisfaction, le.teachingSkill, le.gains, le.lifeBalance, le.rating, 
         le.likeCount, le.dislikeCount, le.isHidden, le.isReported, sl.year, sl.semester, sl.lecture.id, sl.lecture.title, sl.lecture.instructor) 
         from LectureEvaluation le inner join le.semesterLecture sl where le.isHidden = false 
+        and sl.classification = :classification 
         and sl.lecture.id in ( 
             select sl1.lecture.id from LectureEvaluation le1 inner join SemesterLecture sl1 on le1.semesterLecture.id = sl1.id and le1.isHidden = false 
             group by sl1.lecture.id having avg(le1.teachingSkill) >= 4.0 and avg(le1.gains) >= 4.0 
@@ -144,11 +153,12 @@ interface LectureEvaluationRepository : JpaRepository<LectureEvaluation, Long> {
         order by le.id desc
     """
     )
-    fun findByLecturesFineLessThanOrderByDesc(cursorId: Long, pageable: Pageable): List<LectureEvaluationWithLecture>
+    fun findByLecturesFineLessThanOrderByDesc(classification: LectureClassification, cursorId: Long, pageable: Pageable): List<LectureEvaluationWithLecture>
 
     @Query("""
         select 1 
         from lecture_evaluation le inner join semester_lecture sl on le.semester_lecture_id = sl.id where le.is_hidden = false 
+        and sl.classification = :#{#classification.value} 
         and sl.lecture_id in ( 
             select sl1.lecture_id from lecture_evaluation le1 inner join semester_lecture sl1 on le1.semester_lecture_id = sl1.id and le1.is_hidden = false 
             group by sl1.lecture_id having avg(le1.teaching_skill) >= 4.0 and avg(le1.gains) >= 4.0 
@@ -157,13 +167,14 @@ interface LectureEvaluationRepository : JpaRepository<LectureEvaluation, Long> {
         limit 1
     """, nativeQuery = true
     )
-    fun existsByLecturesFineLessThan(cursorId: Long): Int?
+    fun existsByLecturesFineLessThan(classification: LectureClassification, cursorId: Long): Int?
 
     @Query("""
         select new com.wafflestudio.snuttev.domain.evaluation.model.LectureEvaluationWithLecture(
         le.id, le.userId, le.content, le.gradeSatisfaction, le.teachingSkill, le.gains, le.lifeBalance, le.rating, 
         le.likeCount, le.dislikeCount, le.isHidden, le.isReported, sl.year, sl.semester, sl.lecture.id, sl.lecture.title, sl.lecture.instructor) 
         from LectureEvaluation le inner join le.semesterLecture sl where le.isHidden = false 
+        and sl.classification = :classification 
         and sl.lecture.id in ( 
             select sl1.lecture.id from LectureEvaluation le1 inner join SemesterLecture sl1 on le1.semesterLecture.id = sl1.id and le1.isHidden = false 
             group by sl1.lecture.id having avg(le1.gradeSatisfaction) >= 4.0 and avg(le1.lifeBalance) >= 4.0 
@@ -171,13 +182,14 @@ interface LectureEvaluationRepository : JpaRepository<LectureEvaluation, Long> {
         order by le.id desc
     """
     )
-    fun findByLecturesHoneyOrderByDesc(pageable: Pageable): List<LectureEvaluationWithLecture>
+    fun findByLecturesHoneyOrderByDesc(classification: LectureClassification, pageable: Pageable): List<LectureEvaluationWithLecture>
 
     @Query("""
         select new com.wafflestudio.snuttev.domain.evaluation.model.LectureEvaluationWithLecture(
         le.id, le.userId, le.content, le.gradeSatisfaction, le.teachingSkill, le.gains, le.lifeBalance, le.rating, 
         le.likeCount, le.dislikeCount, le.isHidden, le.isReported, sl.year, sl.semester, sl.lecture.id, sl.lecture.title, sl.lecture.instructor) 
         from LectureEvaluation le inner join le.semesterLecture sl where le.isHidden = false 
+        and sl.classification = :classification 
         and sl.lecture.id in ( 
             select sl1.lecture.id from LectureEvaluation le1 inner join SemesterLecture sl1 on le1.semesterLecture.id = sl1.id and le1.isHidden = false 
             group by sl1.lecture.id having avg(le1.gradeSatisfaction) >= 4.0 and avg(le1.lifeBalance) >= 4.0 
@@ -186,11 +198,12 @@ interface LectureEvaluationRepository : JpaRepository<LectureEvaluation, Long> {
         order by le.id desc
     """
     )
-    fun findByLecturesHoneyLessThanOrderByDesc(cursorId: Long, pageable: Pageable): List<LectureEvaluationWithLecture>
+    fun findByLecturesHoneyLessThanOrderByDesc(classification: LectureClassification, cursorId: Long, pageable: Pageable): List<LectureEvaluationWithLecture>
 
     @Query("""
         select 1 
         from lecture_evaluation le inner join semester_lecture sl on le.semester_lecture_id = sl.id where le.is_hidden = false 
+        and sl.classification = :#{#classification.value} 
         and sl.lecture_id in ( 
             select sl1.lecture_id from lecture_evaluation le1 inner join semester_lecture sl1 on le1.semester_lecture_id = sl1.id and le1.is_hidden = false 
             group by sl1.lecture_id having avg(le1.grade_satisfaction) >= 4.0 and avg(le1.life_balance) >= 4.0 
@@ -199,13 +212,14 @@ interface LectureEvaluationRepository : JpaRepository<LectureEvaluation, Long> {
         limit 1
     """, nativeQuery = true
     )
-    fun existsByLecturesHoneyLessThan(cursorId: Long): Int?
+    fun existsByLecturesHoneyLessThan(classification: LectureClassification, cursorId: Long): Int?
 
     @Query("""
         select new com.wafflestudio.snuttev.domain.evaluation.model.LectureEvaluationWithLecture(
         le.id, le.userId, le.content, le.gradeSatisfaction, le.teachingSkill, le.gains, le.lifeBalance, le.rating, 
         le.likeCount, le.dislikeCount, le.isHidden, le.isReported, sl.year, sl.semester, sl.lecture.id, sl.lecture.title, sl.lecture.instructor) 
         from LectureEvaluation le inner join le.semesterLecture sl where le.isHidden = false 
+        and sl.classification = :classification 
         and sl.lecture.id in ( 
             select sl1.lecture.id from LectureEvaluation le1 inner join SemesterLecture sl1 on le1.semesterLecture.id = sl1.id and le1.isHidden = false 
             group by sl1.lecture.id having avg(le1.lifeBalance) < 2.0 and avg(le1.gains) >= 4.0 
@@ -213,13 +227,14 @@ interface LectureEvaluationRepository : JpaRepository<LectureEvaluation, Long> {
         order by le.id desc
     """
     )
-    fun findByLecturesPainsGainsOrderByDesc(pageable: Pageable): List<LectureEvaluationWithLecture>
+    fun findByLecturesPainsGainsOrderByDesc(classification: LectureClassification, pageable: Pageable): List<LectureEvaluationWithLecture>
 
     @Query("""
         select new com.wafflestudio.snuttev.domain.evaluation.model.LectureEvaluationWithLecture(
         le.id, le.userId, le.content, le.gradeSatisfaction, le.teachingSkill, le.gains, le.lifeBalance, le.rating, 
         le.likeCount, le.dislikeCount, le.isHidden, le.isReported, sl.year, sl.semester, sl.lecture.id, sl.lecture.title, sl.lecture.instructor) 
         from LectureEvaluation le inner join le.semesterLecture sl where le.isHidden = false 
+        and sl.classification = :classification 
         and sl.lecture.id in ( 
             select sl1.lecture.id from LectureEvaluation le1 inner join SemesterLecture sl1 on le1.semesterLecture.id = sl1.id and le1.isHidden = false 
             group by sl1.lecture.id having avg(le1.lifeBalance) < 2.0 and avg(le1.gains) >= 4.0 
@@ -228,11 +243,12 @@ interface LectureEvaluationRepository : JpaRepository<LectureEvaluation, Long> {
         order by le.id desc
     """
     )
-    fun findByLecturesPainsGainsLessThanOrderByDesc(cursorId: Long, pageable: Pageable): List<LectureEvaluationWithLecture>
+    fun findByLecturesPainsGainsLessThanOrderByDesc(classification: LectureClassification, cursorId: Long, pageable: Pageable): List<LectureEvaluationWithLecture>
 
     @Query("""
         select 1 
         from lecture_evaluation le inner join semester_lecture sl on le.semester_lecture_id = sl.id where le.is_hidden = false 
+        and sl.classification = :#{#classification.value} 
         and sl.lecture_id in ( 
             select sl1.lecture_id from lecture_evaluation le1 inner join semester_lecture sl1 on le1.semester_lecture_id = sl1.id and le1.is_hidden = false 
             group by sl1.lecture_id having avg(le1.life_balance) < 2.0 and avg(le1.gains) >= 4.0 
@@ -241,7 +257,7 @@ interface LectureEvaluationRepository : JpaRepository<LectureEvaluation, Long> {
         limit 1
     """, nativeQuery = true
     )
-    fun existsByLecturesPainsGainsLessThan(cursorId: Long): Int?
+    fun existsByLecturesPainsGainsLessThan(classification: LectureClassification, cursorId: Long): Int?
 
     @Query("""
         select new com.wafflestudio.snuttev.domain.evaluation.model.LectureEvaluationWithLecture(
