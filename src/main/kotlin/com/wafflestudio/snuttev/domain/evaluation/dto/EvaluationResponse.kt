@@ -1,6 +1,7 @@
 package com.wafflestudio.snuttev.domain.evaluation.dto
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.wafflestudio.snuttev.domain.lecture.model.LectureClassification
 
 
 data class LectureEvaluationDto(
@@ -54,7 +55,7 @@ data class SemesterLectureDto(
 
     val category: String,
 
-    val classification: String,
+    val classification: LectureClassification,
 )
 
 data class LectureEvaluationSummaryResponse(
@@ -76,7 +77,7 @@ data class LectureEvaluationSummaryResponse(
 
     val category: String?,
 
-    val classification: String?,
+    val classification: LectureClassification?,
 
     val evaluation: LectureEvaluationSummary,
 )

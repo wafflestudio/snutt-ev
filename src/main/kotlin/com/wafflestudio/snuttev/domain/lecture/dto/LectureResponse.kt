@@ -2,6 +2,7 @@ package com.wafflestudio.snuttev.domain.lecture.dto
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.wafflestudio.snuttev.domain.evaluation.dto.SemesterLectureDto
+import com.wafflestudio.snuttev.domain.lecture.model.LectureClassification
 
 data class LectureDto(
     val id: Long,
@@ -22,7 +23,7 @@ data class LectureDto(
 
     val category: String?,
 
-    val classification: String?,
+    val classification: LectureClassification?,
 
     val evaluation: LectureEvaluationSimpleSummary
 )
@@ -51,7 +52,7 @@ data class LectureAndSemesterLecturesResponse(
 
     val category: String?,
 
-    val classification: String?,
+    val classification: LectureClassification?,
 
     @JsonProperty("semester_lectures")
     val semesterLectures: List<SemesterLectureDto>
@@ -80,7 +81,7 @@ data class LectureTakenByUserResponse(
 
     val category: String?,
 
-    val classification: String?,
+    val classification: LectureClassification?,
 
     @JsonProperty("taken_year")
     val takenYear: Int,
