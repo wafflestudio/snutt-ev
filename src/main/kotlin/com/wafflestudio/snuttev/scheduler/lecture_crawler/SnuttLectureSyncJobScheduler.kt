@@ -10,7 +10,7 @@ import javax.annotation.PostConstruct
 class SnuttLectureSyncJobScheduler(private val service: SnuttLectureSyncJobService) {
 
     //    전체 수강편람 옮기는 job, local인 경우에만 작동
-    @PostConstruct
+//    @PostConstruct
     fun fetchAll() {
         service.migrateAllLectureDataFromSnutt()
     }

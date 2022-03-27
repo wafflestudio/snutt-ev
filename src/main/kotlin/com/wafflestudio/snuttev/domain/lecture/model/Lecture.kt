@@ -2,7 +2,6 @@ package com.wafflestudio.snuttev.domain.lecture.model
 
 import com.fasterxml.jackson.annotation.JsonValue
 import com.wafflestudio.snuttev.domain.common.model.BaseEntity
-import java.util.*
 import javax.persistence.*
 import javax.validation.constraints.NotBlank
 
