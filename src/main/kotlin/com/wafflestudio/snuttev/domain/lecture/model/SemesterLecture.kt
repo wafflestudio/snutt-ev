@@ -26,7 +26,8 @@ class SemesterLecture(
 
     var category: String,
 
-    var classification: String,
+    @Convert(converter = LectureClassificationConverter::class)
+    var classification: LectureClassification,
 
     @OneToMany(mappedBy = "semesterLecture")
     val evaluations: List<LectureEvaluation> = listOf()
@@ -47,7 +48,7 @@ data class SemesterLectureWithLecture(
 
     var category: String,
 
-    var classification: String,
+    var classification: LectureClassification,
 
     val lectureId: Long,
 

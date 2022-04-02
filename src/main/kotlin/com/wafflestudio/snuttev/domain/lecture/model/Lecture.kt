@@ -26,7 +26,8 @@ class Lecture(
 
     var category: String,
 
-    var classification: String,
+    @Convert(converter = LectureClassificationConverter::class)
+    var classification: LectureClassification,
 
     @OneToMany(mappedBy = "lecture")
     val semesterLectures: List<SemesterLecture> = listOf()
@@ -41,9 +42,21 @@ enum class LectureClassification(@get:JsonValue val value: String) {
     READING_AND_RESEARCH("논문"),
     TEACHING_CERTIFICATION("교직"),
     GRADUATE("대학원"),
-    CORE_SUBJECT("공통"),
+    CORE_SUBJECT("공통");
+
+    companion object {
+        private val mapping = values().associateBy { e -> e.value }
+
+        fun customValueOf(classification: String): LectureClassification? = mapping.getOrDefault(classification, null)
+    }
 }
 
+class LectureClassificationConverter: AttributeConverter<LectureClassification, String> {
+    override fun convertToDatabaseColumn(attribute: LectureClassification?): String? = attribute?.value
+
+    override fun convertToEntityAttribute(dbData: String?): LectureClassification? =
+        dbData?.let { LectureClassification.customValueOf(it) }
+}
 
 data class LectureEvaluationSummaryDao(
     val id: Long?,
@@ -62,7 +75,7 @@ data class LectureEvaluationSummaryDao(
 
     val category: String?,
 
-    val classification: String?,
+    val classification: LectureClassification?,
 
     val avgGradeSatisfaction: Double?,
 

@@ -1,6 +1,7 @@
 package com.wafflestudio.snuttev.scheduler.lecture_crawler
 
 import com.wafflestudio.snuttev.domain.lecture.model.Lecture
+import com.wafflestudio.snuttev.domain.lecture.model.LectureClassification
 import com.wafflestudio.snuttev.domain.lecture.model.SemesterLecture
 import com.wafflestudio.snuttev.domain.lecture.repository.SemesterLectureRepository
 import com.wafflestudio.snuttev.domain.lecture.repository.LectureRepository
@@ -70,7 +71,7 @@ class SnuttLectureSyncJobService(
             semesterLectureKeyOf(it) to (existingSemesterLecturesMap[semesterLectureKeyOf(it)]?.apply {
                 this.academicYear = it.academic_year
                 this.category = it.category
-                this.classification = it.classification
+                this.classification = LectureClassification.customValueOf(it.classification)!!
                 this.extraInfo = it.remark
                 this.lecture = lecture
                 this.credit = it.credit
@@ -87,7 +88,7 @@ class SnuttLectureSyncJobService(
             lectureKeyOf(it) to (originalLecturesMap[lectureKeyOf(it)]?.apply {
                 this.academicYear = it.academic_year
                 this.credit = it.credit
-                this.classification = it.classification
+                this.classification = LectureClassification.customValueOf(it.classification)!!
                 this.category = it.category
             } ?: createNewLectureFromSnuttSemesterLecture(it))
         }
@@ -102,7 +103,7 @@ class SnuttLectureSyncJobService(
             e.credit,
             e.academic_year,
             e.category,
-            e.classification
+            LectureClassification.customValueOf(e.classification)!!,
         )
     }
 
@@ -110,7 +111,14 @@ class SnuttLectureSyncJobService(
         e: SnuttSemesterLecture, lecture: Lecture
     ): SemesterLecture {
         return SemesterLecture(
-            lecture, e.year, e.semester, e.credit, e.remark, e.academic_year, e.category, e.classification
+            lecture,
+            e.year,
+            e.semester,
+            e.credit,
+            e.remark,
+            e.academic_year,
+            e.category,
+            LectureClassification.customValueOf(e.classification)!!,
         )
     }
 
