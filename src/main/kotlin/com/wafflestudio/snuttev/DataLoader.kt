@@ -2,6 +2,7 @@ package com.wafflestudio.snuttev
 
 import com.wafflestudio.snuttev.domain.common.Semester
 import com.wafflestudio.snuttev.domain.lecture.model.Lecture
+import com.wafflestudio.snuttev.domain.lecture.model.LectureClassification
 import com.wafflestudio.snuttev.domain.lecture.model.SemesterLecture
 import com.wafflestudio.snuttev.domain.lecture.repository.LectureRepository
 import com.wafflestudio.snuttev.domain.lecture.repository.SemesterLectureRepository
@@ -33,7 +34,7 @@ class DataLoader(
             credit = 4,
             academicYear = "3학년",
             category = "",
-            classification = "전선",
+            classification = LectureClassification.ELECTIVE_SUBJECT,
         )
         lectureRepository.save(lecture)
         val semesterLectures = listOf(
@@ -44,7 +45,7 @@ class DataLoader(
                 credit = 4,
                 academicYear = "3학년",
                 category = "",
-                classification = "전선",
+                classification = LectureClassification.ELECTIVE_SUBJECT,
             ),
             SemesterLecture(
                 lecture = lecture,
@@ -53,7 +54,7 @@ class DataLoader(
                 credit = 4,
                 academicYear = "3학년",
                 category = "",
-                classification = "전선",
+                classification = LectureClassification.ELECTIVE_SUBJECT,
             ),
             SemesterLecture(
                 lecture = lecture,
@@ -62,7 +63,7 @@ class DataLoader(
                 credit = 4,
                 academicYear = "3학년",
                 category = "",
-                classification = "전선",
+                classification = LectureClassification.ELECTIVE_SUBJECT,
             ),
             SemesterLecture(
                 lecture = lecture,
@@ -71,7 +72,7 @@ class DataLoader(
                 credit = 4,
                 academicYear = "3학년",
                 category = "",
-                classification = "전선",
+                classification = LectureClassification.ELECTIVE_SUBJECT,
             ),
         )
         semesterLectureRepository.saveAll(semesterLectures)
@@ -84,7 +85,7 @@ class DataLoader(
             credit = 3,
             academicYear = "1학년",
             category = "인간과 사회",
-            classification = "교양",
+            classification = LectureClassification.LIBERAL_EDUCATION,
         )
         lectureRepository.save(lecture2)
         val semesterLectures2 = listOf(
@@ -95,7 +96,7 @@ class DataLoader(
                 credit = 3,
                 academicYear = "1학년",
                 category = "인간과 사회",
-                classification = "교양",
+                classification = LectureClassification.LIBERAL_EDUCATION,
             ),
             SemesterLecture(
                 lecture = lecture,
@@ -104,7 +105,7 @@ class DataLoader(
                 credit = 3,
                 academicYear = "1학년",
                 category = "인간과 사회",
-                classification = "교양",
+                classification = LectureClassification.LIBERAL_EDUCATION,
             ),
         )
         semesterLectureRepository.saveAll(semesterLectures2)

@@ -4,12 +4,14 @@ import com.querydsl.core.BooleanBuilder
 import com.querydsl.core.types.Predicate
 import com.querydsl.core.types.Projections
 import com.querydsl.core.types.dsl.BooleanExpression
+import com.querydsl.core.types.dsl.EnumPath
 import com.querydsl.core.types.dsl.NumberPath
 import com.querydsl.core.types.dsl.StringPath
 import com.querydsl.jpa.impl.JPAQueryFactory
 import com.wafflestudio.snuttev.domain.evaluation.model.QLectureEvaluation.lectureEvaluation
 import com.wafflestudio.snuttev.domain.lecture.dto.LectureDto
 import com.wafflestudio.snuttev.domain.lecture.dto.LectureEvaluationSimpleSummary
+import com.wafflestudio.snuttev.domain.lecture.model.LectureClassification
 import com.wafflestudio.snuttev.domain.lecture.model.QLecture.lecture
 import com.wafflestudio.snuttev.domain.lecture.model.QSemesterLecture.semesterLecture
 import com.wafflestudio.snuttev.domain.lecture.service.SearchQueryDto
@@ -98,6 +100,15 @@ class LectureRepositoryImpl(private val queryFactory: JPAQueryFactory) : Lecture
         return if (!tags.isNullOrEmpty()) this.`in`(tags) else null
     }
 
+    private fun EnumPath<LectureClassification>.isIn(tags: List<String>?): BooleanExpression? {
+        return if (!tags.isNullOrEmpty()) this.`in`(tags.map { LectureClassification.customValueOf(it) }) else null
+    }
+
+    private fun EnumPath<LectureClassification>.eq(keyword: String): BooleanExpression? {
+        val keywordLectureClassification = LectureClassification.customValueOf(keyword)
+        return if (keywordLectureClassification != null) this.eq(keywordLectureClassification) else null
+    }
+
     private fun NumberPath<Int>.isIn(tags: List<Int>?): BooleanExpression? {
         return if (!tags.isNullOrEmpty()) this.`in`(tags) else null
     }
@@ -110,7 +121,9 @@ class LectureRepositoryImpl(private val queryFactory: JPAQueryFactory) : Lecture
             val fuzzyKeyword = keyword.fold("%") { acc, c -> "$acc$c%" }
             val orBuilder = BooleanBuilder()
             when {
-                keyword == "전공" -> orBuilder.or(lecture.classification.`in`(listOf("전선", "전필")))
+                keyword == "전공" -> orBuilder.or(lecture.classification.`in`(
+                    listOf(LectureClassification.ELECTIVE_SUBJECT, LectureClassification.REQUISITE_SUBJECT)
+                ))
                 keyword == "체육" -> orBuilder.or(lecture.category.eq("체육"))
                 keyword in listOf("석박", "대학원") -> {
                     orBuilder.or(lecture.academicYear.`in`(listOf("석사", "박사", "석박사통합")))

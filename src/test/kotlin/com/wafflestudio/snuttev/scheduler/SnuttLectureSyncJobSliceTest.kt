@@ -40,7 +40,7 @@ class SnuttLectureSyncJobSliceTest(
     ): SnuttSemesterLecture {
         return SnuttSemesterLecture(
             id = "",
-            classification = "",
+            classification = "교양",
             department = "",
             academic_year = "",
             courseTitle = "",
