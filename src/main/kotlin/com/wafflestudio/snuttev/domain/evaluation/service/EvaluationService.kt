@@ -35,7 +35,7 @@ class EvaluationService(
     @Autowired
     private lateinit var self: EvaluationService
 
-    private val defaultPageSize = 3
+    private val defaultPageSize = 20
 
     @CacheEvict("tag-recent-evaluations", allEntries = true)
     fun createEvaluation(
