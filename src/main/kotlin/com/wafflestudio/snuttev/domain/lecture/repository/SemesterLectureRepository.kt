@@ -1,5 +1,6 @@
 package com.wafflestudio.snuttev.domain.lecture.repository
 
+import com.wafflestudio.snuttev.domain.lecture.model.Lecture
 import com.wafflestudio.snuttev.domain.lecture.model.SemesterLecture
 import com.wafflestudio.snuttev.domain.lecture.model.SemesterLectureWithLecture
 import org.springframework.data.jpa.repository.JpaRepository
@@ -18,4 +19,6 @@ interface SemesterLectureRepository : JpaRepository<SemesterLecture, Long> {
     """
     )
     fun findAllByLectureIdOrderByYearDescSemesterDesc(lectureId: Long): List<SemesterLectureWithLecture>
+
+    fun findFirstByYearAndSemesterAndLecture(year: Int, semester: Int, lecture: Lecture): SemesterLecture?
 }

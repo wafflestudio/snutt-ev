@@ -13,15 +13,15 @@ data class LectureEvaluationDto(
     val content: String,
 
     @JsonProperty("grade_satisfaction")
-    val gradeSatisfaction: Double,
+    val gradeSatisfaction: Double?,
 
     @JsonProperty("teaching_skill")
-    val teachingSkill: Double,
+    val teachingSkill: Double?,
 
-    val gains: Double,
+    val gains: Double?,
 
     @JsonProperty("life_balance")
-    val lifeBalance: Double,
+    val lifeBalance: Double?,
 
     val rating: Double,
 

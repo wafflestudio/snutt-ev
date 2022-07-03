@@ -3,6 +3,7 @@ package com.wafflestudio.snuttev.domain.evaluation.model
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.wafflestudio.snuttev.domain.common.model.BaseEntity
 import com.wafflestudio.snuttev.domain.lecture.model.SemesterLecture
+import java.time.LocalDateTime
 import javax.persistence.*
 
 @Entity
@@ -18,17 +19,17 @@ class LectureEvaluation(
     @Column(columnDefinition = "longtext", nullable = false)
     val content: String,
 
-    @Column(name = "grade_satisfaction", nullable = false)
-    val gradeSatisfaction: Double,
+    @Column(name = "grade_satisfaction", nullable = true)
+    val gradeSatisfaction: Double?,
 
-    @Column(name = "teaching_skill", nullable = false)
-    val teachingSkill: Double,
+    @Column(name = "teaching_skill", nullable = true)
+    val teachingSkill: Double?,
 
-    @Column(nullable = false)
-    val gains: Double,
+    @Column(nullable = true)
+    val gains: Double?,
 
-    @Column(name = "life_balance", nullable = false)
-    val lifeBalance: Double,
+    @Column(name = "life_balance", nullable = true)
+    val lifeBalance: Double?,
 
     @Column(nullable = false)
     val rating: Double,
@@ -45,7 +46,12 @@ class LectureEvaluation(
     @Column(name = "is_reported", nullable = false)
     val isReported: Boolean = false,
 
-) : BaseEntity()
+    @Column(name = "from_snuev", nullable = false)
+    val fromSnuev: Boolean = false,
+
+    createdAt: LocalDateTime = LocalDateTime.now(),
+
+    ) : BaseEntity(createdAt = createdAt)
 
 data class LectureEvaluationWithLecture(
     val id: Long? = null,
