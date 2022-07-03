@@ -8,7 +8,6 @@ import org.springframework.batch.core.Job
 import org.springframework.batch.core.Step
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory
-import org.springframework.batch.core.configuration.annotation.StepScope
 import org.springframework.batch.item.ItemProcessor
 import org.springframework.batch.item.ItemWriter
 import org.springframework.batch.item.database.JdbcCursorItemReader
@@ -19,7 +18,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.jdbc.core.DataClassRowMapper
 import javax.sql.DataSource
 
-@Configuration
+//@Configuration
 class SnuevMigrationJobConfig(
     private val jobBuilderFactory: JobBuilderFactory,
     private val stepBuilderFactory: StepBuilderFactory,
@@ -27,10 +26,10 @@ class SnuevMigrationJobConfig(
     private val semesterLectureRepository: SemesterLectureRepository,
     private val lectureRepository: LectureRepository,
 ) {
-    private final val JOB_NAME = "SNUEV_MIGRATION_JOB"
-    private final val CUSTOM_READER_JOB_STEP = JOB_NAME + "_STEP"
-    private final val CHUNK_SIZE = 100
-    private final val snuevDataSource: DataSource = DataSourceBuilder
+    private val JOB_NAME = "SNUEV_MIGRATION_JOB"
+    private val CUSTOM_READER_JOB_STEP = JOB_NAME + "_STEP"
+    private val CHUNK_SIZE = 100
+    private val snuevDataSource: DataSource = DataSourceBuilder
         .create()
         .driverClassName("org.postgresql.Driver")
         .url("jdbc:postgresql://localhost:5432/snuev")
@@ -44,8 +43,7 @@ class SnuevMigrationJobConfig(
             .build()
     }
 
-    @Bean
-    fun customReaderStep(): Step {
+    private fun customReaderStep(): Step {
         return stepBuilderFactory.get(CUSTOM_READER_JOB_STEP)
             .chunk<SnuevEvaluation, LectureEvaluation>(CHUNK_SIZE)
             .reader(reader())
@@ -54,9 +52,7 @@ class SnuevMigrationJobConfig(
             .build()
     }
 
-    @Bean
-    @StepScope
-    fun reader(): JdbcCursorItemReader<SnuevEvaluation> {
+    private fun reader(): JdbcCursorItemReader<SnuevEvaluation> {
         return JdbcCursorItemReaderBuilder<SnuevEvaluation>()
             .fetchSize(CHUNK_SIZE)
             .dataSource(snuevDataSource)
@@ -75,8 +71,7 @@ class SnuevMigrationJobConfig(
             .build()
     }
 
-    @Bean
-    fun processor(): ItemProcessor<SnuevEvaluation, LectureEvaluation> {
+    private fun processor(): ItemProcessor<SnuevEvaluation, LectureEvaluation> {
         return ItemProcessor<SnuevEvaluation, LectureEvaluation> { item: SnuevEvaluation ->
             val lecture = lectureRepository.findByCourseNumberAndInstructor(item.courseNumber, item.instructor)
                 ?: return@ItemProcessor null
@@ -103,8 +98,7 @@ class SnuevMigrationJobConfig(
         }
     }
 
-    @Bean
-    fun writer(): ItemWriter<LectureEvaluation> {
+    private fun writer(): ItemWriter<LectureEvaluation> {
         return ItemWriter { items ->
             lectureEvaluationRepository.saveAll(items)
         }

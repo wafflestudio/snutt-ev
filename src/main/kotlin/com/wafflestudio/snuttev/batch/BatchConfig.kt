@@ -7,7 +7,6 @@ import javax.sql.DataSource
 
 
 @Configuration
-@EnableBatchProcessing
 class BatchConfig : DefaultBatchConfigurer() {
     // 배치잡의 상태를 DB에 쓰지 않고 메모리에서 관리
     override fun setDataSource(dataSource: DataSource) {
