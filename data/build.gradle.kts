@@ -14,6 +14,9 @@ dependencies {
     implementation(project(":core"))
     implementation("com.querydsl:querydsl-jpa")
 
+    implementation("org.flywaydb:flyway-core:8.5.12")
+    implementation("org.flywaydb:flyway-mysql:8.5.12")
+
     runtimeOnly("mysql:mysql-connector-java")
     kapt("com.querydsl:querydsl-apt::jpa")
 }

@@ -13,15 +13,15 @@ data class LectureEvaluationDto(
     val content: String,
 
     @JsonProperty("grade_satisfaction")
-    val gradeSatisfaction: Double,
+    val gradeSatisfaction: Double?,
 
     @JsonProperty("teaching_skill")
-    val teachingSkill: Double,
+    val teachingSkill: Double?,
 
-    val gains: Double,
+    val gains: Double?,
 
     @JsonProperty("life_balance")
-    val lifeBalance: Double,
+    val lifeBalance: Double?,
 
     val rating: Double,
 
@@ -36,6 +36,9 @@ data class LectureEvaluationDto(
 
     @JsonProperty("is_reported")
     val isReported: Boolean,
+
+    @JsonProperty("from_snuev")
+    val fromSnuev: Boolean,
 )
 
 data class SemesterLectureDto(
@@ -108,15 +111,15 @@ data class LectureEvaluationWithSemesterDto(
     val content: String,
 
     @JsonProperty("grade_satisfaction")
-    val gradeSatisfaction: Double,
+    val gradeSatisfaction: Double?,
 
     @JsonProperty("teaching_skill")
-    val teachingSkill: Double,
+    val teachingSkill: Double?,
 
-    val gains: Double,
+    val gains: Double?,
 
     @JsonProperty("life_balance")
-    val lifeBalance: Double,
+    val lifeBalance: Double?,
 
     val rating: Double,
 
@@ -131,6 +134,9 @@ data class LectureEvaluationWithSemesterDto(
 
     @JsonProperty("is_reported")
     val isReported: Boolean,
+
+    @JsonProperty("from_snuev")
+    val fromSnuev: Boolean,
 
     val year: Int,
 
@@ -155,15 +161,15 @@ data class LectureEvaluationWithLectureDto(
     val content: String,
 
     @JsonProperty("grade_satisfaction")
-    val gradeSatisfaction: Double,
+    val gradeSatisfaction: Double?,
 
     @JsonProperty("teaching_skill")
-    val teachingSkill: Double,
+    val teachingSkill: Double?,
 
-    val gains: Double,
+    val gains: Double?,
 
     @JsonProperty("life_balance")
-    val lifeBalance: Double,
+    val lifeBalance: Double?,
 
     val rating: Double,
 
@@ -178,6 +184,9 @@ data class LectureEvaluationWithLectureDto(
 
     @JsonProperty("is_reported")
     val isReported: Boolean,
+
+    @JsonProperty("from_snuev")
+    val fromSnuev: Boolean,
 
     val year: Int,
 
