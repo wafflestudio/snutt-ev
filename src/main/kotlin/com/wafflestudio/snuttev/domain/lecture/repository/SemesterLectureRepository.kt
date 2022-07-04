@@ -20,5 +20,5 @@ interface SemesterLectureRepository : JpaRepository<SemesterLecture, Long> {
     )
     fun findAllByLectureIdOrderByYearDescSemesterDesc(lectureId: Long): List<SemesterLectureWithLecture>
 
-    fun findFirstByYearAndSemesterAndLecture(year: Int, semester: Int, lecture: Lecture): SemesterLecture?
+    fun findByYearAndSemesterAndLecture(year: Int, semester: Int, lecture: Lecture): SemesterLecture?
 }

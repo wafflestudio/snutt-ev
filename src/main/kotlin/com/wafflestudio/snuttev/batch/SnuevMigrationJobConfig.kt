@@ -2,6 +2,7 @@ package com.wafflestudio.snuttev.batch
 
 import com.wafflestudio.snuttev.domain.evaluation.model.LectureEvaluation
 import com.wafflestudio.snuttev.domain.evaluation.repository.LectureEvaluationRepository
+import com.wafflestudio.snuttev.domain.lecture.model.SemesterLecture
 import com.wafflestudio.snuttev.domain.lecture.repository.LectureRepository
 import com.wafflestudio.snuttev.domain.lecture.repository.SemesterLectureRepository
 import org.springframework.batch.core.Job
@@ -16,12 +17,16 @@ import org.springframework.boot.jdbc.DataSourceBuilder
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.jdbc.core.DataClassRowMapper
+import org.springframework.orm.jpa.JpaTransactionManager
+import org.springframework.transaction.annotation.EnableTransactionManagement
+import javax.persistence.EntityManagerFactory
 import javax.sql.DataSource
 
 //@Configuration
 class SnuevMigrationJobConfig(
     private val jobBuilderFactory: JobBuilderFactory,
     private val stepBuilderFactory: StepBuilderFactory,
+    private val entityManagerFactory: EntityManagerFactory,
     private val lectureEvaluationRepository: LectureEvaluationRepository,
     private val semesterLectureRepository: SemesterLectureRepository,
     private val lectureRepository: LectureRepository,
@@ -49,6 +54,9 @@ class SnuevMigrationJobConfig(
             .reader(reader())
             .processor(processor())
             .writer(writer())
+            .transactionManager(JpaTransactionManager().apply {
+                this.entityManagerFactory = this@SnuevMigrationJobConfig.entityManagerFactory
+            })
             .build()
     }
 
@@ -76,8 +84,19 @@ class SnuevMigrationJobConfig(
             val lecture = lectureRepository.findByCourseNumberAndInstructor(item.courseNumber, item.instructor)
                 ?: return@ItemProcessor null
             val semesterLecture =
-                semesterLectureRepository.findFirstByYearAndSemesterAndLecture(item.year, item.season, lecture)
-                    ?: return@ItemProcessor null
+                semesterLectureRepository.findByYearAndSemesterAndLecture(item.year, item.season + 1, lecture)
+                    ?: semesterLectureRepository.save(
+                        SemesterLecture(
+                            lecture,
+                            item.year,
+                            item.season + 1,
+                            lecture.credit,
+                            "",
+                            lecture.academicYear,
+                            lecture.category,
+                            lecture.classification
+                        )
+                    )
             val userId = "62c1c0f2ccb19a00111d37af" //snuevUser
             LectureEvaluation(
                 semesterLecture = semesterLecture,
@@ -100,6 +119,7 @@ class SnuevMigrationJobConfig(
 
     private fun writer(): ItemWriter<LectureEvaluation> {
         return ItemWriter { items ->
+            semesterLectureRepository.saveAll(items.map { it.semesterLecture })
             lectureEvaluationRepository.saveAll(items)
         }
     }
