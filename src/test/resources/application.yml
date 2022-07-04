@@ -5,6 +5,10 @@ spring:
     url: jdbc:mysql://127.0.0.1:3306/snutt?serverTimezone=UTC
     username: snutt
     password: wafflestudio
+  flyway:
+    locations: classpath:/db
+    baseline-on-migrate: true
+    baseline-version: 0
   jpa:
     generate-ddl: true
     hibernate:
