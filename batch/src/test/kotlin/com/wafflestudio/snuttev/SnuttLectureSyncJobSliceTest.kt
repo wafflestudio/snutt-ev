@@ -1,13 +1,13 @@
 package com.wafflestudio.snuttev
 
-import com.wafflestudio.snuttev.lecture.LectureRepository
-import com.wafflestudio.snuttev.lecture.SemesterLectureRepository
+import com.wafflestudio.snuttev.domain.lecture.repository.LectureRepository
+import com.wafflestudio.snuttev.domain.lecture.repository.SemesterLectureRepository
 import com.wafflestudio.snuttev.sync.SemesterUtils
 import com.wafflestudio.snuttev.sync.model.SnuttSemesterLecture
 import com.wafflestudio.snuttev.sync.model.SnuttTimePlace
 import com.wafflestudio.snuttev.sync.repository.SnuttSemesterLectureRepository
 import com.wafflestudio.snuttev.sync.service.SnuttLectureSyncJobService
-import com.wafflestudio.snuttev.type.Semester
+import com.wafflestudio.snuttev.common.type.Semester
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.mockito.BDDMockito.given

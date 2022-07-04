@@ -1,10 +1,10 @@
 package com.wafflestudio.snuttev.snuev
 
-import com.wafflestudio.snuttev.evaluation.LectureEvaluation
-import com.wafflestudio.snuttev.evaluation.LectureEvaluationRepository
-import com.wafflestudio.snuttev.lecture.LectureRepository
-import com.wafflestudio.snuttev.lecture.SemesterLecture
-import com.wafflestudio.snuttev.lecture.SemesterLectureRepository
+import com.wafflestudio.snuttev.domain.evaluation.model.LectureEvaluation
+import com.wafflestudio.snuttev.domain.evaluation.repository.LectureEvaluationRepository
+import com.wafflestudio.snuttev.domain.lecture.repository.LectureRepository
+import com.wafflestudio.snuttev.domain.lecture.model.SemesterLecture
+import com.wafflestudio.snuttev.domain.lecture.repository.SemesterLectureRepository
 import com.wafflestudio.snuttev.snuev.model.SnuevEvaluation
 import org.springframework.batch.core.Job
 import org.springframework.batch.core.Step

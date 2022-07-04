@@ -2,10 +2,10 @@ package com.wafflestudio.snuttev.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import com.wafflestudio.snuttev.LectureService
-import com.wafflestudio.snuttev.dto.common.ListResponse
-import com.wafflestudio.snuttev.dto.common.PaginationResponse
-import com.wafflestudio.snuttev.dto.lecture.*
+import com.wafflestudio.snuttev.domain.lecture.service.LectureService
+import com.wafflestudio.snuttev.common.dto.common.ListResponse
+import com.wafflestudio.snuttev.common.dto.common.PaginationResponse
+import com.wafflestudio.snuttev.domain.lecture.dto.*
 import io.swagger.v3.oas.annotations.Parameter
 import org.springframework.web.bind.annotation.*
 

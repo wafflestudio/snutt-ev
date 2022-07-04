@@ -1,18 +1,18 @@
 package com.wafflestudio.snuttev.sync.service
 
-import com.wafflestudio.snuttev.lecture.Lecture
-import com.wafflestudio.snuttev.lecture.LectureRepository
-import com.wafflestudio.snuttev.lecture.SemesterLecture
-import com.wafflestudio.snuttev.lecture.SemesterLectureRepository
+import com.wafflestudio.snuttev.common.type.LectureClassification
+import com.wafflestudio.snuttev.domain.lecture.model.Lecture
+import com.wafflestudio.snuttev.domain.lecture.model.SemesterLecture
+import com.wafflestudio.snuttev.domain.lecture.repository.LectureRepository
+import com.wafflestudio.snuttev.domain.lecture.repository.SemesterLectureRepository
 import com.wafflestudio.snuttev.sync.SemesterUtils
 import com.wafflestudio.snuttev.sync.model.SnuttSemesterLecture
 import com.wafflestudio.snuttev.sync.repository.SnuttSemesterLectureRepository
-import com.wafflestudio.snuttev.type.LectureClassification
-import org.springframework.stereotype.Component
 import javax.transaction.Transactional
 
 
-@Component
+//@Component
+@Deprecated("")
 class SnuttLectureSyncJobService(
     private val semesterUtils: SemesterUtils,
     private val snuttSemesterLectureRepository: SnuttSemesterLectureRepository,

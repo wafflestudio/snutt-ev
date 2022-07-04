@@ -1,9 +1,9 @@
 package com.wafflestudio.snuttev.controller
 
-import com.wafflestudio.snuttev.EvaluationService
-import com.wafflestudio.snuttev.dto.common.CursorPaginationResponse
-import com.wafflestudio.snuttev.dto.evaluation.*
-import com.wafflestudio.snuttev.error.ErrorResponse
+import com.wafflestudio.snuttev.domain.evaluation.service.EvaluationService
+import com.wafflestudio.snuttev.common.dto.common.CursorPaginationResponse
+import com.wafflestudio.snuttev.common.error.ErrorResponse
+import com.wafflestudio.snuttev.domain.evaluation.dto.*
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
