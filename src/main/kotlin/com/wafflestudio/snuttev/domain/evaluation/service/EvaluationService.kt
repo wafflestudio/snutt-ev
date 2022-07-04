@@ -117,10 +117,10 @@ class EvaluationService(
                     id = (it["id"] as BigInteger).toLong(),
                     userId = it["userId"] as String,
                     content = it["content"] as String,
-                    gradeSatisfaction = it["gradeSatisfaction"] as Double,
-                    teachingSkill = it["teachingSkill"] as Double,
-                    gains = it["gains"] as Double,
-                    lifeBalance = it["lifeBalance"] as Double,
+                    gradeSatisfaction = it["gradeSatisfaction"] as Double?,
+                    teachingSkill = it["teachingSkill"] as Double?,
+                    gains = it["gains"] as Double?,
+                    lifeBalance = it["lifeBalance"] as Double?,
                     rating = it["rating"] as Double,
                     likeCount = (it["likeCount"] as BigInteger).toLong(),
                     dislikeCount = (it["dislikeCount"] as BigInteger).toLong(),
@@ -131,6 +131,7 @@ class EvaluationService(
                     lectureId = (it["lectureId"] as BigInteger).toLong(),
                     lectureTitle = it["lectureTitle"] as String?,
                     lectureInstructor = it["lectureInstructor"] as String?,
+                    fromSnuev = it["fromSnuev"] as Boolean,
                 )
             }
         } ?: lectureEvaluationRepository.findByLectureIdOrderByDesc(lectureId, userId, pageable)
@@ -354,6 +355,7 @@ class EvaluationService(
             dislikeCount = lectureEvaluation.dislikeCount,
             isHidden = lectureEvaluation.isHidden,
             isReported = lectureEvaluation.isReported,
+            fromSnuev = lectureEvaluation.fromSnuev,
         )
 
     private fun genLectureEvaluationWithSemesterDto(
@@ -373,6 +375,7 @@ class EvaluationService(
             dislikeCount = lectureEvaluationWithLecture.dislikeCount!!,
             isHidden = lectureEvaluationWithLecture.isHidden!!,
             isReported = lectureEvaluationWithLecture.isReported!!,
+            fromSnuev = lectureEvaluationWithLecture.fromSnuev!!,
             year = lectureEvaluationWithLecture.year!!,
             semester = lectureEvaluationWithLecture.semester!!,
             lectureId = lectureEvaluationWithLecture.lectureId!!,
@@ -397,6 +400,7 @@ class EvaluationService(
             dislikeCount = lectureEvaluationWithLecture.dislikeCount!!,
             isHidden = lectureEvaluationWithLecture.isHidden!!,
             isReported = lectureEvaluationWithLecture.isReported!!,
+            fromSnuev = lectureEvaluationWithLecture.fromSnuev!!,
             year = lectureEvaluationWithLecture.year!!,
             semester = lectureEvaluationWithLecture.semester!!,
             lecture = SimpleLectureDto(
