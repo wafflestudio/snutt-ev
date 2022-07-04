@@ -8,11 +8,11 @@ import com.wafflestudio.snuttev.domain.lecture.repository.SemesterLectureReposit
 import com.wafflestudio.snuttev.sync.SemesterUtils
 import com.wafflestudio.snuttev.sync.model.SnuttSemesterLecture
 import com.wafflestudio.snuttev.sync.repository.SnuttSemesterLectureRepository
+import org.springframework.stereotype.Component
 import javax.transaction.Transactional
 
 
-//@Component
-@Deprecated("")
+@Component
 class SnuttLectureSyncJobService(
     private val semesterUtils: SemesterUtils,
     private val snuttSemesterLectureRepository: SnuttSemesterLectureRepository,
