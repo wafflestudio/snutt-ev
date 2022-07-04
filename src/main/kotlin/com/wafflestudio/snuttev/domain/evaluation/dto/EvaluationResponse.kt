@@ -36,6 +36,9 @@ data class LectureEvaluationDto(
 
     @JsonProperty("is_reported")
     val isReported: Boolean,
+
+    @JsonProperty("from_snuev")
+    val fromSnuev: Boolean,
 )
 
 data class SemesterLectureDto(
@@ -132,6 +135,9 @@ data class LectureEvaluationWithSemesterDto(
     @JsonProperty("is_reported")
     val isReported: Boolean,
 
+    @JsonProperty("from_snuev")
+    val fromSnuev: Boolean,
+
     val year: Int,
 
     val semester: Int,
@@ -178,6 +184,9 @@ data class LectureEvaluationWithLectureDto(
 
     @JsonProperty("is_reported")
     val isReported: Boolean,
+
+    @JsonProperty("from_snuev")
+    val fromSnuev: Boolean,
 
     val year: Int,
 
