@@ -8,7 +8,6 @@ spring:
   flyway:
     locations: classpath:/db
     baseline-on-migrate: true
-    baseline-version: 0
   jpa:
     generate-ddl: true
     hibernate:
