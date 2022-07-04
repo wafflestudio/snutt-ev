@@ -8,10 +8,9 @@ spring:
   flyway:
     locations: classpath:/db
     baseline-on-migrate: true
-    baseline-version: 0
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: none
     show-sql: true
     properties:
       hibernate:
@@ -92,5 +91,3 @@ spring:
       port:
       authentication-database:
       database:
-  flyway:
-    enabled: false

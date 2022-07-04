@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS lecture
     department     VARCHAR(255) NULL,
     instructor     VARCHAR(255) NULL,
     title          VARCHAR(255) NULL,
-    CONSTRAINT unique_course_instructor
+    CONSTRAINT lecture__unique__course__instructor
         UNIQUE (course_number, instructor)
 );
 
@@ -30,9 +30,9 @@ CREATE TABLE IF NOT EXISTS semester_lecture
     semester       INT          NOT NULL,
     year           INT          NOT NULL,
     lecture_id     BIGINT       NOT NULL,
-    CONSTRAINT unique_lecture_year_semester
+    CONSTRAINT semester_lecture__unique__lecture__year__semester
         UNIQUE (lecture_id, year, semester),
-    CONSTRAINT fk_lecture_id
+    CONSTRAINT semester_lecture__fk__lecture_id
         FOREIGN KEY (lecture_id) REFERENCES lecture (id)
 );
 
@@ -54,7 +54,7 @@ CREATE TABLE IF NOT EXISTS lecture_evaluation
     teaching_skill      DOUBLE       NOT NULL,
     user_id             VARCHAR(255) NOT NULL,
     semester_lecture_id BIGINT       NOT NULL,
-    CONSTRAINT fk_semester_lecture_id
+    CONSTRAINT lecture_evaluation__fk__semester_lecture_id
         FOREIGN KEY (semester_lecture_id) REFERENCES semester_lecture (id)
 );
 
@@ -71,7 +71,7 @@ CREATE TABLE IF NOT EXISTS evaluation_comment
     like_count            BIGINT       NOT NULL,
     user_id               VARCHAR(255) NOT NULL,
     lecture_evaluation_id BIGINT       NOT NULL,
-    CONSTRAINT fk_lecture_evaluation_id
+    CONSTRAINT evaluation_comment__fk__lecture_evaluation_id
         FOREIGN KEY (lecture_evaluation_id) REFERENCES lecture_evaluation (id)
 );
 
@@ -85,9 +85,9 @@ CREATE TABLE IF NOT EXISTS evaluation_report
     is_hidden             BIT          NOT NULL,
     user_id               VARCHAR(255) NOT NULL,
     lecture_evaluation_id BIGINT       NOT NULL,
-    CONSTRAINT unique_lecture_evaluation_and_user
+    CONSTRAINT evaluation_report__unique__lecture_evaluation__user_id
         UNIQUE (lecture_evaluation_id, user_id),
-    CONSTRAINT fk_lecture_evaluation_id
+    CONSTRAINT evaluation_report__fk__lecture_evaluation_id
         FOREIGN KEY (lecture_evaluation_id) REFERENCES lecture_evaluation (id)
 );
 
@@ -101,9 +101,9 @@ CREATE TABLE IF NOT EXISTS tag_group
     name       VARCHAR(255) NOT NULL,
     ordering   INT          NOT NULL,
     value_type VARCHAR(255) NOT NULL,
-    CONSTRAINT unique_ordering
+    CONSTRAINT tag_group__unique__ordering
         UNIQUE (ordering),
-    CONSTRAINT unique_name
+    CONSTRAINT tag_group__unique__name
         UNIQUE (name)
 );
 
@@ -119,8 +119,8 @@ CREATE TABLE IF NOT EXISTS tag
     ordering     INT          NOT NULL,
     string_value VARCHAR(255) NULL,
     tag_group_id BIGINT       NOT NULL,
-    CONSTRAINT unique_tag_group_id_ordering
+    CONSTRAINT tag__unique__tag_group_id__ordering
         UNIQUE (tag_group_id, ordering),
-    CONSTRAINT fk_tag_group_id
+    CONSTRAINT tag__fk__tag_group_id
         FOREIGN KEY (tag_group_id) REFERENCES tag_group (id)
 );
