@@ -5,8 +5,11 @@ spring:
     url: jdbc:mysql://localhost:3306/snutt?serverTimezone=UTC
     username: snutt
     password: wafflestudio
+  flyway:
+    locations: classpath:/db
+    baseline-on-migrate: true
+    baseline-version: 0
   jpa:
-    generate-ddl: true
     hibernate:
       ddl-auto: create
     show-sql: true
@@ -49,9 +52,8 @@ spring:
     username:
     password:
   jpa:
-    generate-ddl: true
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
   redis:
     host:
     port:
@@ -76,7 +78,6 @@ spring:
     username:
     password:
   jpa:
-    generate-ddl: false
     hibernate:
       ddl-auto: none
     show-sql: false
@@ -91,3 +92,5 @@ spring:
       port:
       authentication-database:
       database:
+  flyway:
+    enabled: false
