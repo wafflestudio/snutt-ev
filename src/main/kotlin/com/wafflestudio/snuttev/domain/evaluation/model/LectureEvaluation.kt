@@ -82,8 +82,6 @@ data class LectureEvaluationWithLecture(
     @field:JsonProperty("isReported")
     val isReported: Boolean? = null,
 
-    @get:JsonProperty("fromSnuev")
-    @field:JsonProperty("fromSnuev")
     val fromSnuev: Boolean? = null,
 
     val year: Int? = null,
