@@ -8,7 +8,8 @@ class SnuttSemesterLecture(
     val id: String,
     val classification: String,
     val department: String,
-    val academic_year: String,
+    @Field("academic_year")
+    val academicYear: String,
     @Field("course_title")
     val courseTitle: String,
     val credit: Int,

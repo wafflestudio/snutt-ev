@@ -9,6 +9,11 @@ spring:
       port: 27017
       authentication-database: admin
       database: snutt
+  batch:
+    job:
+      names: ${job.name:EMPTY}
+  main:
+    web-application-type: none
 
 ---
 

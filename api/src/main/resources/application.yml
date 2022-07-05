@@ -11,6 +11,8 @@ spring:
     deserialization:
       fail-on-unknown-properties: false
       fail-on-null-for-primitives: true
+  jpa:
+    show-sql: true
 
 ---
 

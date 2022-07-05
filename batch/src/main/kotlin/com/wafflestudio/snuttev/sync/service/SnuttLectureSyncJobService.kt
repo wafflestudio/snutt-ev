@@ -8,18 +8,15 @@ import com.wafflestudio.snuttev.domain.lecture.repository.SemesterLectureReposit
 import com.wafflestudio.snuttev.sync.SemesterUtils
 import com.wafflestudio.snuttev.sync.model.SnuttSemesterLecture
 import com.wafflestudio.snuttev.sync.repository.SnuttSemesterLectureRepository
-import org.springframework.stereotype.Component
-import javax.transaction.Transactional
 
 
-@Component
+@Deprecated("It is replaced by SnuttLectureSyncJobConfig")
 class SnuttLectureSyncJobService(
     private val semesterUtils: SemesterUtils,
     private val snuttSemesterLectureRepository: SnuttSemesterLectureRepository,
     private val lectureRepository: LectureRepository,
     private val semesterLectureRepository: SemesterLectureRepository
 ) {
-    @Transactional
     fun migrateAllLectureDataFromSnutt() {
         val snuttSemesterLectures = snuttSemesterLectureRepository.findAll()
         val existingSemesterLectures = semesterLectureRepository.findAll()
@@ -27,7 +24,6 @@ class SnuttLectureSyncJobService(
         migrateSemesterLecturesFromSnutt(snuttSemesterLectures, existingSemesterLectures)
     }
 
-    @Transactional
     fun migrateLatestSemesterLectureDataFromSnutt() {
         val (currentYear, currentSemester) = semesterUtils.getCurrentYearAndSemester()
         val (yearOfNextSemester, nextSemester) = semesterUtils.getYearAndSemesterOfNextSemester()
@@ -42,7 +38,7 @@ class SnuttLectureSyncJobService(
             targetYear, targetSemester.value
         ).filter { it.instructor.isNotEmpty() }
         val existingSemesterLectures =
-            semesterLectureRepository.findAllByYearAndSemester(targetYear, targetSemester.value)
+            semesterLectureRepository.findAllByYearAndSemesterWithLecture(targetYear, targetSemester.value)
 
         migrateSemesterLecturesFromSnutt(latestSnuttSemesterLectures, existingSemesterLectures)
     }
@@ -70,7 +66,7 @@ class SnuttLectureSyncJobService(
         return snuttSemesterLectures.associate {
             val lecture = mergedLecturesMap[lectureKeyOf(it)]!!
             semesterLectureKeyOf(it) to (existingSemesterLecturesMap[semesterLectureKeyOf(it)]?.apply {
-                this.academicYear = it.academic_year
+                this.academicYear = it.academicYear
                 this.category = it.category
                 this.classification = LectureClassification.customValueOf(it.classification)!!
                 this.extraInfo = it.remark
@@ -87,7 +83,7 @@ class SnuttLectureSyncJobService(
 
         return newSnuttSemesterLectures.associate {
             lectureKeyOf(it) to (originalLecturesMap[lectureKeyOf(it)]?.apply {
-                this.academicYear = it.academic_year
+                this.academicYear = it.academicYear
                 this.credit = it.credit
                 this.classification = LectureClassification.customValueOf(it.classification)!!
                 this.category = it.category
@@ -102,7 +98,7 @@ class SnuttLectureSyncJobService(
             e.department,
             e.courseNumber,
             e.credit,
-            e.academic_year,
+            e.academicYear,
             e.category,
             LectureClassification.customValueOf(e.classification)!!,
         )
@@ -117,7 +113,7 @@ class SnuttLectureSyncJobService(
             e.semester,
             e.credit,
             e.remark,
-            e.academic_year,
+            e.academicYear,
             e.category,
             LectureClassification.customValueOf(e.classification)!!,
         )

@@ -1,5 +1,6 @@
 package com.wafflestudio.snuttev
 
+import com.wafflestudio.snuttev.common.type.Semester
 import com.wafflestudio.snuttev.domain.lecture.repository.LectureRepository
 import com.wafflestudio.snuttev.domain.lecture.repository.SemesterLectureRepository
 import com.wafflestudio.snuttev.sync.SemesterUtils
@@ -7,18 +8,12 @@ import com.wafflestudio.snuttev.sync.model.SnuttSemesterLecture
 import com.wafflestudio.snuttev.sync.model.SnuttTimePlace
 import com.wafflestudio.snuttev.sync.repository.SnuttSemesterLectureRepository
 import com.wafflestudio.snuttev.sync.service.SnuttLectureSyncJobService
-import com.wafflestudio.snuttev.common.type.Semester
 import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.Test
 import org.mockito.BDDMockito.given
-import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
-import org.springframework.test.context.TestConstructor
-import javax.transaction.Transactional
 
 
-@TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
-@SpringBootTest
+@Deprecated("It is replaced by SnuttLectureSyncJobConfig")
 class SnuttLectureSyncJobSliceTest(
     private val snuttLectureSyncJobService: SnuttLectureSyncJobService,
     private val lectureRepository: LectureRepository,
@@ -42,7 +37,7 @@ class SnuttLectureSyncJobSliceTest(
             id = "",
             classification = "교양",
             department = "",
-            academic_year = "",
+            academicYear = "",
             courseTitle = "",
             credit = 0,
             classTime = "",
@@ -169,8 +164,6 @@ class SnuttLectureSyncJobSliceTest(
         ),
     )
 
-    @Test
-    @Transactional
     fun `snutt 전체 강의 데이터 migration 시에 course번호와 교수이름이 중복되는 강의 데이터는 중복해 저장하지 않는다`() {
         given(snuttSemesterLectureRepository.findAll()).willReturn(autumnSemesterLectures + winterSemesterLectures)
 
@@ -180,8 +173,6 @@ class SnuttLectureSyncJobSliceTest(
         assertEquals(11, lectures.size)
     }
 
-    @Test
-    @Transactional
     fun `snutt 전체 강의 데이터 migration 시에 강의와 학기가 중복되는 데이터는 중복해 저장하지 않는다`() {
         given(snuttSemesterLectureRepository.findAll()).willReturn(autumnSemesterLectures + winterSemesterLectures)
 
@@ -191,8 +182,6 @@ class SnuttLectureSyncJobSliceTest(
         assertEquals(12, semesterLectures.size)
     }
 
-    @Test
-    @Transactional
     fun `snutt 최근 강의 데이터 migration시 강의, semesterLecture 중복 제거 테스트`() {
         given(semesterUtils.getCurrentYearAndSemester()).willReturn(2021 to Semester.SUMMER)
         given(semesterUtils.getYearAndSemesterOfNextSemester()).willReturn(2021 to Semester.AUTUMN)
@@ -208,8 +197,6 @@ class SnuttLectureSyncJobSliceTest(
         assertEquals(5, semesterLectures.size )
     }
 
-    @Test
-    @Transactional
     fun `snutt데이터 그대로일 때 sync 여러번 일어나도 기존 데이터 유지`() {
         given(snuttSemesterLectureRepository.findAll()).willReturn(autumnSemesterLectures + winterSemesterLectures)
         snuttLectureSyncJobService.migrateAllLectureDataFromSnutt()
@@ -221,8 +208,6 @@ class SnuttLectureSyncJobSliceTest(
         assertIterableEquals(semesterLecturesBefore, semesterLecturesAfter)
     }
 
-    @Test
-    @Transactional
     fun `기존에 들어있던 SemesterLecture에 lecture가 같은 semester가 업데이트 된 경우 정상 업데이트 작동 확인`() {
 
         given(snuttSemesterLectureRepository.findAll()).willReturn(
@@ -257,8 +242,6 @@ class SnuttLectureSyncJobSliceTest(
         assertEquals(targetSemesterLectures.category, "categorya")
     }
 
-    @Test
-    @Transactional
     fun `기존에 들어있던 lecture 데이터들 최신 학기의 강의 정보로 lecture 정보 최신화`() {
         given(snuttSemesterLectureRepository.findAll()).willReturn(autumnSemesterLectures)
         given(semesterUtils.getCurrentYearAndSemester()).willReturn(2021 to Semester.AUTUMN)

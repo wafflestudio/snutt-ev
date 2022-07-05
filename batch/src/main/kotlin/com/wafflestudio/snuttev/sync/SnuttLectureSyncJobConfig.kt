@@ -17,6 +17,8 @@ import org.springframework.batch.item.data.MongoItemReader
 import org.springframework.batch.item.data.builder.MongoItemReaderBuilder
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Profile
+import org.springframework.data.domain.Sort
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.data.mongodb.core.query.Query
@@ -25,6 +27,7 @@ import org.springframework.orm.jpa.JpaTransactionManager
 import javax.persistence.EntityManagerFactory
 
 @Configuration
+@Profile(value = ["!test"])
 class SnuttLectureSyncJobConfig(
     private val jobBuilderFactory: JobBuilderFactory,
     private val stepBuilderFactory: StepBuilderFactory,
@@ -40,6 +43,9 @@ class SnuttLectureSyncJobConfig(
     private val CUSTOM_READER_JOB_STEP = JOB_NAME + "_STEP"
     private final val CHUNK_SIZE = 100
 
+    private var lecturesMap: MutableMap<String, Lecture> = mutableMapOf()
+    private var semesterLecturesMap: MutableMap<String, SemesterLecture> = mutableMapOf()
+
     @Bean
     fun syncJobNextSemester(): Job {
         val (currentYear, currentSemester) = semesterUtils.getCurrentYearAndSemester()
@@ -50,6 +56,11 @@ class SnuttLectureSyncJobConfig(
             true -> yearOfNextSemester to nextSemester
             false -> currentYear to currentSemester
         }
+        lecturesMap = lectureRepository.findAll().associateBy { "${it.courseNumber},${it.instructor}" }.toMutableMap()
+        semesterLecturesMap =
+            semesterLectureRepository.findAllByYearAndSemesterWithLecture(targetYear, targetSemester.value)
+                .associateBy { "${it.lecture.courseNumber},${it.lecture.instructor},${it.year},${it.semester}" }
+                .toMutableMap()
 
         return jobBuilderFactory.get(NEXT_SEMESTER_JOB_NAME)
             .start(
@@ -57,7 +68,7 @@ class SnuttLectureSyncJobConfig(
                     Query.query(
                         Criteria
                             .where("year").isEqualTo(targetYear)
-                            .and("semester").isEqualTo(targetSemester)
+                            .and("semester").isEqualTo(targetSemester.value)
                     )
                 )
             )
@@ -66,6 +77,11 @@ class SnuttLectureSyncJobConfig(
 
     @Bean
     fun syncJob(): Job {
+        lecturesMap = lectureRepository.findAll().associateBy { "${it.courseNumber},${it.instructor}" }.toMutableMap()
+        semesterLecturesMap =
+            semesterLectureRepository.findAllWithLecture()
+                .associateBy { "${it.lecture.courseNumber},${it.lecture.instructor},${it.year},${it.semester}" }
+                .toMutableMap()
         return jobBuilderFactory.get(JOB_NAME)
             .start(customReaderStep(Query()))
             .build()
@@ -84,7 +100,10 @@ class SnuttLectureSyncJobConfig(
     }
 
     private fun reader(query: Query): MongoItemReader<SnuttSemesterLecture> {
-        return MongoItemReaderBuilder<SnuttSemesterLecture>().collection("lectures").query(query)
+        return MongoItemReaderBuilder<SnuttSemesterLecture>()
+            .template(mongoTemplate)
+            .collection("lectures").query(query)
+            .sorts(mapOf("courseNumber" to Sort.DEFAULT_DIRECTION))
             .targetType(SnuttSemesterLecture::class.java).pageSize(CHUNK_SIZE)
             .name(this::reader.name)
             .build()
@@ -92,25 +111,23 @@ class SnuttLectureSyncJobConfig(
 
     private fun processor(): ItemProcessor<SnuttSemesterLecture, SemesterLecture> {
         return ItemProcessor<SnuttSemesterLecture, SemesterLecture> { item: SnuttSemesterLecture ->
-            val lecture = lectureRepository.findByCourseNumberAndInstructor(item.courseNumber, item.instructor)?.apply {
-                this.academicYear = item.academic_year
+            val lecture: Lecture = lecturesMap["${item.courseNumber},${item.instructor}"]?.apply {
+                this.academicYear = item.academicYear
                 this.credit = item.credit
                 this.classification = LectureClassification.customValueOf(item.classification)!!
                 this.category = item.category
-            } ?: lectureRepository.save(
-                Lecture(
-                    item.courseTitle,
-                    item.instructor,
-                    item.department,
-                    item.courseNumber,
-                    item.credit,
-                    item.academic_year,
-                    item.category,
-                    LectureClassification.customValueOf(item.classification)!!,
-                )
-            )
-            semesterLectureRepository.findByLectureAndYearAndSemester(lecture, item.year, item.semester)?.apply {
-                this.academicYear = item.academic_year
+            } ?: Lecture(
+                item.courseTitle,
+                item.instructor,
+                item.department,
+                item.courseNumber,
+                item.credit,
+                item.academicYear,
+                item.category,
+                LectureClassification.customValueOf(item.classification)!!,
+            ).also { lecturesMap["${item.courseNumber},${item.instructor}"] = it }
+            semesterLecturesMap["${item.courseNumber},${item.instructor},${item.year},${item.semester}"]?.apply {
+                this.academicYear = item.academicYear
                 this.category = item.category
                 this.classification = LectureClassification.customValueOf(item.classification)!!
                 this.extraInfo = item.remark
@@ -122,17 +139,17 @@ class SnuttLectureSyncJobConfig(
                 item.semester,
                 item.credit,
                 item.remark,
-                item.academic_year,
+                item.academicYear,
                 item.category,
                 LectureClassification.customValueOf(item.classification)!!,
-            )
+            ).also { semesterLecturesMap["${item.courseNumber},${item.instructor},${item.year},${item.semester}"] = it }
         }
     }
 
     private fun writer(): ItemWriter<SemesterLecture> {
         return ItemWriter { items ->
-            lectureRepository.saveAll(items.map { it.lecture })
-            semesterLectureRepository.saveAll(items)
+            lectureRepository.saveAll(items.map { it.lecture }.toSet())
+            semesterLectureRepository.saveAll(items.toSet())
         }
     }
 }
