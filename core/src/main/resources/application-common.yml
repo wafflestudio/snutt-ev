@@ -1,0 +1,40 @@
+spring.profiles.default: local
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/snutt?serverTimezone=UTC
+    username: snutt
+    password: wafflestudio
+  flyway:
+    locations: classpath:/db
+    baseline-on-migrate: true
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        format_sql: true
+        use_sql_comments: true
+
+---
+
+spring.config.activate.on-profile: dev
+
+secretNames: dev/snutt-ev
+
+spring:
+  datasource:
+    url:
+    username:
+    password:
+
+---
+
+spring.config.activate.on-profile: prod
+
+secretNames: prod/snutt-ev
+
+spring:
+  datasource:
+    url:
+    username:
+    password:

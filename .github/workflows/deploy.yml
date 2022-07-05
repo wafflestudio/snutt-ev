@@ -10,6 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       IMAGE_TAG: latest
+      BATCH_IMAGE_TAG: batch-latest
       BUILD_NUMBER: ${{ github.run_number }}
       ECR_REGISTRY: 405906814034.dkr.ecr.ap-northeast-2.amazonaws.com
       ECR_REPOSITORY: snutt/snutt-ev-server
@@ -39,7 +40,9 @@ jobs:
         id: build-image
         run: |
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker build -f Dockerfile-batch -t $ECR_REGISTRY/$ECR_REPOSITORY:$BATCH_IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$BATCH_IMAGE_TAG
           echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
 
       - name: Delete untagged images in ECR
