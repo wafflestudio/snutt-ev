@@ -19,7 +19,7 @@ interface LectureEvaluationRepository : JpaRepository<LectureEvaluation, Long> {
     @Query("""
         select new com.wafflestudio.snuttev.domain.evaluation.model.LectureEvaluationWithLecture(
         le.id, le.userId, le.content, le.gradeSatisfaction, le.teachingSkill, le.gains, le.lifeBalance, le.rating, 
-        le.likeCount, le.dislikeCount, le.isHidden, le.isReported, sl.year, sl.semester, sl.lecture.id, cast(null as string), cast(null as string)) 
+        le.likeCount, le.dislikeCount, le.isHidden, le.isReported, le.fromSnuev, sl.year, sl.semester, sl.lecture.id, cast(null as string), cast(null as string)) 
         from LectureEvaluation le inner join le.semesterLecture sl where sl.lecture.id = :lectureId and le.isHidden = false and le.userId <> :userId 
         order by sl.year desc, sl.semester desc, le.id desc
     """
@@ -29,7 +29,7 @@ interface LectureEvaluationRepository : JpaRepository<LectureEvaluation, Long> {
     @Query("""
         select 
         le.id as id, le.user_id as userId, le.content as content, le.grade_satisfaction as gradeSatisfaction, le.teaching_skill as teachingSkill, le.gains as gains, le.life_balance as lifeBalance, le.rating as rating, 
-        le.like_count as likeCount, le.dislike_count as dislikeCount, le.is_hidden as isHidden, le.is_reported as isReported, sl.year as year, sl.semester as semester, sl.lecture_id as lectureId, cast(null as char) as lectureTitle, cast(null as char) as lectureInstructor 
+        le.like_count as likeCount, le.dislike_count as dislikeCount, le.is_hidden as isHidden, le.is_reported as isReported, le.from_snuev as fromSnuev, sl.year as year, sl.semester as semester, sl.lecture_id as lectureId, cast(null as char) as lectureTitle, cast(null as char) as lectureInstructor 
         from lecture_evaluation le inner join semester_lecture sl on le.semester_lecture_id = sl.id where sl.lecture_id = :lectureId and le.is_hidden = false and le.user_id <> :userId 
         and (sl.year, sl.semester, le.id) < (:cursorYear, :cursorSemester, :cursorId)
         order by sl.year desc, sl.semester desc, le.id desc
@@ -49,7 +49,7 @@ interface LectureEvaluationRepository : JpaRepository<LectureEvaluation, Long> {
     @Query("""
         select new com.wafflestudio.snuttev.domain.evaluation.model.LectureEvaluationWithLecture(
         le.id, le.userId, le.content, le.gradeSatisfaction, le.teachingSkill, le.gains, le.lifeBalance, le.rating, 
-        le.likeCount, le.dislikeCount, le.isHidden, le.isReported, sl.year, sl.semester, sl.lecture.id, sl.lecture.title, sl.lecture.instructor) 
+        le.likeCount, le.dislikeCount, le.isHidden, le.isReported, le.fromSnuev, sl.year, sl.semester, sl.lecture.id, sl.lecture.title, sl.lecture.instructor) 
         from LectureEvaluation le inner join le.semesterLecture sl where le.isHidden = false 
         and sl.classification = :classification 
         order by le.id desc
@@ -60,7 +60,7 @@ interface LectureEvaluationRepository : JpaRepository<LectureEvaluation, Long> {
     @Query("""
         select new com.wafflestudio.snuttev.domain.evaluation.model.LectureEvaluationWithLecture(
         le.id, le.userId, le.content, le.gradeSatisfaction, le.teachingSkill, le.gains, le.lifeBalance, le.rating, 
-        le.likeCount, le.dislikeCount, le.isHidden, le.isReported, sl.year, sl.semester, sl.lecture.id, sl.lecture.title, sl.lecture.instructor) 
+        le.likeCount, le.dislikeCount, le.isHidden, le.isReported, le.fromSnuev, sl.year, sl.semester, sl.lecture.id, sl.lecture.title, sl.lecture.instructor) 
         from LectureEvaluation le inner join le.semesterLecture sl where le.isHidden = false 
         and sl.classification = :classification 
         and le.id < :cursorId 
@@ -82,7 +82,7 @@ interface LectureEvaluationRepository : JpaRepository<LectureEvaluation, Long> {
     @Query("""
         select new com.wafflestudio.snuttev.domain.evaluation.model.LectureEvaluationWithLecture(
         le.id, le.userId, le.content, le.gradeSatisfaction, le.teachingSkill, le.gains, le.lifeBalance, le.rating, 
-        le.likeCount, le.dislikeCount, le.isHidden, le.isReported, sl.year, sl.semester, sl.lecture.id, sl.lecture.title, sl.lecture.instructor) 
+        le.likeCount, le.dislikeCount, le.isHidden, le.isReported, le.fromSnuev, sl.year, sl.semester, sl.lecture.id, sl.lecture.title, sl.lecture.instructor) 
         from LectureEvaluation le inner join le.semesterLecture sl where le.isHidden = false 
         and sl.classification = :classification 
         and sl.lecture.id in ( 
@@ -97,7 +97,7 @@ interface LectureEvaluationRepository : JpaRepository<LectureEvaluation, Long> {
     @Query("""
         select new com.wafflestudio.snuttev.domain.evaluation.model.LectureEvaluationWithLecture(
         le.id, le.userId, le.content, le.gradeSatisfaction, le.teachingSkill, le.gains, le.lifeBalance, le.rating, 
-        le.likeCount, le.dislikeCount, le.isHidden, le.isReported, sl.year, sl.semester, sl.lecture.id, sl.lecture.title, sl.lecture.instructor) 
+        le.likeCount, le.dislikeCount, le.isHidden, le.isReported, le.fromSnuev, sl.year, sl.semester, sl.lecture.id, sl.lecture.title, sl.lecture.instructor) 
         from LectureEvaluation le inner join le.semesterLecture sl where le.isHidden = false 
         and sl.classification = :classification 
         and sl.lecture.id in ( 
@@ -127,7 +127,7 @@ interface LectureEvaluationRepository : JpaRepository<LectureEvaluation, Long> {
     @Query("""
         select new com.wafflestudio.snuttev.domain.evaluation.model.LectureEvaluationWithLecture(
         le.id, le.userId, le.content, le.gradeSatisfaction, le.teachingSkill, le.gains, le.lifeBalance, le.rating, 
-        le.likeCount, le.dislikeCount, le.isHidden, le.isReported, sl.year, sl.semester, sl.lecture.id, sl.lecture.title, sl.lecture.instructor) 
+        le.likeCount, le.dislikeCount, le.isHidden, le.isReported, le.fromSnuev, sl.year, sl.semester, sl.lecture.id, sl.lecture.title, sl.lecture.instructor) 
         from LectureEvaluation le inner join le.semesterLecture sl where le.isHidden = false 
         and sl.classification = :classification 
         and sl.lecture.id in ( 
@@ -142,7 +142,7 @@ interface LectureEvaluationRepository : JpaRepository<LectureEvaluation, Long> {
     @Query("""
         select new com.wafflestudio.snuttev.domain.evaluation.model.LectureEvaluationWithLecture(
         le.id, le.userId, le.content, le.gradeSatisfaction, le.teachingSkill, le.gains, le.lifeBalance, le.rating, 
-        le.likeCount, le.dislikeCount, le.isHidden, le.isReported, sl.year, sl.semester, sl.lecture.id, sl.lecture.title, sl.lecture.instructor) 
+        le.likeCount, le.dislikeCount, le.isHidden, le.isReported, le.fromSnuev, sl.year, sl.semester, sl.lecture.id, sl.lecture.title, sl.lecture.instructor) 
         from LectureEvaluation le inner join le.semesterLecture sl where le.isHidden = false 
         and sl.classification = :classification 
         and sl.lecture.id in ( 
@@ -172,7 +172,7 @@ interface LectureEvaluationRepository : JpaRepository<LectureEvaluation, Long> {
     @Query("""
         select new com.wafflestudio.snuttev.domain.evaluation.model.LectureEvaluationWithLecture(
         le.id, le.userId, le.content, le.gradeSatisfaction, le.teachingSkill, le.gains, le.lifeBalance, le.rating, 
-        le.likeCount, le.dislikeCount, le.isHidden, le.isReported, sl.year, sl.semester, sl.lecture.id, sl.lecture.title, sl.lecture.instructor) 
+        le.likeCount, le.dislikeCount, le.isHidden, le.isReported, le.fromSnuev, sl.year, sl.semester, sl.lecture.id, sl.lecture.title, sl.lecture.instructor) 
         from LectureEvaluation le inner join le.semesterLecture sl where le.isHidden = false 
         and sl.classification = :classification 
         and sl.lecture.id in ( 
@@ -187,7 +187,7 @@ interface LectureEvaluationRepository : JpaRepository<LectureEvaluation, Long> {
     @Query("""
         select new com.wafflestudio.snuttev.domain.evaluation.model.LectureEvaluationWithLecture(
         le.id, le.userId, le.content, le.gradeSatisfaction, le.teachingSkill, le.gains, le.lifeBalance, le.rating, 
-        le.likeCount, le.dislikeCount, le.isHidden, le.isReported, sl.year, sl.semester, sl.lecture.id, sl.lecture.title, sl.lecture.instructor) 
+        le.likeCount, le.dislikeCount, le.isHidden, le.isReported, le.fromSnuev, sl.year, sl.semester, sl.lecture.id, sl.lecture.title, sl.lecture.instructor) 
         from LectureEvaluation le inner join le.semesterLecture sl where le.isHidden = false 
         and sl.classification = :classification 
         and sl.lecture.id in ( 
@@ -217,7 +217,7 @@ interface LectureEvaluationRepository : JpaRepository<LectureEvaluation, Long> {
     @Query("""
         select new com.wafflestudio.snuttev.domain.evaluation.model.LectureEvaluationWithLecture(
         le.id, le.userId, le.content, le.gradeSatisfaction, le.teachingSkill, le.gains, le.lifeBalance, le.rating, 
-        le.likeCount, le.dislikeCount, le.isHidden, le.isReported, sl.year, sl.semester, sl.lecture.id, sl.lecture.title, sl.lecture.instructor) 
+        le.likeCount, le.dislikeCount, le.isHidden, le.isReported, le.fromSnuev, sl.year, sl.semester, sl.lecture.id, sl.lecture.title, sl.lecture.instructor) 
         from LectureEvaluation le inner join le.semesterLecture sl where le.isHidden = false 
         and sl.classification = :classification 
         and sl.lecture.id in ( 
@@ -232,7 +232,7 @@ interface LectureEvaluationRepository : JpaRepository<LectureEvaluation, Long> {
     @Query("""
         select new com.wafflestudio.snuttev.domain.evaluation.model.LectureEvaluationWithLecture(
         le.id, le.userId, le.content, le.gradeSatisfaction, le.teachingSkill, le.gains, le.lifeBalance, le.rating, 
-        le.likeCount, le.dislikeCount, le.isHidden, le.isReported, sl.year, sl.semester, sl.lecture.id, sl.lecture.title, sl.lecture.instructor) 
+        le.likeCount, le.dislikeCount, le.isHidden, le.isReported, le.fromSnuev, sl.year, sl.semester, sl.lecture.id, sl.lecture.title, sl.lecture.instructor) 
         from LectureEvaluation le inner join le.semesterLecture sl where le.isHidden = false 
         and sl.classification = :classification 
         and sl.lecture.id in ( 
@@ -262,7 +262,7 @@ interface LectureEvaluationRepository : JpaRepository<LectureEvaluation, Long> {
     @Query("""
         select new com.wafflestudio.snuttev.domain.evaluation.model.LectureEvaluationWithLecture(
         le.id, le.userId, le.content, le.gradeSatisfaction, le.teachingSkill, le.gains, le.lifeBalance, le.rating, 
-        le.likeCount, le.dislikeCount, le.isHidden, le.isReported, sl.year, sl.semester, sl.lecture.id, cast(null as string), cast(null as string)) 
+        le.likeCount, le.dislikeCount, le.isHidden, le.isReported, le.fromSnuev, sl.year, sl.semester, sl.lecture.id, cast(null as string), cast(null as string)) 
         from LectureEvaluation le inner join le.semesterLecture sl where sl.lecture.id = :lectureId and le.userId = :userId and le.isHidden = false 
         order by sl.year desc, sl.semester desc, le.id desc
     """
