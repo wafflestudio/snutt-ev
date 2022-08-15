@@ -1,6 +1,6 @@
 package com.wafflestudio.snuttev.sync
 
-import com.wafflestudio.snuttev.common.type.Semester
+import com.wafflestudio.snuttev.core.common.type.Semester
 import org.springframework.stereotype.Component
 import java.time.LocalDate
 import java.time.Month

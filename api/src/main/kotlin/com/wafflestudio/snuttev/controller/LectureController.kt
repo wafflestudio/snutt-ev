@@ -2,12 +2,21 @@ package com.wafflestudio.snuttev.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import com.wafflestudio.snuttev.domain.lecture.service.LectureService
-import com.wafflestudio.snuttev.common.dto.common.ListResponse
-import com.wafflestudio.snuttev.common.dto.common.PaginationResponse
-import com.wafflestudio.snuttev.domain.lecture.dto.*
+import com.wafflestudio.snuttev.core.domain.lecture.service.LectureService
+import com.wafflestudio.snuttev.core.common.dto.common.ListResponse
+import com.wafflestudio.snuttev.core.common.dto.common.PaginationResponse
+import com.wafflestudio.snuttev.core.domain.lecture.dto.LectureAndSemesterLecturesResponse
+import com.wafflestudio.snuttev.core.domain.lecture.dto.LectureDto
+import com.wafflestudio.snuttev.core.domain.lecture.dto.LectureIdResponse
+import com.wafflestudio.snuttev.core.domain.lecture.dto.LectureTakenByUserResponse
+import com.wafflestudio.snuttev.core.domain.lecture.dto.SearchLectureRequest
+import com.wafflestudio.snuttev.core.domain.lecture.dto.SnuttLectureInfo
 import io.swagger.v3.oas.annotations.Parameter
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.ModelAttribute
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.RestController
 
 @RestController
 class LectureController(
@@ -41,6 +50,10 @@ class LectureController(
     ): ListResponse<LectureTakenByUserResponse> {
         val snuttLectureInfos: List<SnuttLectureInfo> =
             objectMapper.readValue(snuttLectureInfoString ?: "")
-        return ListResponse(lectureService.getSnuttevLecturesWithSnuttLectureInfos(snuttLectureInfos))
+        return ListResponse(
+            lectureService.getSnuttevLecturesWithSnuttLectureInfos(
+                snuttLectureInfos
+            )
+        )
     }
 }

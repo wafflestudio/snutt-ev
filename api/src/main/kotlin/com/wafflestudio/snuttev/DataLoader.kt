@@ -1,16 +1,16 @@
 package com.wafflestudio.snuttev
 
-import com.wafflestudio.snuttev.common.type.LectureClassification
-import com.wafflestudio.snuttev.common.type.Semester
-import com.wafflestudio.snuttev.domain.lecture.model.Lecture
-import com.wafflestudio.snuttev.domain.lecture.repository.LectureRepository
-import com.wafflestudio.snuttev.domain.lecture.model.SemesterLecture
-import com.wafflestudio.snuttev.domain.lecture.repository.SemesterLectureRepository
-import com.wafflestudio.snuttev.domain.tag.model.Tag
-import com.wafflestudio.snuttev.domain.tag.model.TagGroup
-import com.wafflestudio.snuttev.domain.tag.model.TagValueType
-import com.wafflestudio.snuttev.domain.tag.repository.TagGroupRepository
-import com.wafflestudio.snuttev.domain.tag.repository.TagRepository
+import com.wafflestudio.snuttev.core.common.type.LectureClassification
+import com.wafflestudio.snuttev.core.common.type.Semester
+import com.wafflestudio.snuttev.core.domain.lecture.model.Lecture
+import com.wafflestudio.snuttev.core.domain.lecture.repository.LectureRepository
+import com.wafflestudio.snuttev.core.domain.lecture.model.SemesterLecture
+import com.wafflestudio.snuttev.core.domain.lecture.repository.SemesterLectureRepository
+import com.wafflestudio.snuttev.core.domain.tag.model.Tag
+import com.wafflestudio.snuttev.core.domain.tag.model.TagGroup
+import com.wafflestudio.snuttev.core.domain.tag.model.TagValueType
+import com.wafflestudio.snuttev.core.domain.tag.repository.TagGroupRepository
+import com.wafflestudio.snuttev.core.domain.tag.repository.TagRepository
 import org.springframework.boot.ApplicationArguments
 import org.springframework.boot.ApplicationRunner
 import org.springframework.context.annotation.Profile

@@ -1,8 +1,8 @@
 package com.wafflestudio.snuttev
 
-import com.wafflestudio.snuttev.common.error.ErrorInfo
-import com.wafflestudio.snuttev.common.error.ErrorResponse
-import com.wafflestudio.snuttev.common.error.SnuttException
+import com.wafflestudio.snuttev.core.common.error.ErrorInfo
+import com.wafflestudio.snuttev.core.common.error.ErrorResponse
+import com.wafflestudio.snuttev.core.common.error.SnuttException
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
