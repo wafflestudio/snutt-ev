@@ -24,5 +24,4 @@ class Tag(
 
     @Column(name = "string_value")
     val stringValue: String? = null,
-
-    ) : BaseEntity()
+) : BaseEntity()

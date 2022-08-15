@@ -27,5 +27,4 @@ class EvaluationComment(
 
     @Column(name = "is_reported", nullable = false)
     val isReported: Boolean = false,
-
-    ) : BaseEntity()
+) : BaseEntity()

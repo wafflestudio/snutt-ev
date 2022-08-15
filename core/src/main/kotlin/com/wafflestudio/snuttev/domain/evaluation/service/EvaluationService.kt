@@ -13,6 +13,7 @@ import com.wafflestudio.snuttev.domain.evaluation.model.LectureEvaluation
 import com.wafflestudio.snuttev.domain.evaluation.model.LectureEvaluationWithLecture
 import com.wafflestudio.snuttev.domain.evaluation.repository.EvaluationReportRepository
 import com.wafflestudio.snuttev.domain.evaluation.repository.LectureEvaluationRepository
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.cache.annotation.CacheEvict
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.data.domain.PageRequest
@@ -31,6 +32,8 @@ class EvaluationService(
     private val tagRepository: TagRepository,
     private val evaluationReportRepository: EvaluationReportRepository,
 ) {
+    @Autowired
+    private lateinit var self: EvaluationService
 
     private val defaultPageSize = 20
 

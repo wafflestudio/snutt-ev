@@ -50,8 +50,7 @@ class LectureEvaluation(
     val fromSnuev: Boolean = false,
 
     createdAt: LocalDateTime = LocalDateTime.now(),
-
-    ) : BaseEntity(createdAt = createdAt)
+) : BaseEntity(createdAt = createdAt)
 
 data class LectureEvaluationWithLecture(
     val id: Long? = null,

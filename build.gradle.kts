@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id("org.springframework.boot") version "2.7.0"
+    id("org.springframework.boot") version "2.7.2"
     id("io.spring.dependency-management") version "1.0.11.RELEASE"
     kotlin("jvm") version "1.6.21"
     kotlin("plugin.spring") version "1.6.21"
@@ -12,10 +12,10 @@ plugins {
 java.sourceCompatibility = JavaVersion.VERSION_11
 tasks.bootJar { enabled = false }
 
-allprojects {
-    group = "com.wafflestudio"
-    version = "0.0.1"
+group = "com.wafflestudio.snuttev"
+version = "1.0.0"
 
+allprojects {
     repositories {
         mavenCentral()
     }
@@ -76,13 +76,13 @@ subprojects {
 project(":api") {
     tasks.bootJar {
         enabled = true
-        archiveFileName.set("api.jar")
+        archiveFileName.set("snuttev-api.jar")
     }
 }
 
 project(":batch") {
     tasks.bootJar {
         enabled = true
-        archiveFileName.set("batch.jar")
+        archiveFileName.set("snuttev-batch.jar")
     }
 }
