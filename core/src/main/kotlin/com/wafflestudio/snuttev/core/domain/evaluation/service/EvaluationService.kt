@@ -50,6 +50,9 @@ class EvaluationService(
     private val tagRepository: TagRepository,
     private val evaluationReportRepository: EvaluationReportRepository,
 ) {
+    @Autowired
+    private lateinit var self: EvaluationService
+
     private val defaultPageSize = 20
 
     @CacheEvict("tag-recent-evaluations", allEntries = true)
@@ -196,11 +199,11 @@ class EvaluationService(
         val classification = LectureClassification.LIBERAL_EDUCATION
 
         val cursorPaginationForLectureEvaluationWithLectureDto = when (tag.name) {
-            "최신" -> getLectureEvaluationsWithLectureFromTagRecent(classification, cursorId, pageable)
-            "추천" -> getLectureEvaluationsWithLectureFromTagRecommended(classification, cursorId, pageable)
-            "명강" -> getLectureEvaluationsWithLectureFromTagFine(classification, cursorId, pageable)
-            "꿀강" -> getLectureEvaluationsWithLectureFromTagHoney(classification, cursorId, pageable)
-            "고진감래" -> getLectureEvaluationsWithLectureFromTagPainsGains(classification, cursorId, pageable)
+            "최신" -> self.getLectureEvaluationsWithLectureFromTagRecent(classification, cursorId, pageable)
+            "추천" -> self.getLectureEvaluationsWithLectureFromTagRecommended(classification, cursorId, pageable)
+            "명강" -> self.getLectureEvaluationsWithLectureFromTagFine(classification, cursorId, pageable)
+            "꿀강" -> self.getLectureEvaluationsWithLectureFromTagHoney(classification, cursorId, pageable)
+            "고진감래" -> self.getLectureEvaluationsWithLectureFromTagPainsGains(classification, cursorId, pageable)
             else -> throw WrongMainTagException
         }
 
