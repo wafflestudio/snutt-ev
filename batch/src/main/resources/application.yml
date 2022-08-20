@@ -1,0 +1,40 @@
+spring.profiles.default: local
+
+spring:
+  config:
+    import: application-common.yml
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      authentication-database: admin
+      database: snutt
+  batch:
+    job:
+      names: ${job.name:EMPTY}
+  main:
+    web-application-type: none
+
+---
+
+spring.config.activate.on-profile: dev
+
+spring:
+  data:
+    mongodb:
+      host:
+      port:
+      authentication-database:
+      database:
+
+---
+
+spring.config.activate.on-profile: prod
+
+spring:
+  data:
+    mongodb:
+      host:
+      port:
+      authentication-database:
+      database:
