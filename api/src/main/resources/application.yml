@@ -1,8 +1,6 @@
 spring.profiles.default: local
 
 spring:
-  main:
-    allow-circular-references: true
   config:
     import: application-common.yml
   redis:

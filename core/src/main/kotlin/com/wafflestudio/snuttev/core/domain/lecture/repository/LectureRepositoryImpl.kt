@@ -21,7 +21,16 @@ import org.springframework.data.domain.Pageable
 
 
 class LectureRepositoryImpl(private val queryFactory: JPAQueryFactory) : LectureRepositoryCustom {
-    override fun searchLectures(request: com.wafflestudio.snuttev.core.common.dto.SearchQueryDto, pageable: Pageable): Page<LectureDto> {
+    override fun searchLectures(request: SearchQueryDto, pageable: Pageable): Page<LectureDto> {
+        val predicates = arrayOf(
+            lecture.credit.isIn(request.credit),
+            lecture.academicYear.isIn(request.academicYear),
+            lecture.classification.isIn(request.classification),
+            lecture.department.isIn(request.department),
+            lecture.category.isIn(request.category),
+            extractCriteriaFromQuery(request.query)
+        )
+
         val queryResult = queryFactory.select(
             Projections.constructor(
                 LectureDto::class.java,
@@ -43,20 +52,30 @@ class LectureRepositoryImpl(private val queryFactory: JPAQueryFactory) : Lecture
             .leftJoin(lecture.semesterLectures, semesterLecture)
             .leftJoin(semesterLecture.evaluations, lectureEvaluation)
             .groupBy(lecture)
-            .where(
-                lecture.credit.isIn(request.credit),
-                lecture.academicYear.isIn(request.academicYear),
-                lecture.classification.isIn(request.classification),
-                lecture.department.isIn(request.department),
-                lecture.category.isIn(request.category),
-                extractCriteriaFromQuery(request.query)
-            ).offset(pageable.offset).limit(pageable.pageSize.toLong()).fetch()
-        val total: Long = queryResult.size.toLong()
+            .where(*predicates)
+            .offset(pageable.offset).limit(pageable.pageSize.toLong()).fetch()
+
+        val total = queryFactory.select(
+            lecture.count()
+        ).from(lecture)
+            .where(*predicates)
+            .fetchOne()!!
 
         return PageImpl(queryResult, pageable, total)
     }
 
-    override fun searchSemesterLectures(request: com.wafflestudio.snuttev.core.common.dto.SearchQueryDto, pageable: Pageable): Page<LectureDto> {
+    override fun searchSemesterLectures(request: SearchQueryDto, pageable: Pageable): Page<LectureDto> {
+        val predicates = arrayOf(
+            request.year?.let { semesterLecture.year.eq(it) },
+            request.semester?.let { semesterLecture.semester.eq(it) },
+            semesterLecture.credit.isIn(request.credit),
+            semesterLecture.academicYear.isIn(request.academicYear),
+            semesterLecture.classification.isIn(request.classification),
+            semesterLecture.lecture.department.isIn(request.department),
+            semesterLecture.category.isIn(request.category),
+            extractCriteriaFromQuery(request.query)
+        )
+
         val queryResult =
             queryFactory.select(
                 Projections.constructor(
@@ -79,17 +98,14 @@ class LectureRepositoryImpl(private val queryFactory: JPAQueryFactory) : Lecture
                 .innerJoin(semesterLecture.lecture, lecture)
                 .leftJoin(semesterLecture.evaluations, lectureEvaluation)
                 .groupBy(lecture)
-                .where(
-                    request.year?.let { semesterLecture.year.eq(it) },
-                    request.semester?.let { semesterLecture.semester.eq(it) },
-                    semesterLecture.credit.isIn(request.credit),
-                    semesterLecture.academicYear.isIn(request.academicYear),
-                    semesterLecture.classification.isIn(request.classification),
-                    semesterLecture.lecture.department.isIn(request.department),
-                    semesterLecture.category.isIn(request.category),
-                    extractCriteriaFromQuery(request.query)
-                ).offset(pageable.offset).limit(pageable.pageSize.toLong()).fetch()
-        val total: Long = queryResult.size.toLong()
+                .where(*predicates)
+                .offset(pageable.offset).limit(pageable.pageSize.toLong()).fetch()
+        val total = queryFactory.select(
+            semesterLecture.count()
+        ).from(semesterLecture)
+            .innerJoin(semesterLecture.lecture, lecture)
+            .where(*predicates)
+            .fetchOne()!!
 
         return PageImpl(queryResult, pageable, total)
     }
@@ -113,15 +129,17 @@ class LectureRepositoryImpl(private val queryFactory: JPAQueryFactory) : Lecture
 
     private fun extractCriteriaFromQuery(query: String?): Predicate? {
         val builder = BooleanBuilder()
-        if(query.isNullOrBlank()) return builder.value
+        if (query.isNullOrBlank()) return builder.value
         query.split(' ').forEach { keyword ->
             // 소개원실 -> %소%개%원%실%
             val fuzzyKeyword = keyword.fold("%") { acc, c -> "$acc$c%" }
             val orBuilder = BooleanBuilder()
             when {
-                keyword == "전공" -> orBuilder.or(lecture.classification.`in`(
-                    listOf(LectureClassification.ELECTIVE_SUBJECT, LectureClassification.REQUISITE_SUBJECT)
-                ))
+                keyword == "전공" -> orBuilder.or(
+                    lecture.classification.`in`(
+                        listOf(LectureClassification.ELECTIVE_SUBJECT, LectureClassification.REQUISITE_SUBJECT)
+                    )
+                )
                 keyword == "체육" -> orBuilder.or(lecture.category.eq("체육"))
                 keyword in listOf("석박", "대학원") -> {
                     orBuilder.or(lecture.academicYear.`in`(listOf("석사", "박사", "석박사통합")))
