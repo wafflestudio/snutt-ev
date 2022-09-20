@@ -66,8 +66,9 @@ class LectureRepositoryImpl(private val queryFactory: JPAQueryFactory) : Lecture
 
     override fun searchSemesterLectures(request: SearchQueryDto, pageable: Pageable): Page<LectureDto> {
         val predicates = arrayOf(
-            request.year?.let { semesterLecture.year.eq(it) },
-            request.semester?.let { semesterLecture.semester.eq(it) },
+            request.semesters.map { (year, semester) ->
+                semesterLecture.year.eq(year).and(semesterLecture.semester.eq(semester))
+            }.reduce { acc, next -> acc.or(next) },
             semesterLecture.credit.isIn(request.credit),
             semesterLecture.academicYear.isIn(request.academicYear),
             semesterLecture.classification.isIn(request.classification),
@@ -100,6 +101,7 @@ class LectureRepositoryImpl(private val queryFactory: JPAQueryFactory) : Lecture
                 .groupBy(lecture)
                 .where(*predicates)
                 .offset(pageable.offset).limit(pageable.pageSize.toLong()).fetch()
+
         val total = queryFactory.select(
             semesterLecture.count()
         ).from(semesterLecture)

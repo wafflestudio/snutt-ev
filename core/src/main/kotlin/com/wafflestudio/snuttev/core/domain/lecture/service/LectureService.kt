@@ -29,7 +29,7 @@ class LectureService(
         val request = mappingTagsToLectureProperty(param)
         val pageable = PageRequest.of(param.page, 20)
         return when {
-            (request.year == null && request.semester == null) -> {
+            request.semesters.isEmpty() -> {
                 lectureRepository.searchLectures(request, pageable)
             }
             else -> lectureRepository.searchSemesterLectures(request, pageable)
@@ -93,7 +93,7 @@ class LectureService(
         return LectureIdResponse(lecture.id!!)
     }
 
-    private fun mappingTagsToLectureProperty(request: SearchLectureRequest): com.wafflestudio.snuttev.core.common.dto.SearchQueryDto {
+    private fun mappingTagsToLectureProperty(request: SearchLectureRequest): SearchQueryDto {
         val tags = tagRepository.getTagsWithTagGroupByTagsIdIsIn(request.tags)
         val tagMap: Map<String, List<Any>> = tags.groupBy({ it.tagGroup.name }, {
             when (it.tagGroup.valueType) {
@@ -102,12 +102,12 @@ class LectureService(
                 TagValueType.LOGIC -> ""
             }
         })
-        val (year, semester) = tagMap["학기"]?.filterIsInstance<String>()?.let {
-            if (it.size != 1) throw WrongSearchTagException
-            val pair = it[0].split(",")
-            if (pair.size != 2) throw WrongSearchTagException
-            Pair(pair[0].toInt(), pair[1].toInt())
-        } ?: Pair(null, null)
+        val semesters = tagMap["학기"]?.filterIsInstance<String>()?.let { semesterTag ->
+            semesterTag.map {
+                val (year, semester) = it.split(",")
+                year.toInt() to semester.toInt()
+            }
+        } ?: listOf()
         return SearchQueryDto(
             query = request.query,
             classification = tagMap["구분"]?.filterIsInstance<String>(),
@@ -115,8 +115,7 @@ class LectureService(
             academicYear = tagMap["학년"]?.filterIsInstance<String>(),
             department = tagMap["학과"]?.filterIsInstance<String>(),
             category = tagMap["교양분류"]?.filterIsInstance<String>(),
-            year = year,
-            semester = semester,
+            semesters = semesters,
         )
     }
 
