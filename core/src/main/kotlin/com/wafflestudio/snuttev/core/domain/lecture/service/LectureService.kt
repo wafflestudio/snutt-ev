@@ -102,11 +102,9 @@ class LectureService(
                 TagValueType.LOGIC -> ""
             }
         })
-        val semesters = tagMap["학기"]?.filterIsInstance<String>()?.let { semesterTag ->
-            semesterTag.map {
-                val (year, semester) = it.split(",")
-                year.toInt() to semester.toInt()
-            }
+        val semesters = tagMap["학기"]?.filterIsInstance<String>()?.map {
+            val (year, semester) = it.split(",")
+            year.toInt() to semester.toInt()
         } ?: listOf()
         return SearchQueryDto(
             query = request.query,
