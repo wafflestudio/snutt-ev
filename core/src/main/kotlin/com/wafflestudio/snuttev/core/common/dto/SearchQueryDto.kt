@@ -7,6 +7,5 @@ data class SearchQueryDto(
     val academicYear: List<String>? = null,
     val department: List<String>? = null,
     val category: List<String>? = null,
-    val year: Int? = null,
-    val semester: Int? = null,
+    val yearSemesters: List<Pair<Int,Int>> = listOf(),
 )
