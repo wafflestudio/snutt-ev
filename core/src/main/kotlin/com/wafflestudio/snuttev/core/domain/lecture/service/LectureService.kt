@@ -3,7 +3,6 @@ package com.wafflestudio.snuttev.core.domain.lecture.service
 import com.wafflestudio.snuttev.core.common.dto.SearchQueryDto
 import com.wafflestudio.snuttev.core.domain.evaluation.dto.SemesterLectureDto
 import com.wafflestudio.snuttev.core.common.error.LectureNotFoundException
-import com.wafflestudio.snuttev.core.common.error.WrongSearchTagException
 import com.wafflestudio.snuttev.core.domain.lecture.dto.LectureAndSemesterLecturesResponse
 import com.wafflestudio.snuttev.core.domain.lecture.dto.LectureDto
 import com.wafflestudio.snuttev.core.domain.lecture.dto.LectureIdResponse
@@ -29,7 +28,7 @@ class LectureService(
         val request = mappingTagsToLectureProperty(param)
         val pageable = PageRequest.of(param.page, 20)
         return when {
-            request.semesters.isEmpty() -> {
+            request.yearSemesters.isEmpty() -> {
                 lectureRepository.searchLectures(request, pageable)
             }
             else -> lectureRepository.searchSemesterLectures(request, pageable)
@@ -102,7 +101,7 @@ class LectureService(
                 TagValueType.LOGIC -> ""
             }
         })
-        val semesters = tagMap["학기"]?.filterIsInstance<String>()?.map {
+        val yearSemesters = tagMap["학기"]?.filterIsInstance<String>()?.map {
             val (year, semester) = it.split(",")
             year.toInt() to semester.toInt()
         } ?: listOf()
@@ -113,7 +112,7 @@ class LectureService(
             academicYear = tagMap["학년"]?.filterIsInstance<String>(),
             department = tagMap["학과"]?.filterIsInstance<String>(),
             category = tagMap["교양분류"]?.filterIsInstance<String>(),
-            semesters = semesters,
+            yearSemesters = yearSemesters,
         )
     }
 

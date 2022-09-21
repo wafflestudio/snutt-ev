@@ -66,7 +66,7 @@ class LectureRepositoryImpl(private val queryFactory: JPAQueryFactory) : Lecture
 
     override fun searchSemesterLectures(request: SearchQueryDto, pageable: Pageable): Page<LectureDto> {
         val predicates = arrayOf(
-            request.semesters.map { (year, semester) ->
+            request.yearSemesters.map { (year, semester) ->
                 semesterLecture.year.eq(year).and(semesterLecture.semester.eq(semester))
             }.reduce { acc, next -> acc.or(next) },
             semesterLecture.credit.isIn(request.credit),
