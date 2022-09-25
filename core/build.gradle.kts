@@ -16,6 +16,7 @@ dependencies {
     implementation("org.flywaydb:flyway-core:8.5.12")
     implementation("org.flywaydb:flyway-mysql:8.5.12")
     implementation("software.amazon.awssdk:secretsmanager:2.17.276")
+    implementation("software.amazon.awssdk:sts:2.17.276")
 
     runtimeOnly("mysql:mysql-connector-java")
     kapt("com.querydsl:querydsl-apt::jpa")
