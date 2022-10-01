@@ -1,8 +1,8 @@
 package com.wafflestudio.snuttev.controller
 
-import com.wafflestudio.snuttev.core.domain.tag.service.TagService
 import com.wafflestudio.snuttev.core.domain.tag.dto.SearchTagResponse
 import com.wafflestudio.snuttev.core.domain.tag.dto.TagGroupDto
+import com.wafflestudio.snuttev.core.domain.tag.service.TagService
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RestController
 
@@ -20,5 +20,4 @@ class TagController(
     fun getSearchTags(): SearchTagResponse {
         return tagService.getSearchTags()
     }
-
 }

@@ -9,7 +9,7 @@ import javax.persistence.Id
 import javax.persistence.MappedSuperclass
 
 @MappedSuperclass
-open class BaseEntity (
+open class BaseEntity(
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

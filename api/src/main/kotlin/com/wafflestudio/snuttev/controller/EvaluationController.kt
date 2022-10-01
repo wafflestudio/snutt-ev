@@ -30,10 +30,12 @@ class EvaluationController(
     private val evaluationService: EvaluationService,
 ) {
 
-    @Operation(responses = [
-        ApiResponse(responseCode = "200"),
-        ApiResponse(responseCode = "409", description = "29001 EVALUATION_ALREADY_EXISTS", content = [Content(schema = Schema(implementation = ErrorResponse::class))]),
-    ])
+    @Operation(
+        responses = [
+            ApiResponse(responseCode = "200"),
+            ApiResponse(responseCode = "409", description = "29001 EVALUATION_ALREADY_EXISTS", content = [Content(schema = Schema(implementation = ErrorResponse::class))]),
+        ]
+    )
     @PostMapping("/v1/semester-lectures/{id}/evaluations")
     fun createEvaluation(
         @PathVariable(value = "id") semesterLectureId: Long,
@@ -85,10 +87,12 @@ class EvaluationController(
         return evaluationService.deleteLectureEvaluation(userId, evaluationId)
     }
 
-    @Operation(responses = [
-        ApiResponse(responseCode = "200"),
-        ApiResponse(responseCode = "409", description = "29003 EVALUATION_REPORT_ALREADY_EXISTS", content = [Content(schema = Schema(implementation = ErrorResponse::class))]),
-    ])
+    @Operation(
+        responses = [
+            ApiResponse(responseCode = "200"),
+            ApiResponse(responseCode = "409", description = "29003 EVALUATION_REPORT_ALREADY_EXISTS", content = [Content(schema = Schema(implementation = ErrorResponse::class))]),
+        ]
+    )
     @PostMapping("/v1/evaluations/{id}/report")
     fun reportLectureEvaluation(
         @PathVariable(value = "id") evaluationId: Long,

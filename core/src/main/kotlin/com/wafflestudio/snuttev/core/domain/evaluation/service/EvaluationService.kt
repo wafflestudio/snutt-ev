@@ -1,10 +1,6 @@
 package com.wafflestudio.snuttev.core.domain.evaluation.service
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo
-import com.wafflestudio.snuttev.core.domain.lecture.repository.LectureRepository
-import com.wafflestudio.snuttev.core.domain.lecture.repository.SemesterLectureRepository
-import com.wafflestudio.snuttev.core.domain.tag.repository.TagRepository
-import com.wafflestudio.snuttev.core.common.type.LectureClassification
 import com.wafflestudio.snuttev.core.common.dto.common.CursorPaginationResponse
 import com.wafflestudio.snuttev.core.common.error.EvaluationAlreadyExistsException
 import com.wafflestudio.snuttev.core.common.error.EvaluationReportAlreadyExistsException
@@ -16,6 +12,7 @@ import com.wafflestudio.snuttev.core.common.error.SemesterLectureNotFoundExcepti
 import com.wafflestudio.snuttev.core.common.error.TagNotFoundException
 import com.wafflestudio.snuttev.core.common.error.WrongCursorFormatException
 import com.wafflestudio.snuttev.core.common.error.WrongMainTagException
+import com.wafflestudio.snuttev.core.common.type.LectureClassification
 import com.wafflestudio.snuttev.core.domain.evaluation.dto.CreateEvaluationReportRequest
 import com.wafflestudio.snuttev.core.domain.evaluation.dto.CreateEvaluationRequest
 import com.wafflestudio.snuttev.core.domain.evaluation.dto.EvaluationReportDto
@@ -31,6 +28,9 @@ import com.wafflestudio.snuttev.core.domain.evaluation.model.LectureEvaluation
 import com.wafflestudio.snuttev.core.domain.evaluation.model.LectureEvaluationWithLecture
 import com.wafflestudio.snuttev.core.domain.evaluation.repository.EvaluationReportRepository
 import com.wafflestudio.snuttev.core.domain.evaluation.repository.LectureEvaluationRepository
+import com.wafflestudio.snuttev.core.domain.lecture.repository.LectureRepository
+import com.wafflestudio.snuttev.core.domain.lecture.repository.SemesterLectureRepository
+import com.wafflestudio.snuttev.core.domain.tag.repository.TagRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.cache.annotation.CacheEvict
 import org.springframework.cache.annotation.Cacheable

@@ -9,16 +9,15 @@ import com.querydsl.core.types.dsl.NumberPath
 import com.querydsl.core.types.dsl.StringPath
 import com.querydsl.jpa.impl.JPAQueryFactory
 import com.wafflestudio.snuttev.core.common.dto.SearchQueryDto
+import com.wafflestudio.snuttev.core.common.type.LectureClassification
+import com.wafflestudio.snuttev.core.domain.evaluation.model.QLectureEvaluation.lectureEvaluation
 import com.wafflestudio.snuttev.core.domain.lecture.dto.LectureDto
 import com.wafflestudio.snuttev.core.domain.lecture.dto.LectureEvaluationSimpleSummary
-import com.wafflestudio.snuttev.core.domain.evaluation.model.QLectureEvaluation.lectureEvaluation
 import com.wafflestudio.snuttev.core.domain.lecture.model.QLecture.lecture
 import com.wafflestudio.snuttev.core.domain.lecture.model.QSemesterLecture.semesterLecture
-import com.wafflestudio.snuttev.core.common.type.LectureClassification
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
-
 
 class LectureRepositoryImpl(private val queryFactory: JPAQueryFactory) : LectureRepositoryCustom {
     override fun searchLectures(request: SearchQueryDto, pageable: Pageable): Page<LectureDto> {

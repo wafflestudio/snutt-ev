@@ -2,7 +2,13 @@ package com.wafflestudio.snuttev.core.domain.lecture.model
 
 import com.wafflestudio.snuttev.core.common.model.BaseEntity
 import com.wafflestudio.snuttev.core.common.type.LectureClassification
-import javax.persistence.*
+import javax.persistence.AttributeConverter
+import javax.persistence.Column
+import javax.persistence.Convert
+import javax.persistence.Entity
+import javax.persistence.OneToMany
+import javax.persistence.Table
+import javax.persistence.UniqueConstraint
 import javax.validation.constraints.NotBlank
 
 @Entity
@@ -33,8 +39,7 @@ class Lecture(
     val semesterLectures: List<SemesterLecture> = listOf()
 ) : BaseEntity()
 
-
-class LectureClassificationConverter: AttributeConverter<LectureClassification, String> {
+class LectureClassificationConverter : AttributeConverter<LectureClassification, String> {
     override fun convertToDatabaseColumn(attribute: LectureClassification?): String? = attribute?.value
 
     override fun convertToEntityAttribute(dbData: String?): LectureClassification? =

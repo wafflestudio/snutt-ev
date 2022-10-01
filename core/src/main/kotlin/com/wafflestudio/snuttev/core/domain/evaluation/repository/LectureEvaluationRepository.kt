@@ -16,7 +16,8 @@ interface LectureEvaluationRepository : JpaRepository<LectureEvaluation, Long> {
     @Query("select count(le.id) from LectureEvaluation le inner join le.semesterLecture sl where sl.lecture.id = :lectureId and le.isHidden = false")
     fun countByLectureId(lectureId: Long): Long
 
-    @Query("""
+    @Query(
+        """
         select new com.wafflestudio.snuttev.core.domain.evaluation.model.LectureEvaluationWithLecture(
         le.id, le.userId, le.content, le.gradeSatisfaction, le.teachingSkill, le.gains, le.lifeBalance, le.rating, 
         le.likeCount, le.dislikeCount, le.isHidden, le.isReported, le.fromSnuev, sl.year, sl.semester, sl.lecture.id, cast(null as string), cast(null as string)) 
@@ -26,27 +27,32 @@ interface LectureEvaluationRepository : JpaRepository<LectureEvaluation, Long> {
     )
     fun findByLectureIdOrderByDesc(lectureId: Long, userId: String, pageable: Pageable): List<LectureEvaluationWithLecture>
 
-    @Query("""
+    @Query(
+        """
         select 
         le.id as id, le.user_id as userId, le.content as content, le.grade_satisfaction as gradeSatisfaction, le.teaching_skill as teachingSkill, le.gains as gains, le.life_balance as lifeBalance, le.rating as rating, 
         le.like_count as likeCount, le.dislike_count as dislikeCount, le.is_hidden as isHidden, le.is_reported as isReported, le.from_snuev as fromSnuev, sl.year as year, sl.semester as semester, sl.lecture_id as lectureId, cast(null as char) as lectureTitle, cast(null as char) as lectureInstructor 
         from lecture_evaluation le inner join semester_lecture sl on le.semester_lecture_id = sl.id where sl.lecture_id = :lectureId and le.is_hidden = false and le.user_id <> :userId 
         and (sl.year, sl.semester, le.id) < (:cursorYear, :cursorSemester, :cursorId)
         order by sl.year desc, sl.semester desc, le.id desc
-    """, nativeQuery = true
+    """,
+        nativeQuery = true
     )
-    fun findByLectureIdLessThanOrderByDesc(lectureId: Long, userId: String, cursorYear:Int, cursorSemester: Int, cursorId: Long, pageable: Pageable): List<Map<String, Any>>
+    fun findByLectureIdLessThanOrderByDesc(lectureId: Long, userId: String, cursorYear: Int, cursorSemester: Int, cursorId: Long, pageable: Pageable): List<Map<String, Any>>
 
-    @Query("""
+    @Query(
+        """
         select 1 
         from lecture_evaluation le inner join semester_lecture sl on le.semester_lecture_id = sl.id where sl.lecture_id = :lectureId and le.is_hidden = false and le.user_id <> :userId 
         and (sl.year, sl.semester, le.id) < (:cursorYear, :cursorSemester, :cursorId) 
         limit 1
-    """, nativeQuery = true
+    """,
+        nativeQuery = true
     )
     fun existsByLectureIdLessThan(lectureId: Long, userId: String, cursorYear: Int, cursorSemester: Int, cursorId: Long): Int?
 
-    @Query("""
+    @Query(
+        """
         select new com.wafflestudio.snuttev.core.domain.evaluation.model.LectureEvaluationWithLecture(
         le.id, le.userId, le.content, le.gradeSatisfaction, le.teachingSkill, le.gains, le.lifeBalance, le.rating, 
         le.likeCount, le.dislikeCount, le.isHidden, le.isReported, le.fromSnuev, sl.year, sl.semester, sl.lecture.id, sl.lecture.title, sl.lecture.instructor) 
@@ -57,7 +63,8 @@ interface LectureEvaluationRepository : JpaRepository<LectureEvaluation, Long> {
     )
     fun findByLecturesRecentOrderByDesc(classification: LectureClassification, pageable: Pageable): List<LectureEvaluationWithLecture>
 
-    @Query("""
+    @Query(
+        """
         select new com.wafflestudio.snuttev.core.domain.evaluation.model.LectureEvaluationWithLecture(
         le.id, le.userId, le.content, le.gradeSatisfaction, le.teachingSkill, le.gains, le.lifeBalance, le.rating, 
         le.likeCount, le.dislikeCount, le.isHidden, le.isReported, le.fromSnuev, sl.year, sl.semester, sl.lecture.id, sl.lecture.title, sl.lecture.instructor) 
@@ -69,17 +76,20 @@ interface LectureEvaluationRepository : JpaRepository<LectureEvaluation, Long> {
     )
     fun findByLecturesRecentLessThanOrderByDesc(classification: LectureClassification, cursorId: Long, pageable: Pageable): List<LectureEvaluationWithLecture>
 
-    @Query("""
+    @Query(
+        """
         select 1 
         from lecture_evaluation le inner join semester_lecture sl on le.semester_lecture_id = sl.id where le.is_hidden = false 
         and sl.classification = :#{#classification.value} 
         and le.id < :cursorId 
         limit 1
-    """, nativeQuery = true
+    """,
+        nativeQuery = true
     )
     fun existsByLecturesRecentLessThan(classification: LectureClassification, cursorId: Long): Int?
 
-    @Query("""
+    @Query(
+        """
         select new com.wafflestudio.snuttev.core.domain.evaluation.model.LectureEvaluationWithLecture(
         le.id, le.userId, le.content, le.gradeSatisfaction, le.teachingSkill, le.gains, le.lifeBalance, le.rating, 
         le.likeCount, le.dislikeCount, le.isHidden, le.isReported, le.fromSnuev, sl.year, sl.semester, sl.lecture.id, sl.lecture.title, sl.lecture.instructor) 
@@ -94,7 +104,8 @@ interface LectureEvaluationRepository : JpaRepository<LectureEvaluation, Long> {
     )
     fun findByLecturesRecommendedOrderByDesc(classification: LectureClassification, pageable: Pageable): List<LectureEvaluationWithLecture>
 
-    @Query("""
+    @Query(
+        """
         select new com.wafflestudio.snuttev.core.domain.evaluation.model.LectureEvaluationWithLecture(
         le.id, le.userId, le.content, le.gradeSatisfaction, le.teachingSkill, le.gains, le.lifeBalance, le.rating, 
         le.likeCount, le.dislikeCount, le.isHidden, le.isReported, le.fromSnuev, sl.year, sl.semester, sl.lecture.id, sl.lecture.title, sl.lecture.instructor) 
@@ -110,7 +121,8 @@ interface LectureEvaluationRepository : JpaRepository<LectureEvaluation, Long> {
     )
     fun findByLecturesRecommendedLessThanOrderByDesc(classification: LectureClassification, cursorId: Long, pageable: Pageable): List<LectureEvaluationWithLecture>
 
-    @Query("""
+    @Query(
+        """
         select 1 
         from lecture_evaluation le inner join semester_lecture sl on le.semester_lecture_id = sl.id where le.is_hidden = false 
         and sl.classification = :#{#classification.value} 
@@ -120,11 +132,13 @@ interface LectureEvaluationRepository : JpaRepository<LectureEvaluation, Long> {
         ) 
         and le.id < :cursorId 
         limit 1
-    """, nativeQuery = true
+    """,
+        nativeQuery = true
     )
     fun existsByLecturesRecommendedLessThan(classification: LectureClassification, cursorId: Long): Int?
 
-    @Query("""
+    @Query(
+        """
         select new com.wafflestudio.snuttev.core.domain.evaluation.model.LectureEvaluationWithLecture(
         le.id, le.userId, le.content, le.gradeSatisfaction, le.teachingSkill, le.gains, le.lifeBalance, le.rating, 
         le.likeCount, le.dislikeCount, le.isHidden, le.isReported, le.fromSnuev, sl.year, sl.semester, sl.lecture.id, sl.lecture.title, sl.lecture.instructor) 
@@ -139,7 +153,8 @@ interface LectureEvaluationRepository : JpaRepository<LectureEvaluation, Long> {
     )
     fun findByLecturesFineOrderByDesc(classification: LectureClassification, pageable: Pageable): List<LectureEvaluationWithLecture>
 
-    @Query("""
+    @Query(
+        """
         select new com.wafflestudio.snuttev.core.domain.evaluation.model.LectureEvaluationWithLecture(
         le.id, le.userId, le.content, le.gradeSatisfaction, le.teachingSkill, le.gains, le.lifeBalance, le.rating, 
         le.likeCount, le.dislikeCount, le.isHidden, le.isReported, le.fromSnuev, sl.year, sl.semester, sl.lecture.id, sl.lecture.title, sl.lecture.instructor) 
@@ -155,7 +170,8 @@ interface LectureEvaluationRepository : JpaRepository<LectureEvaluation, Long> {
     )
     fun findByLecturesFineLessThanOrderByDesc(classification: LectureClassification, cursorId: Long, pageable: Pageable): List<LectureEvaluationWithLecture>
 
-    @Query("""
+    @Query(
+        """
         select 1 
         from lecture_evaluation le inner join semester_lecture sl on le.semester_lecture_id = sl.id where le.is_hidden = false 
         and sl.classification = :#{#classification.value} 
@@ -165,11 +181,13 @@ interface LectureEvaluationRepository : JpaRepository<LectureEvaluation, Long> {
         ) 
         and le.id < :cursorId 
         limit 1
-    """, nativeQuery = true
+    """,
+        nativeQuery = true
     )
     fun existsByLecturesFineLessThan(classification: LectureClassification, cursorId: Long): Int?
 
-    @Query("""
+    @Query(
+        """
         select new com.wafflestudio.snuttev.core.domain.evaluation.model.LectureEvaluationWithLecture(
         le.id, le.userId, le.content, le.gradeSatisfaction, le.teachingSkill, le.gains, le.lifeBalance, le.rating, 
         le.likeCount, le.dislikeCount, le.isHidden, le.isReported, le.fromSnuev, sl.year, sl.semester, sl.lecture.id, sl.lecture.title, sl.lecture.instructor) 
@@ -184,7 +202,8 @@ interface LectureEvaluationRepository : JpaRepository<LectureEvaluation, Long> {
     )
     fun findByLecturesHoneyOrderByDesc(classification: LectureClassification, pageable: Pageable): List<LectureEvaluationWithLecture>
 
-    @Query("""
+    @Query(
+        """
         select new com.wafflestudio.snuttev.core.domain.evaluation.model.LectureEvaluationWithLecture(
         le.id, le.userId, le.content, le.gradeSatisfaction, le.teachingSkill, le.gains, le.lifeBalance, le.rating, 
         le.likeCount, le.dislikeCount, le.isHidden, le.isReported, le.fromSnuev, sl.year, sl.semester, sl.lecture.id, sl.lecture.title, sl.lecture.instructor) 
@@ -200,7 +219,8 @@ interface LectureEvaluationRepository : JpaRepository<LectureEvaluation, Long> {
     )
     fun findByLecturesHoneyLessThanOrderByDesc(classification: LectureClassification, cursorId: Long, pageable: Pageable): List<LectureEvaluationWithLecture>
 
-    @Query("""
+    @Query(
+        """
         select 1 
         from lecture_evaluation le inner join semester_lecture sl on le.semester_lecture_id = sl.id where le.is_hidden = false 
         and sl.classification = :#{#classification.value} 
@@ -210,11 +230,13 @@ interface LectureEvaluationRepository : JpaRepository<LectureEvaluation, Long> {
         ) 
         and le.id < :cursorId 
         limit 1
-    """, nativeQuery = true
+    """,
+        nativeQuery = true
     )
     fun existsByLecturesHoneyLessThan(classification: LectureClassification, cursorId: Long): Int?
 
-    @Query("""
+    @Query(
+        """
         select new com.wafflestudio.snuttev.core.domain.evaluation.model.LectureEvaluationWithLecture(
         le.id, le.userId, le.content, le.gradeSatisfaction, le.teachingSkill, le.gains, le.lifeBalance, le.rating, 
         le.likeCount, le.dislikeCount, le.isHidden, le.isReported, le.fromSnuev, sl.year, sl.semester, sl.lecture.id, sl.lecture.title, sl.lecture.instructor) 
@@ -229,7 +251,8 @@ interface LectureEvaluationRepository : JpaRepository<LectureEvaluation, Long> {
     )
     fun findByLecturesPainsGainsOrderByDesc(classification: LectureClassification, pageable: Pageable): List<LectureEvaluationWithLecture>
 
-    @Query("""
+    @Query(
+        """
         select new com.wafflestudio.snuttev.core.domain.evaluation.model.LectureEvaluationWithLecture(
         le.id, le.userId, le.content, le.gradeSatisfaction, le.teachingSkill, le.gains, le.lifeBalance, le.rating, 
         le.likeCount, le.dislikeCount, le.isHidden, le.isReported, le.fromSnuev, sl.year, sl.semester, sl.lecture.id, sl.lecture.title, sl.lecture.instructor) 
@@ -245,7 +268,8 @@ interface LectureEvaluationRepository : JpaRepository<LectureEvaluation, Long> {
     )
     fun findByLecturesPainsGainsLessThanOrderByDesc(classification: LectureClassification, cursorId: Long, pageable: Pageable): List<LectureEvaluationWithLecture>
 
-    @Query("""
+    @Query(
+        """
         select 1 
         from lecture_evaluation le inner join semester_lecture sl on le.semester_lecture_id = sl.id where le.is_hidden = false 
         and sl.classification = :#{#classification.value} 
@@ -255,11 +279,13 @@ interface LectureEvaluationRepository : JpaRepository<LectureEvaluation, Long> {
         ) 
         and le.id < :cursorId 
         limit 1
-    """, nativeQuery = true
+    """,
+        nativeQuery = true
     )
     fun existsByLecturesPainsGainsLessThan(classification: LectureClassification, cursorId: Long): Int?
 
-    @Query("""
+    @Query(
+        """
         select new com.wafflestudio.snuttev.core.domain.evaluation.model.LectureEvaluationWithLecture(
         le.id, le.userId, le.content, le.gradeSatisfaction, le.teachingSkill, le.gains, le.lifeBalance, le.rating, 
         le.likeCount, le.dislikeCount, le.isHidden, le.isReported, le.fromSnuev, sl.year, sl.semester, sl.lecture.id, cast(null as string), cast(null as string)) 
