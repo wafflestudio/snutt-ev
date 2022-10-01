@@ -1,10 +1,14 @@
 package com.wafflestudio.snuttev.core.domain.evaluation.model
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import java.time.LocalDateTime
-import com.wafflestudio.snuttev.core.domain.lecture.model.SemesterLecture
 import com.wafflestudio.snuttev.core.common.model.BaseEntity
-import javax.persistence.*
+import com.wafflestudio.snuttev.core.domain.lecture.model.SemesterLecture
+import java.time.LocalDateTime
+import javax.persistence.Column
+import javax.persistence.Entity
+import javax.persistence.FetchType
+import javax.persistence.JoinColumn
+import javax.persistence.ManyToOne
 
 @Entity
 class LectureEvaluation(

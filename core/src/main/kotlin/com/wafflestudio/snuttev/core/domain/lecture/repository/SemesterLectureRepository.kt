@@ -8,7 +8,6 @@ import org.springframework.data.jpa.repository.Query
 
 interface SemesterLectureRepository : JpaRepository<SemesterLecture, Long> {
 
-
     @Query("SELECT DISTINCT sl FROM SemesterLecture sl JOIN FETCH sl.lecture WHERE sl.year = :year AND sl.semester = :semester")
     fun findAllByYearAndSemesterWithLecture(year: Int, semester: Int): List<SemesterLecture>
 

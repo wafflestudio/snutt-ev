@@ -3,7 +3,6 @@ package com.wafflestudio.snuttev.core.domain.evaluation.dto
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.wafflestudio.snuttev.core.common.type.LectureClassification
 
-
 data class LectureEvaluationDto(
     val id: Long,
 

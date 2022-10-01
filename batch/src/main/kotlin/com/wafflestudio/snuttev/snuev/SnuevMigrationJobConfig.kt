@@ -1,11 +1,11 @@
 package com.wafflestudio.snuttev.snuev
 
-import com.wafflestudio.snuttev.snuev.model.SnuevEvaluation
 import com.wafflestudio.snuttev.core.domain.evaluation.model.LectureEvaluation
 import com.wafflestudio.snuttev.core.domain.evaluation.repository.LectureEvaluationRepository
-import com.wafflestudio.snuttev.core.domain.lecture.repository.LectureRepository
 import com.wafflestudio.snuttev.core.domain.lecture.model.SemesterLecture
+import com.wafflestudio.snuttev.core.domain.lecture.repository.LectureRepository
 import com.wafflestudio.snuttev.core.domain.lecture.repository.SemesterLectureRepository
+import com.wafflestudio.snuttev.snuev.model.SnuevEvaluation
 import org.springframework.batch.core.Job
 import org.springframework.batch.core.Step
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory
@@ -54,9 +54,11 @@ class SnuevMigrationJobConfig(
             .reader(reader())
             .processor(processor())
             .writer(writer())
-            .transactionManager(JpaTransactionManager().apply {
-                this.entityManagerFactory = this@SnuevMigrationJobConfig.entityManagerFactory
-            })
+            .transactionManager(
+                JpaTransactionManager().apply {
+                    this.entityManagerFactory = this@SnuevMigrationJobConfig.entityManagerFactory
+                }
+            )
             .build()
     }
 
@@ -97,7 +99,7 @@ class SnuevMigrationJobConfig(
                             lecture.classification
                         )
                     )
-            val userId = "62c1c0f2ccb19a00111d37af" //snuevUser
+            val userId = "62c1c0f2ccb19a00111d37af" // snuevUser
             LectureEvaluation(
                 semesterLecture = semesterLecture,
                 userId = userId,

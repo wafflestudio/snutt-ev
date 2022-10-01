@@ -1,8 +1,8 @@
 package com.wafflestudio.snuttev.core.domain.lecture.dto
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.wafflestudio.snuttev.core.domain.evaluation.dto.SemesterLectureDto
 import com.wafflestudio.snuttev.core.common.type.LectureClassification
+import com.wafflestudio.snuttev.core.domain.evaluation.dto.SemesterLectureDto
 
 data class LectureDto(
     val id: Long,

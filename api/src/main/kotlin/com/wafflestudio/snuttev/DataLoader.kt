@@ -3,8 +3,8 @@ package com.wafflestudio.snuttev
 import com.wafflestudio.snuttev.core.common.type.LectureClassification
 import com.wafflestudio.snuttev.core.common.type.Semester
 import com.wafflestudio.snuttev.core.domain.lecture.model.Lecture
-import com.wafflestudio.snuttev.core.domain.lecture.repository.LectureRepository
 import com.wafflestudio.snuttev.core.domain.lecture.model.SemesterLecture
+import com.wafflestudio.snuttev.core.domain.lecture.repository.LectureRepository
 import com.wafflestudio.snuttev.core.domain.lecture.repository.SemesterLectureRepository
 import com.wafflestudio.snuttev.core.domain.tag.model.Tag
 import com.wafflestudio.snuttev.core.domain.tag.model.TagGroup
