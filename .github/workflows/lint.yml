@@ -1,4 +1,4 @@
-name: Test CI
+name: Lint CI
 
 on:
   push:
@@ -20,6 +20,6 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Run Tests
+      - name: Run Lint
         run: |
-          ./gradlew clean test
+          ./gradlew clean ktlintCheck

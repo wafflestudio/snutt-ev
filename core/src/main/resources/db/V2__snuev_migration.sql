@@ -1,6 +1,5 @@
-ALTER TABLE lecture_evaluation
-    MODIFY	COLUMN	grade_satisfaction  DOUBLE  NULL,
-    MODIFY	COLUMN	gains               DOUBLE  NULL,
-    MODIFY	COLUMN	teaching_skill      DOUBLE  NULL,
-    MODIFY	COLUMN	life_balance        DOUBLE  NULL,
-    ADD	    COLUMN  from_snuev          BIT     DEFAULT false;
+ALTER TABLE lecture_evaluation MODIFY	COLUMN	grade_satisfaction  DOUBLE  NULL;
+ALTER TABLE lecture_evaluation MODIFY	COLUMN	gains               DOUBLE  NULL;
+ALTER TABLE lecture_evaluation MODIFY	COLUMN	teaching_skill      DOUBLE  NULL;
+ALTER TABLE lecture_evaluation MODIFY	COLUMN	life_balance        DOUBLE  NULL;
+ALTER TABLE lecture_evaluation ADD	    COLUMN  from_snuev          BIT     DEFAULT false;

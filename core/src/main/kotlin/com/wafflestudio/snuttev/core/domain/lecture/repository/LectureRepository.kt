@@ -11,7 +11,8 @@ interface LectureRepository : JpaRepository<Lecture, Long?>, LectureRepositoryCu
     @Query("SELECT l FROM Lecture AS l WHERE CONCAT(l.courseNumber,l.instructor) IN :lectureKeys")
     fun findAllByLectureKeys(lectureKeys: Set<String>): List<Lecture>
 
-    @Query("""
+    @Query(
+        """
         select new com.wafflestudio.snuttev.core.domain.lecture.model.LectureEvaluationSummaryDao(
         sl.lecture.id, sl.lecture.title, sl.lecture.instructor, sl.lecture.department, sl.lecture.courseNumber, 
         sl.lecture.credit, sl.lecture.academicYear, sl.lecture.category, sl.lecture.classification, 

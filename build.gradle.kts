@@ -1,4 +1,6 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jlleitschuh.gradle.ktlint.KtlintExtension
+import org.springframework.boot.gradle.tasks.bundling.BootJar
 
 plugins {
     id("org.springframework.boot") version "2.7.2"
@@ -7,22 +9,13 @@ plugins {
     kotlin("plugin.spring") version "1.6.21"
     kotlin("plugin.allopen") version "1.6.21"
     kotlin("plugin.noarg") version "1.6.21"
+    id("org.jlleitschuh.gradle.ktlint") version "10.3.0"
 }
-
-java.sourceCompatibility = JavaVersion.VERSION_11
-tasks.bootJar { enabled = false }
-
-group = "com.wafflestudio.snuttev"
-version = "1.0.0"
 
 allprojects {
     repositories {
         mavenCentral()
     }
-}
-
-repositories {
-    mavenCentral()
 }
 
 subprojects {
@@ -34,7 +27,12 @@ subprojects {
         plugin("org.jetbrains.kotlin.plugin.spring")
         plugin("kotlin-spring")
         plugin("io.spring.dependency-management")
+        apply(plugin = "org.jlleitschuh.gradle.ktlint")
     }
+
+    group = "com.wafflestudio.snuttev"
+    version = "1.0.0"
+    java.sourceCompatibility = JavaVersion.VERSION_17
 
     dependencies {
         implementation("org.springframework.boot:spring-boot-starter-web")
@@ -55,34 +53,42 @@ subprojects {
     tasks.withType<KotlinCompile> {
         kotlinOptions {
             freeCompilerArgs = listOf("-Xjsr305=strict")
-            jvmTarget = "11"
+            jvmTarget = "17"
         }
     }
 
     tasks.withType<Test> {
+        systemProperty("spring.profiles.active", "test")
         useJUnitPlatform()
     }
 
-    tasks.bootJar {
-        enabled = false
-    }
-
-    tasks.jar {
-        enabled = true
+    configure<KtlintExtension> {
+        debug.set(true)
     }
 }
 
-
 project(":api") {
     tasks.bootJar {
-        enabled = true
         archiveFileName.set("snuttev-api.jar")
     }
 }
 
 project(":batch") {
     tasks.bootJar {
-        enabled = true
         archiveFileName.set("snuttev-batch.jar")
     }
 }
+
+project(":core") {
+    val jar: Jar by tasks
+    val bootJar: BootJar by tasks
+
+    jar.enabled = true
+    bootJar.enabled = false
+}
+
+val jar: Jar by tasks
+val bootJar: BootJar by tasks
+
+jar.enabled = true
+bootJar.enabled = false

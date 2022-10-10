@@ -9,5 +9,5 @@ import org.springframework.cache.annotation.EnableCaching
 class SnuttevApplication
 
 fun main(args: Array<String>) {
-	runApplication<SnuttevApplication>(*args)
+    runApplication<SnuttevApplication>(*args)
 }

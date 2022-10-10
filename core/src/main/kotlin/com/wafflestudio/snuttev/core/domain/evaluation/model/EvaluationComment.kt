@@ -1,7 +1,11 @@
 package com.wafflestudio.snuttev.core.domain.evaluation.model
 
 import com.wafflestudio.snuttev.core.common.model.BaseEntity
-import javax.persistence.*
+import javax.persistence.Column
+import javax.persistence.Entity
+import javax.persistence.FetchType
+import javax.persistence.JoinColumn
+import javax.persistence.ManyToOne
 
 @Entity
 class EvaluationComment(

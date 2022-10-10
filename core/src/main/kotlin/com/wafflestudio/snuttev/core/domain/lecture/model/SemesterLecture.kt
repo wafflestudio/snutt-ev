@@ -1,11 +1,17 @@
 package com.wafflestudio.snuttev.core.domain.lecture.model
 
 import com.wafflestudio.snuttev.core.common.model.BaseEntity
-import com.wafflestudio.snuttev.core.domain.evaluation.model.LectureEvaluation
 import com.wafflestudio.snuttev.core.common.type.LectureClassification
-import com.wafflestudio.snuttev.core.domain.lecture.model.Lecture
-import com.wafflestudio.snuttev.core.domain.lecture.model.LectureClassificationConverter
-import javax.persistence.*
+import com.wafflestudio.snuttev.core.domain.evaluation.model.LectureEvaluation
+import javax.persistence.Column
+import javax.persistence.Convert
+import javax.persistence.Entity
+import javax.persistence.FetchType
+import javax.persistence.JoinColumn
+import javax.persistence.ManyToOne
+import javax.persistence.OneToMany
+import javax.persistence.Table
+import javax.persistence.UniqueConstraint
 
 @Entity
 @Table(uniqueConstraints = [UniqueConstraint(columnNames = ["lecture_id", "year", "semester"])])

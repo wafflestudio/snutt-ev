@@ -1,12 +1,12 @@
 package com.wafflestudio.snuttev.sync
 
-import com.wafflestudio.snuttev.sync.repository.SnuttSemesterLectureRepository
-import com.wafflestudio.snuttev.sync.model.SnuttSemesterLecture
 import com.wafflestudio.snuttev.core.common.type.LectureClassification
 import com.wafflestudio.snuttev.core.domain.lecture.model.Lecture
 import com.wafflestudio.snuttev.core.domain.lecture.model.SemesterLecture
 import com.wafflestudio.snuttev.core.domain.lecture.repository.LectureRepository
 import com.wafflestudio.snuttev.core.domain.lecture.repository.SemesterLectureRepository
+import com.wafflestudio.snuttev.sync.model.SnuttSemesterLecture
+import com.wafflestudio.snuttev.sync.repository.SnuttSemesterLectureRepository
 import org.springframework.batch.core.Job
 import org.springframework.batch.core.Step
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory
@@ -50,9 +50,11 @@ class SnuttLectureSyncJobConfig(
     fun syncJobNextSemester(): Job {
         val (currentYear, currentSemester) = semesterUtils.getCurrentYearAndSemester()
         val (yearOfNextSemester, nextSemester) = semesterUtils.getYearAndSemesterOfNextSemester()
-        val (targetYear, targetSemester) = when (snuttSemesterLectureRepository.existsByYearAndSemester(
-            yearOfNextSemester, nextSemester.value
-        )) {
+        val (targetYear, targetSemester) = when (
+            snuttSemesterLectureRepository.existsByYearAndSemester(
+                yearOfNextSemester, nextSemester.value
+            )
+        ) {
             true -> yearOfNextSemester to nextSemester
             false -> currentYear to currentSemester
         }
@@ -93,9 +95,11 @@ class SnuttLectureSyncJobConfig(
             .reader(reader(query))
             .processor(processor())
             .writer(writer())
-            .transactionManager(JpaTransactionManager().apply {
-                this.entityManagerFactory = this@SnuttLectureSyncJobConfig.entityManagerFactory
-            })
+            .transactionManager(
+                JpaTransactionManager().apply {
+                    this.entityManagerFactory = this@SnuttLectureSyncJobConfig.entityManagerFactory
+                }
+            )
             .build()
     }
 

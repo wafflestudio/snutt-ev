@@ -2,7 +2,7 @@ package com.wafflestudio.snuttev.snuev.model
 
 import java.time.LocalDateTime
 
-data class SnuevEvaluation (
+data class SnuevEvaluation(
     val comment: String,
     val score: Int,
     val easiness: Int,

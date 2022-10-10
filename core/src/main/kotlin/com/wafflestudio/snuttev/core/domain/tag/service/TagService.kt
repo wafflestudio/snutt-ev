@@ -1,9 +1,9 @@
 package com.wafflestudio.snuttev.core.domain.tag.service
 
+import com.wafflestudio.snuttev.core.common.error.TagGroupNotFoundException
 import com.wafflestudio.snuttev.core.domain.tag.dto.SearchTagResponse
 import com.wafflestudio.snuttev.core.domain.tag.dto.TagDto
 import com.wafflestudio.snuttev.core.domain.tag.dto.TagGroupDto
-import com.wafflestudio.snuttev.core.common.error.TagGroupNotFoundException
 import com.wafflestudio.snuttev.core.domain.tag.model.Tag
 import com.wafflestudio.snuttev.core.domain.tag.model.TagGroup
 import com.wafflestudio.snuttev.core.domain.tag.repository.TagGroupRepository
@@ -42,5 +42,4 @@ class TagService(
             description = tag.description,
             ordering = tag.ordering,
         )
-
 }
