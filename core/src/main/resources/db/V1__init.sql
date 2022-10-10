@@ -28,10 +28,10 @@ CREATE TABLE IF NOT EXISTS semester_lecture
     credit         INT          NOT NULL,
     extra_info     LONGTEXT     NULL,
     semester       INT          NOT NULL,
-    year           INT          NOT NULL,
+    `year`           INT          NOT NULL,
     lecture_id     BIGINT       NOT NULL,
     CONSTRAINT semester_lecture__unique__lecture__year__semester
-        UNIQUE (lecture_id, year, semester),
+        UNIQUE (lecture_id, `year`, semester),
     CONSTRAINT semester_lecture__fk__lecture_id
         FOREIGN KEY (lecture_id) REFERENCES lecture (id)
 );

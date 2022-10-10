@@ -294,4 +294,29 @@ interface LectureEvaluationRepository : JpaRepository<LectureEvaluation, Long> {
     """
     )
     fun findByLectureIdAndUserIdOrderByDesc(lectureId: Long, userId: String): List<LectureEvaluationWithLecture>
+
+    @Query(
+        """
+        select new com.wafflestudio.snuttev.core.domain.evaluation.model.LectureEvaluationWithLecture(
+        le.id, le.userId, le.content, le.gradeSatisfaction, le.teachingSkill, le.gains, le.lifeBalance, le.rating, 
+        le.likeCount, le.dislikeCount, le.isHidden, le.isReported, le.fromSnuev, sl.year, sl.semester, sl.lecture.id, sl.lecture.title, sl.lecture.instructor) 
+        from LectureEvaluation le inner join le.semesterLecture sl where le.userId = :userId and le.isHidden = false
+        order by le.id desc
+    """
+    )
+    fun findByUserIdOrderByDesc(userId: String, pageable: Pageable): List<LectureEvaluationWithLecture>
+
+    @Query(
+        """
+        select new com.wafflestudio.snuttev.core.domain.evaluation.model.LectureEvaluationWithLecture(
+        le.id, le.userId, le.content, le.gradeSatisfaction, le.teachingSkill, le.gains, le.lifeBalance, le.rating, 
+        le.likeCount, le.dislikeCount, le.isHidden, le.isReported, le.fromSnuev, sl.year, sl.semester, sl.lecture.id, sl.lecture.title, sl.lecture.instructor) 
+        from LectureEvaluation le inner join le.semesterLecture sl where le.userId = :userId and le.isHidden = false 
+        and le.id < :cursorId 
+        order by le.id desc
+    """
+    )
+    fun findByUserIdLessThanOrderByDesc(userId: String, cursorId: Long, pageable: Pageable): List<LectureEvaluationWithLecture>
+
+    fun countByUserIdAndIsHiddenFalse(userId: String): Long
 }

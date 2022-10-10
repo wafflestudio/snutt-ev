@@ -58,6 +58,7 @@ subprojects {
     }
 
     tasks.withType<Test> {
+        systemProperty("spring.profiles.active", "test")
         useJUnitPlatform()
     }
 

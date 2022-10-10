@@ -180,6 +180,36 @@ class EvaluationService(
         )
     }
 
+    fun getMyEvaluations(userId: String, cursor: String?): CursorPaginationResponse<LectureEvaluationWithLectureDto> {
+        val pageable = PageRequest.of(0, defaultPageSize + 1)
+
+        val cursorId: Long?
+        try {
+            cursorId = cursor?.toLong()
+        } catch (e: NumberFormatException) {
+            throw WrongCursorFormatException
+        }
+
+        val lectureEvaluationsCount = lectureEvaluationRepository.countByUserIdAndIsHiddenFalse(userId)
+
+        val lectureEvaluationsWithLecture = cursorId?.let {
+            lectureEvaluationRepository.findByUserIdLessThanOrderByDesc(userId, cursorId, pageable)
+        } ?: lectureEvaluationRepository.findByUserIdOrderByDesc(userId, pageable)
+
+        val isLast = lectureEvaluationsWithLecture.getOrNull(defaultPageSize) == null
+        val result = if (isLast) lectureEvaluationsWithLecture else lectureEvaluationsWithLecture.dropLast(1)
+
+        return CursorPaginationResponse(
+            content = result.map {
+                genLectureEvaluationWithLectureDto(userId, it)
+            },
+            cursor = result.lastOrNull()?.id?.toString(),
+            size = defaultPageSize,
+            last = isLast,
+            totalCount = lectureEvaluationsCount,
+        )
+    }
+
     fun getMainTagEvaluations(
         userId: String,
         tagId: Long,

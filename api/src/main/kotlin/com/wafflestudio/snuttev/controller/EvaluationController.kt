@@ -70,6 +70,14 @@ class EvaluationController(
         return evaluationService.getMyEvaluationsOfLecture(userId, lectureId)
     }
 
+    @GetMapping("/v1/evaluations/users/me")
+    fun getEvaluationsOfMe(
+        @RequestParam("cursor") cursor: String?,
+        @RequestAttribute(value = "UserId") userId: String,
+    ): CursorPaginationResponse<LectureEvaluationWithLectureDto> {
+        return evaluationService.getMyEvaluations(userId, cursor)
+    }
+
     @GetMapping("/v1/tags/main/{id}/evaluations")
     fun getMainTagEvaluations(
         @PathVariable(value = "id") tagId: Long,
