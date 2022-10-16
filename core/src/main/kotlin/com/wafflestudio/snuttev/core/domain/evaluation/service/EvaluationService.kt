@@ -249,7 +249,7 @@ class EvaluationService(
 
     @CacheEvict("tag-recent-evaluations", "tag-recommended-evaluations", "tag-fine-evaluations", "tag-honey-evaluations", "tag-painsgains-evaluations", allEntries = true)
     @Transactional
-    fun deleteLectureEvaluation(
+    fun deleteEvaluation(
         userId: String,
         lectureEvaluationId: Long,
     ) {
@@ -261,7 +261,7 @@ class EvaluationService(
         lectureEvaluation.isHidden = true
     }
 
-    fun reportLectureEvaluation(
+    fun reportEvaluation(
         userId: String,
         lectureEvaluationId: Long,
         createEvaluationReportRequest: CreateEvaluationReportRequest,
