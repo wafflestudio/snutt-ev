@@ -92,7 +92,7 @@ class EvaluationController(
         @PathVariable(value = "id") evaluationId: Long,
         @RequestAttribute(value = "UserId") userId: String,
     ) {
-        return evaluationService.deleteLectureEvaluation(userId, evaluationId)
+        return evaluationService.deleteEvaluation(userId, evaluationId)
     }
 
     @Operation(
@@ -107,6 +107,6 @@ class EvaluationController(
         @RequestBody @Valid createEvaluationReportRequest: CreateEvaluationReportRequest,
         @RequestAttribute(value = "UserId") userId: String,
     ): EvaluationReportDto {
-        return evaluationService.reportLectureEvaluation(userId, evaluationId, createEvaluationReportRequest)
+        return evaluationService.reportEvaluation(userId, evaluationId, createEvaluationReportRequest)
     }
 }
