@@ -24,6 +24,8 @@ spring:
     port:
     database:
     ttl: 5m
+  jpa:
+    show-sql: false
 
 ---
 
@@ -35,3 +37,5 @@ spring:
     port:
     database:
     ttl: 10m
+  jpa:
+    show-sql: false
