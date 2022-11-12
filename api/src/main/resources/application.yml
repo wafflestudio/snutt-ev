@@ -14,6 +14,16 @@ spring:
   jpa:
     show-sql: true
 
+server:
+  tomcat:
+    accesslog:
+      enabled: true
+      directory: /dev
+      prefix: stdout
+      buffered: false
+      suffix:
+      file-date-format:
+
 ---
 
 spring.config.activate.on-profile: dev
@@ -27,6 +37,11 @@ spring:
   jpa:
     show-sql: false
 
+server:
+  tomcat:
+    accesslog:
+      enabled: false
+
 ---
 
 spring.config.activate.on-profile: prod
@@ -39,3 +54,8 @@ spring:
     ttl: 10m
   jpa:
     show-sql: false
+
+server:
+  tomcat:
+    accesslog:
+      enabled: false
