@@ -4,10 +4,7 @@ import java.time.Duration
 
 enum class CacheKey(
     val key: String,
-    val ttl: Duration,
+    val ttl: Duration? = null,
 ) {
-    EVALUATIONS_BY_TAG_CLASSIFICATION_PAGE(
-        "ev_by_tag_classification_cursor:%s_%s_%s_%s",
-        Duration.ofMinutes(2)
-    ),
+    EVALUATIONS_BY_TAG_CLASSIFICATION_PAGE("ev_by_tag_classification_cursor:%s_%s_%s_%s"),
 }

@@ -3,7 +3,6 @@ package com.wafflestudio.snuttev.core.domain.evaluation.dto
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.querydsl.core.annotations.QueryProjection
 
-// 왜 nullable 하게 짰었을까?
 data class EvaluationWithSemesterDto @QueryProjection constructor(
     val id: Long,
 

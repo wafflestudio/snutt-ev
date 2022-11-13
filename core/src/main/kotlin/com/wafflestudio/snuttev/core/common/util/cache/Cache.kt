@@ -4,6 +4,7 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.redis.core.StringRedisTemplate
 import org.springframework.stereotype.Component
 import java.time.Duration
@@ -12,14 +13,17 @@ import javax.annotation.PostConstruct
 @Component
 class Cache(
     private val redisTemplate: StringRedisTemplate,
+    @Value("\${spring.redis.ttl}") private val defaultTtl: Duration,
 ) {
     @PostConstruct
     private fun init() {
         Companion.redisTemplate = redisTemplate
+        Companion.defaultTtl = defaultTtl
     }
 
     companion object {
         lateinit var redisTemplate: StringRedisTemplate
+        lateinit var defaultTtl: Duration
         val objectMapper = jacksonObjectMapper()
 
         val log: Logger get() = LoggerFactory.getLogger(Cache::class.java)
@@ -38,7 +42,7 @@ class Cache(
 
             val value = supplier()
 
-            set(key, value, cacheKey.ttl)
+            set(key, value, cacheKey.ttl ?: defaultTtl)
 
             return value
         }
