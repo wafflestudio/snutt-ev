@@ -12,7 +12,12 @@ import com.wafflestudio.snuttev.core.domain.lecture.dto.SearchLectureRequest
 import com.wafflestudio.snuttev.core.domain.lecture.dto.SnuttLectureInfo
 import com.wafflestudio.snuttev.core.domain.lecture.service.LectureService
 import io.swagger.v3.oas.annotations.Parameter
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.ModelAttribute
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.RequestAttribute
+import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.RestController
 
 @RestController
 class LectureController(
@@ -44,7 +49,7 @@ class LectureController(
     fun getLecturesTakenByCurrentUser(
         @Parameter(hidden = true)
         @RequestParam("snutt_lecture_info") snuttLectureInfoString: String? = "",
-        @RequestParam("filter") filter: String?,
+        @RequestParam(/* value = */ "filter") filter: String?,
         @RequestAttribute(value = "UserId") userId: String
     ): ListResponse<LectureTakenByUserResponse> {
         val snuttLectureInfos: List<SnuttLectureInfo> =

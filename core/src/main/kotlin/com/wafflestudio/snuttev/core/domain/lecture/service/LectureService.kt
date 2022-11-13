@@ -37,10 +37,11 @@ class LectureService(
         }
     }
 
-    fun getSnuttevLecturesWithSnuttLectureInfos(userId: String,
-                                                snuttLectureInfos: List<SnuttLectureInfo>,
-                                                excludeLecturesWithEvaluations: Boolean)
-    : List<LectureTakenByUserResponse> {
+    fun getSnuttevLecturesWithSnuttLectureInfos(
+        userId: String,
+        snuttLectureInfos: List<SnuttLectureInfo>,
+        excludeLecturesWithEvaluations: Boolean
+    ): List<LectureTakenByUserResponse> {
         val distinctLectures = snuttLectureInfos
             .filter { !it.courseNumber.isNullOrEmpty() && !it.instructor.isNullOrEmpty() }
             .associateBy { "${it.courseNumber}${it.instructor}" }
