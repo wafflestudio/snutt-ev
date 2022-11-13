@@ -42,14 +42,4 @@ data class EvaluationCursor(
     val year: Int,
     val semester: Int,
     val lectureEvaluationId: Long,
-) : Comparable<EvaluationCursor> {
-    override fun compareTo(other: EvaluationCursor): Int {
-        if (year != other.year) {
-            return year.compareTo(other.year)
-        }
-        if (semester != other.semester) {
-            return semester.compareTo(other.semester)
-        }
-        return lectureEvaluationId.compareTo(other.lectureEvaluationId)
-    }
-}
+)
