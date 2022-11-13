@@ -1,6 +1,5 @@
 package com.wafflestudio.snuttev.core.domain.evaluation.service
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo
 import com.wafflestudio.snuttev.core.common.dto.common.CursorPaginationResponse
 import com.wafflestudio.snuttev.core.common.error.EvaluationAlreadyExistsException
 import com.wafflestudio.snuttev.core.common.error.EvaluationReportAlreadyExistsException
@@ -10,36 +9,29 @@ import com.wafflestudio.snuttev.core.common.error.MyLectureEvaluationException
 import com.wafflestudio.snuttev.core.common.error.NotMyLectureEvaluationException
 import com.wafflestudio.snuttev.core.common.error.SemesterLectureNotFoundException
 import com.wafflestudio.snuttev.core.common.error.TagNotFoundException
-import com.wafflestudio.snuttev.core.common.error.WrongCursorFormatException
-import com.wafflestudio.snuttev.core.common.error.WrongMainTagException
 import com.wafflestudio.snuttev.core.common.type.LectureClassification
+import com.wafflestudio.snuttev.core.common.util.PageUtils
+import com.wafflestudio.snuttev.core.common.util.cache.Cache
+import com.wafflestudio.snuttev.core.common.util.cache.CacheKey
 import com.wafflestudio.snuttev.core.domain.evaluation.dto.CreateEvaluationReportRequest
 import com.wafflestudio.snuttev.core.domain.evaluation.dto.CreateEvaluationRequest
+import com.wafflestudio.snuttev.core.domain.evaluation.dto.EvaluationCursor
 import com.wafflestudio.snuttev.core.domain.evaluation.dto.EvaluationReportDto
+import com.wafflestudio.snuttev.core.domain.evaluation.dto.EvaluationWithLectureResponse
+import com.wafflestudio.snuttev.core.domain.evaluation.dto.EvaluationWithSemesterResponse
+import com.wafflestudio.snuttev.core.domain.evaluation.dto.EvaluationsResponse
 import com.wafflestudio.snuttev.core.domain.evaluation.dto.LectureEvaluationDto
 import com.wafflestudio.snuttev.core.domain.evaluation.dto.LectureEvaluationSummary
 import com.wafflestudio.snuttev.core.domain.evaluation.dto.LectureEvaluationSummaryResponse
-import com.wafflestudio.snuttev.core.domain.evaluation.dto.LectureEvaluationWithLectureDto
-import com.wafflestudio.snuttev.core.domain.evaluation.dto.LectureEvaluationWithSemesterDto
-import com.wafflestudio.snuttev.core.domain.evaluation.dto.LectureEvaluationsResponse
-import com.wafflestudio.snuttev.core.domain.evaluation.dto.SimpleLectureDto
 import com.wafflestudio.snuttev.core.domain.evaluation.model.EvaluationReport
 import com.wafflestudio.snuttev.core.domain.evaluation.model.LectureEvaluation
-import com.wafflestudio.snuttev.core.domain.evaluation.model.LectureEvaluationWithLecture
 import com.wafflestudio.snuttev.core.domain.evaluation.repository.EvaluationReportRepository
 import com.wafflestudio.snuttev.core.domain.evaluation.repository.LectureEvaluationRepository
 import com.wafflestudio.snuttev.core.domain.lecture.repository.LectureRepository
 import com.wafflestudio.snuttev.core.domain.lecture.repository.SemesterLectureRepository
 import com.wafflestudio.snuttev.core.domain.tag.repository.TagRepository
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.cache.annotation.CacheEvict
-import org.springframework.cache.annotation.Cacheable
-import org.springframework.data.domain.PageRequest
-import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
-import java.lang.NumberFormatException
-import java.math.BigInteger
 import javax.transaction.Transactional
 
 @Service
@@ -50,12 +42,10 @@ class EvaluationService(
     private val tagRepository: TagRepository,
     private val evaluationReportRepository: EvaluationReportRepository,
 ) {
-    @Autowired
-    private lateinit var self: EvaluationService
+    companion object {
+        private const val DEFAULT_PAGE_SIZE = 20
+    }
 
-    private val defaultPageSize = 20
-
-    @CacheEvict("tag-recent-evaluations", allEntries = true)
     fun createEvaluation(
         userId: String,
         semesterLectureId: Long,
@@ -78,6 +68,9 @@ class EvaluationService(
             rating = createEvaluationRequest.rating,
         )
         lectureEvaluationRepository.save(lectureEvaluation)
+
+        Cache.deleteAll(CacheKey.EVALUATIONS_BY_TAG_CLASSIFICATION_PAGE)
+
         return genLectureEvaluationDto(lectureEvaluation)
     }
 
@@ -111,101 +104,68 @@ class EvaluationService(
         userId: String,
         lectureId: Long,
         cursor: String?,
-    ): CursorPaginationResponse<LectureEvaluationWithSemesterDto> {
-        val pageable = PageRequest.of(0, defaultPageSize)
+    ): CursorPaginationResponse<EvaluationWithSemesterResponse> {
+        val evaluationCursor = PageUtils.getCursor<EvaluationCursor>(cursor)
+
         val lectureEvaluationsCount = lectureEvaluationRepository.countByLectureId(lectureId)
 
-        val lectureEvaluationsWithLecture = cursor?.let {
-            val cursorValues = cursor.split("-")
-            val cursorYear: Int
-            val cursorSemester: Int
-            val cursorId: Long
-            try {
-                cursorYear = cursorValues[0].toInt()
-                cursorSemester = cursorValues[1].toInt()
-                cursorId = cursorValues[2].toLong()
-            } catch (e: IndexOutOfBoundsException) {
-                throw WrongCursorFormatException
-            } catch (e: NumberFormatException) {
-                throw WrongCursorFormatException
+        var evaluationWithSemesterDtos = lectureEvaluationRepository.findNotMyEvaluationsWithSemesterByLectureId(
+            lectureId,
+            userId,
+            evaluationCursor,
+            DEFAULT_PAGE_SIZE + 1,
+        )
+
+        var nextCursor: String? = null
+        if (evaluationWithSemesterDtos.size > DEFAULT_PAGE_SIZE) {
+            evaluationWithSemesterDtos = evaluationWithSemesterDtos.dropLast(1)
+            evaluationWithSemesterDtos.last().run {
+                nextCursor = PageUtils.generateCursor(EvaluationCursor(this.year, this.semester, this.id))
             }
-
-            lectureEvaluationRepository.findByLectureIdLessThanOrderByDesc(lectureId, userId, cursorYear, cursorSemester, cursorId, pageable).map {
-                LectureEvaluationWithLecture(
-                    id = (it["id"] as BigInteger).toLong(),
-                    userId = it["userId"] as String,
-                    content = it["content"] as String,
-                    gradeSatisfaction = it["gradeSatisfaction"] as Double?,
-                    teachingSkill = it["teachingSkill"] as Double?,
-                    gains = it["gains"] as Double?,
-                    lifeBalance = it["lifeBalance"] as Double?,
-                    rating = it["rating"] as Double,
-                    likeCount = (it["likeCount"] as BigInteger).toLong(),
-                    dislikeCount = (it["dislikeCount"] as BigInteger).toLong(),
-                    isHidden = it["isHidden"] as Boolean,
-                    isReported = it["isReported"] as Boolean,
-                    year = it["year"] as Int,
-                    semester = it["semester"] as Int,
-                    lectureId = (it["lectureId"] as BigInteger).toLong(),
-                    lectureTitle = it["lectureTitle"] as String?,
-                    lectureInstructor = it["lectureInstructor"] as String?,
-                    fromSnuev = it["fromSnuev"] as Boolean,
-                )
-            }
-        } ?: lectureEvaluationRepository.findByLectureIdOrderByDesc(lectureId, userId, pageable)
-
-        val lastLectureEvaluationWithLecture = lectureEvaluationsWithLecture.lastOrNull()
-
-        val nextCursor = lastLectureEvaluationWithLecture?.let {
-            "${it.year}-${it.semester}-${it.id}"
         }
 
-        val isLast = lastLectureEvaluationWithLecture?.let {
-            lectureEvaluationRepository.existsByLectureIdLessThan(lectureId, userId, it.year!!, it.semester!!, it.id!!) == null
-        } ?: true
-
         return CursorPaginationResponse(
-            content = lectureEvaluationsWithLecture.map { genLectureEvaluationWithSemesterDto(userId, it) },
+            content = evaluationWithSemesterDtos.map { it.toResponse(userId) },
             cursor = nextCursor,
-            size = defaultPageSize,
-            last = isLast,
+            size = DEFAULT_PAGE_SIZE,
+            last = nextCursor == null,
             totalCount = lectureEvaluationsCount,
         )
     }
 
-    fun getMyEvaluationsOfLecture(userId: String, lectureId: Long): LectureEvaluationsResponse {
-        val lectureEvaluationsWithLecture = lectureEvaluationRepository.findByLectureIdAndUserIdOrderByDesc(lectureId, userId)
-        return LectureEvaluationsResponse(
-            evaluations = lectureEvaluationsWithLecture.map { genLectureEvaluationWithSemesterDto(userId, it) },
+    fun getMyEvaluationsOfLecture(userId: String, lectureId: Long): EvaluationsResponse {
+        val evaluationWithSemesterDtos = lectureEvaluationRepository.findMyEvaluationsWithSemesterByLectureId(
+            lectureId, userId,
+        )
+        return EvaluationsResponse(
+            evaluations = evaluationWithSemesterDtos.map { it.toResponse(userId) },
         )
     }
 
-    fun getMyEvaluations(userId: String, cursor: String?): CursorPaginationResponse<LectureEvaluationWithLectureDto> {
-        val pageable = PageRequest.of(0, defaultPageSize + 1)
-
-        val cursorId: Long?
-        try {
-            cursorId = cursor?.toLong()
-        } catch (e: NumberFormatException) {
-            throw WrongCursorFormatException
-        }
+    fun getMyEvaluations(userId: String, cursor: String?): CursorPaginationResponse<EvaluationWithLectureResponse> {
+        val evaluationIdCursor = PageUtils.getCursor<Long>(cursor)
 
         val lectureEvaluationsCount = lectureEvaluationRepository.countByUserIdAndIsHiddenFalse(userId)
 
-        val lectureEvaluationsWithLecture = cursorId?.let {
-            lectureEvaluationRepository.findByUserIdLessThanOrderByDesc(userId, cursorId, pageable)
-        } ?: lectureEvaluationRepository.findByUserIdOrderByDesc(userId, pageable)
+        var evaluationWithLectureDtos = lectureEvaluationRepository.findMyEvaluationsWithLecture(
+            userId,
+            evaluationIdCursor,
+            DEFAULT_PAGE_SIZE + 1,
+        )
 
-        val isLast = lectureEvaluationsWithLecture.getOrNull(defaultPageSize) == null
-        val result = if (isLast) lectureEvaluationsWithLecture else lectureEvaluationsWithLecture.dropLast(1)
+        var nextCursor: String? = null
+        if (evaluationWithLectureDtos.size > DEFAULT_PAGE_SIZE) {
+            evaluationWithLectureDtos = evaluationWithLectureDtos.dropLast(1)
+            evaluationWithLectureDtos.last().run {
+                nextCursor = PageUtils.generateCursor(this.id)
+            }
+        }
 
         return CursorPaginationResponse(
-            content = result.map {
-                genLectureEvaluationWithLectureDto(userId, it)
-            },
-            cursor = result.lastOrNull()?.id?.toString(),
-            size = defaultPageSize,
-            last = isLast,
+            content = evaluationWithLectureDtos.map { it.toResponse(userId) },
+            cursor = nextCursor,
+            size = DEFAULT_PAGE_SIZE,
+            last = nextCursor == null,
             totalCount = lectureEvaluationsCount,
         )
     }
@@ -214,40 +174,41 @@ class EvaluationService(
         userId: String,
         tagId: Long,
         cursor: String?,
-    ): CursorPaginationResponse<LectureEvaluationWithLectureDto> {
-        val tag = tagRepository.findByIdOrNull(tagId) ?: throw TagNotFoundException
-
-        val pageable = PageRequest.of(0, defaultPageSize)
-
-        val cursorId: Long?
-        try {
-            cursorId = cursor?.toLong()
-        } catch (e: NumberFormatException) {
-            throw WrongCursorFormatException
-        }
+    ): CursorPaginationResponse<EvaluationWithLectureResponse> {
+        val evaluationIdCursor = PageUtils.getCursor<Long>(cursor)
 
         val classification = LectureClassification.LIBERAL_EDUCATION
 
-        val cursorPaginationForLectureEvaluationWithLectureDto = when (tag.name) {
-            "최신" -> self.getLectureEvaluationsWithLectureFromTagRecent(classification, cursorId, pageable)
-            "추천" -> self.getLectureEvaluationsWithLectureFromTagRecommended(classification, cursorId, pageable)
-            "명강" -> self.getLectureEvaluationsWithLectureFromTagFine(classification, cursorId, pageable)
-            "꿀강" -> self.getLectureEvaluationsWithLectureFromTagHoney(classification, cursorId, pageable)
-            "고진감래" -> self.getLectureEvaluationsWithLectureFromTagPainsGains(classification, cursorId, pageable)
-            else -> throw WrongMainTagException
+        var evaluationWithLectureDtos = Cache.get(
+            CacheKey.EVALUATIONS_BY_TAG_CLASSIFICATION_PAGE,
+            {
+                val tag = tagRepository.findByIdOrNull(tagId) ?: throw TagNotFoundException
+                lectureEvaluationRepository.findEvaluationWithLectureByTagAndClassification(
+                    tag,
+                    classification,
+                    evaluationIdCursor,
+                    DEFAULT_PAGE_SIZE + 1,
+                )
+            },
+            tagId, classification, evaluationIdCursor, DEFAULT_PAGE_SIZE + 1,
+        ) ?: emptyList()
+
+        var nextCursor: String? = null
+        if (evaluationWithLectureDtos.size > DEFAULT_PAGE_SIZE) {
+            evaluationWithLectureDtos = evaluationWithLectureDtos.dropLast(1)
+            evaluationWithLectureDtos.last().run {
+                nextCursor = PageUtils.generateCursor(this.id)
+            }
         }
 
         return CursorPaginationResponse(
-            content = cursorPaginationForLectureEvaluationWithLectureDto.lectureEvaluationsWithLecture.map {
-                genLectureEvaluationWithLectureDto(userId, it)
-            },
-            cursor = cursorPaginationForLectureEvaluationWithLectureDto.cursor,
-            size = defaultPageSize,
-            last = cursorPaginationForLectureEvaluationWithLectureDto.last!!,
+            content = evaluationWithLectureDtos.map { it.toResponse(userId) },
+            cursor = nextCursor,
+            size = DEFAULT_PAGE_SIZE,
+            last = nextCursor == null,
         )
     }
 
-    @CacheEvict("tag-recent-evaluations", "tag-recommended-evaluations", "tag-fine-evaluations", "tag-honey-evaluations", "tag-painsgains-evaluations", allEntries = true)
     @Transactional
     fun deleteEvaluation(
         userId: String,
@@ -259,6 +220,8 @@ class EvaluationService(
         }
 
         lectureEvaluation.isHidden = true
+
+        Cache.deleteAll(CacheKey.EVALUATIONS_BY_TAG_CLASSIFICATION_PAGE)
     }
 
     fun reportEvaluation(
@@ -284,111 +247,6 @@ class EvaluationService(
         return genEvaluationReportDto(evaluationReport)
     }
 
-    @Cacheable("tag-recent-evaluations")
-    fun getLectureEvaluationsWithLectureFromTagRecent(classification: LectureClassification, cursorId: Long?, pageable: Pageable): CursorPaginationForLectureEvaluationWithLectureDto {
-        val lectureEvaluationsWithLecture = cursorId?.let {
-            lectureEvaluationRepository.findByLecturesRecentLessThanOrderByDesc(classification, cursorId, pageable)
-        } ?: lectureEvaluationRepository.findByLecturesRecentOrderByDesc(classification, pageable)
-
-        val lastLectureEvaluationWithLecture = lectureEvaluationsWithLecture.lastOrNull()
-
-        val nextCursor = lastLectureEvaluationWithLecture?.id?.toString()
-
-        val isLast = lastLectureEvaluationWithLecture?.let {
-            lectureEvaluationRepository.existsByLecturesRecentLessThan(classification, it.id!!) == null
-        } ?: true
-
-        return CursorPaginationForLectureEvaluationWithLectureDto(
-            lectureEvaluationsWithLecture = lectureEvaluationsWithLecture,
-            cursor = nextCursor,
-            last = isLast,
-        )
-    }
-
-    @Cacheable("tag-recommended-evaluations")
-    fun getLectureEvaluationsWithLectureFromTagRecommended(classification: LectureClassification, cursorId: Long?, pageable: Pageable): CursorPaginationForLectureEvaluationWithLectureDto {
-        val lectureEvaluationsWithLecture = cursorId?.let {
-            lectureEvaluationRepository.findByLecturesRecommendedLessThanOrderByDesc(classification, cursorId, pageable)
-        } ?: lectureEvaluationRepository.findByLecturesRecommendedOrderByDesc(classification, pageable)
-
-        val lastLectureEvaluationWithLecture = lectureEvaluationsWithLecture.lastOrNull()
-
-        val nextCursor = lastLectureEvaluationWithLecture?.id?.toString()
-
-        val isLast = lastLectureEvaluationWithLecture?.let {
-            lectureEvaluationRepository.existsByLecturesRecommendedLessThan(classification, it.id!!) == null
-        } ?: true
-
-        return CursorPaginationForLectureEvaluationWithLectureDto(
-            lectureEvaluationsWithLecture = lectureEvaluationsWithLecture,
-            cursor = nextCursor,
-            last = isLast,
-        )
-    }
-
-    @Cacheable("tag-fine-evaluations")
-    fun getLectureEvaluationsWithLectureFromTagFine(classification: LectureClassification, cursorId: Long?, pageable: Pageable): CursorPaginationForLectureEvaluationWithLectureDto {
-        val lectureEvaluationsWithLecture = cursorId?.let {
-            lectureEvaluationRepository.findByLecturesFineLessThanOrderByDesc(classification, cursorId, pageable)
-        } ?: lectureEvaluationRepository.findByLecturesFineOrderByDesc(classification, pageable)
-
-        val lastLectureEvaluationWithLecture = lectureEvaluationsWithLecture.lastOrNull()
-
-        val nextCursor = lastLectureEvaluationWithLecture?.id?.toString()
-
-        val isLast = lastLectureEvaluationWithLecture?.let {
-            lectureEvaluationRepository.existsByLecturesFineLessThan(classification, it.id!!) == null
-        } ?: true
-
-        return CursorPaginationForLectureEvaluationWithLectureDto(
-            lectureEvaluationsWithLecture = lectureEvaluationsWithLecture,
-            cursor = nextCursor,
-            last = isLast,
-        )
-    }
-
-    @Cacheable("tag-honey-evaluations")
-    fun getLectureEvaluationsWithLectureFromTagHoney(classification: LectureClassification, cursorId: Long?, pageable: Pageable): CursorPaginationForLectureEvaluationWithLectureDto {
-        val lectureEvaluationsWithLecture = cursorId?.let {
-            lectureEvaluationRepository.findByLecturesHoneyLessThanOrderByDesc(classification, cursorId, pageable)
-        } ?: lectureEvaluationRepository.findByLecturesHoneyOrderByDesc(classification, pageable)
-
-        val lastLectureEvaluationWithLecture = lectureEvaluationsWithLecture.lastOrNull()
-
-        val nextCursor = lastLectureEvaluationWithLecture?.id?.toString()
-
-        val isLast = lastLectureEvaluationWithLecture?.let {
-            lectureEvaluationRepository.existsByLecturesHoneyLessThan(classification, it.id!!) == null
-        } ?: true
-
-        return CursorPaginationForLectureEvaluationWithLectureDto(
-            lectureEvaluationsWithLecture = lectureEvaluationsWithLecture,
-            cursor = nextCursor,
-            last = isLast,
-        )
-    }
-
-    @Cacheable("tag-painsgains-evaluations")
-    fun getLectureEvaluationsWithLectureFromTagPainsGains(classification: LectureClassification, cursorId: Long?, pageable: Pageable): CursorPaginationForLectureEvaluationWithLectureDto {
-        val lectureEvaluationsWithLecture = cursorId?.let {
-            lectureEvaluationRepository.findByLecturesPainsGainsLessThanOrderByDesc(classification, cursorId, pageable)
-        } ?: lectureEvaluationRepository.findByLecturesPainsGainsOrderByDesc(classification, pageable)
-
-        val lastLectureEvaluationWithLecture = lectureEvaluationsWithLecture.lastOrNull()
-
-        val nextCursor = lastLectureEvaluationWithLecture?.id?.toString()
-
-        val isLast = lastLectureEvaluationWithLecture?.let {
-            lectureEvaluationRepository.existsByLecturesPainsGainsLessThan(classification, it.id!!) == null
-        } ?: true
-
-        return CursorPaginationForLectureEvaluationWithLectureDto(
-            lectureEvaluationsWithLecture = lectureEvaluationsWithLecture,
-            cursor = nextCursor,
-            last = isLast,
-        )
-    }
-
     private fun genLectureEvaluationDto(lectureEvaluation: LectureEvaluation): LectureEvaluationDto =
         LectureEvaluationDto(
             id = lectureEvaluation.id!!,
@@ -406,60 +264,6 @@ class EvaluationService(
             fromSnuev = lectureEvaluation.fromSnuev,
         )
 
-    private fun genLectureEvaluationWithSemesterDto(
-        userId: String,
-        lectureEvaluationWithLecture: LectureEvaluationWithLecture,
-    ): LectureEvaluationWithSemesterDto =
-        LectureEvaluationWithSemesterDto(
-            id = lectureEvaluationWithLecture.id!!,
-            userId = lectureEvaluationWithLecture.userId!!,
-            content = lectureEvaluationWithLecture.content!!,
-            gradeSatisfaction = lectureEvaluationWithLecture.gradeSatisfaction,
-            teachingSkill = lectureEvaluationWithLecture.teachingSkill,
-            gains = lectureEvaluationWithLecture.gains,
-            lifeBalance = lectureEvaluationWithLecture.lifeBalance,
-            rating = lectureEvaluationWithLecture.rating!!,
-            likeCount = lectureEvaluationWithLecture.likeCount!!,
-            dislikeCount = lectureEvaluationWithLecture.dislikeCount!!,
-            isHidden = lectureEvaluationWithLecture.isHidden!!,
-            isReported = lectureEvaluationWithLecture.isReported!!,
-            fromSnuev = lectureEvaluationWithLecture.fromSnuev!!,
-            year = lectureEvaluationWithLecture.year!!,
-            semester = lectureEvaluationWithLecture.semester!!,
-            lectureId = lectureEvaluationWithLecture.lectureId!!,
-            isModifiable = lectureEvaluationWithLecture.userId == userId,
-            isReportable = lectureEvaluationWithLecture.userId != userId,
-        )
-
-    private fun genLectureEvaluationWithLectureDto(
-        userId: String,
-        lectureEvaluationWithLecture: LectureEvaluationWithLecture,
-    ): LectureEvaluationWithLectureDto =
-        LectureEvaluationWithLectureDto(
-            id = lectureEvaluationWithLecture.id!!,
-            userId = lectureEvaluationWithLecture.userId!!,
-            content = lectureEvaluationWithLecture.content!!,
-            gradeSatisfaction = lectureEvaluationWithLecture.gradeSatisfaction,
-            teachingSkill = lectureEvaluationWithLecture.teachingSkill,
-            gains = lectureEvaluationWithLecture.gains,
-            lifeBalance = lectureEvaluationWithLecture.lifeBalance,
-            rating = lectureEvaluationWithLecture.rating!!,
-            likeCount = lectureEvaluationWithLecture.likeCount!!,
-            dislikeCount = lectureEvaluationWithLecture.dislikeCount!!,
-            isHidden = lectureEvaluationWithLecture.isHidden!!,
-            isReported = lectureEvaluationWithLecture.isReported!!,
-            fromSnuev = lectureEvaluationWithLecture.fromSnuev!!,
-            year = lectureEvaluationWithLecture.year!!,
-            semester = lectureEvaluationWithLecture.semester!!,
-            lecture = SimpleLectureDto(
-                id = lectureEvaluationWithLecture.lectureId!!,
-                title = lectureEvaluationWithLecture.lectureTitle!!,
-                instructor = lectureEvaluationWithLecture.lectureInstructor!!,
-            ),
-            isModifiable = lectureEvaluationWithLecture.userId == userId,
-            isReportable = lectureEvaluationWithLecture.userId != userId,
-        )
-
     private fun genEvaluationReportDto(evaluationReport: EvaluationReport): EvaluationReportDto =
         EvaluationReportDto(
             id = evaluationReport.id!!,
@@ -469,12 +273,3 @@ class EvaluationService(
             isHidden = evaluationReport.isHidden,
         )
 }
-
-@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-data class CursorPaginationForLectureEvaluationWithLectureDto(
-    val lectureEvaluationsWithLecture: List<LectureEvaluationWithLecture> = emptyList(),
-
-    val cursor: String? = null,
-
-    val last: Boolean? = null,
-)

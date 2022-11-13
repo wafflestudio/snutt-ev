@@ -5,11 +5,11 @@ import com.wafflestudio.snuttev.core.common.error.ErrorResponse
 import com.wafflestudio.snuttev.core.domain.evaluation.dto.CreateEvaluationReportRequest
 import com.wafflestudio.snuttev.core.domain.evaluation.dto.CreateEvaluationRequest
 import com.wafflestudio.snuttev.core.domain.evaluation.dto.EvaluationReportDto
+import com.wafflestudio.snuttev.core.domain.evaluation.dto.EvaluationWithLectureResponse
+import com.wafflestudio.snuttev.core.domain.evaluation.dto.EvaluationWithSemesterResponse
+import com.wafflestudio.snuttev.core.domain.evaluation.dto.EvaluationsResponse
 import com.wafflestudio.snuttev.core.domain.evaluation.dto.LectureEvaluationDto
 import com.wafflestudio.snuttev.core.domain.evaluation.dto.LectureEvaluationSummaryResponse
-import com.wafflestudio.snuttev.core.domain.evaluation.dto.LectureEvaluationWithLectureDto
-import com.wafflestudio.snuttev.core.domain.evaluation.dto.LectureEvaluationWithSemesterDto
-import com.wafflestudio.snuttev.core.domain.evaluation.dto.LectureEvaluationsResponse
 import com.wafflestudio.snuttev.core.domain.evaluation.service.EvaluationService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
@@ -58,7 +58,7 @@ class EvaluationController(
         @PathVariable(value = "id") lectureId: Long,
         @RequestParam("cursor") cursor: String?,
         @RequestAttribute(value = "UserId") userId: String,
-    ): CursorPaginationResponse<LectureEvaluationWithSemesterDto> {
+    ): CursorPaginationResponse<EvaluationWithSemesterResponse> {
         return evaluationService.getEvaluationsOfLecture(userId, lectureId, cursor)
     }
 
@@ -66,7 +66,7 @@ class EvaluationController(
     fun getLectureEvaluationsOfMe(
         @PathVariable(value = "id") lectureId: Long,
         @RequestAttribute(value = "UserId") userId: String,
-    ): LectureEvaluationsResponse {
+    ): EvaluationsResponse {
         return evaluationService.getMyEvaluationsOfLecture(userId, lectureId)
     }
 
@@ -74,7 +74,7 @@ class EvaluationController(
     fun getEvaluationsOfMe(
         @RequestParam("cursor") cursor: String?,
         @RequestAttribute(value = "UserId") userId: String,
-    ): CursorPaginationResponse<LectureEvaluationWithLectureDto> {
+    ): CursorPaginationResponse<EvaluationWithLectureResponse> {
         return evaluationService.getMyEvaluations(userId, cursor)
     }
 
@@ -83,7 +83,7 @@ class EvaluationController(
         @PathVariable(value = "id") tagId: Long,
         @RequestParam("cursor") cursor: String?,
         @RequestAttribute(value = "UserId") userId: String,
-    ): CursorPaginationResponse<LectureEvaluationWithLectureDto> {
+    ): CursorPaginationResponse<EvaluationWithLectureResponse> {
         return evaluationService.getMainTagEvaluations(userId, tagId, cursor)
     }
 
