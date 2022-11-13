@@ -31,7 +31,7 @@ class Cache(
         inline fun <reified T : Any> get(cacheKey: CacheKey, supplier: () -> T?, vararg args: Any?): T? {
             val key = cacheKey.key.format(*args)
             try {
-                log.info("[CACHE GET] {}", key)
+                log.debug("[CACHE GET] {}", key)
                 val redisValue = redisTemplate.opsForValue().get(key)
                 redisValue?.let {
                     return objectMapper.readValue(it)
@@ -50,7 +50,7 @@ class Cache(
         fun <T : Any> set(key: String, value: T?, ttl: Duration) {
             value?.let {
                 try {
-                    log.info("[CACHE SET] {}", key)
+                    log.debug("[CACHE SET] {}", key)
                     val redisValue = objectMapper.writeValueAsString(value)
                     redisTemplate.opsForValue().set(key, redisValue, ttl)
                 } catch (e: Exception) {
@@ -62,7 +62,7 @@ class Cache(
         fun delete(cacheKey: CacheKey, vararg args: Any) {
             val key = cacheKey.key.format(*args)
             try {
-                log.info("[CACHE DELETE] {}", key)
+                log.debug("[CACHE DELETE] {}", key)
                 redisTemplate.delete(key)
             } catch (e: Exception) {
                 log.error(e.message, e)
@@ -72,7 +72,7 @@ class Cache(
         fun deleteAll(cacheKey: CacheKey) {
             val keys = redisTemplate.keys(cacheKey.key.replace("%s", "*"))
             try {
-                log.info("[CACHE DELETE ALL] {}", keys)
+                log.debug("[CACHE DELETE ALL] {}", keys)
                 redisTemplate.delete(keys)
             } catch (e: Exception) {
                 log.error(e.message, e)

@@ -65,4 +65,4 @@ spring:
     host:
     port:
     database:
-    ttl: 10m
+    ttl: 1h
