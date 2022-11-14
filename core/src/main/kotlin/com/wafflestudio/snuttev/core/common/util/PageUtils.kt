@@ -18,13 +18,14 @@ class PageUtils {
             return Base64.getUrlEncoder().encodeToString(encrypted)
         }
 
-        inline fun <reified T> getCursor(cursorString: String?): T? {
-            if (cursorString.isNullOrEmpty()) {
-                return null
+        inline fun <reified T> getCursor(cursorString: String?): T? = cursorString?.let {
+            return try {
+                val base64Decoded = Base64.getUrlDecoder().decode(cursorString)
+                val decrypted = getCipher(Cipher.DECRYPT_MODE).doFinal(base64Decoded)
+                return jacksonObjectMapper().readValue<T>(decrypted)
+            } catch (e: Exception) {
+                null
             }
-            val base64Decoded = Base64.getUrlDecoder().decode(cursorString)
-            val decrypted = getCipher(Cipher.DECRYPT_MODE).doFinal(base64Decoded)
-            return jacksonObjectMapper().readValue<T>(decrypted)
         }
 
         fun getCipher(mode: Int): Cipher {
