@@ -17,49 +17,50 @@ internal final class Cache(
 ) {
     private val log: Logger get() = LoggerFactory.getLogger(Cache::class.java)
 
-    inline fun <reified T : Any> withCache(cacheKey: CacheKey, vararg args: Any?, supplier: () -> T?): T? {
-        val key = cacheKey.key.format(*args)
+    inline fun <reified T : Any> withCache(builtCacheKey: CacheKey.BuiltCacheKey, supplier: () -> T?): T? {
+        get<T>(builtCacheKey)?.let { return it }
+
+        val value = supplier()
+        set(builtCacheKey, value)
+        return value
+    }
+
+    inline fun <reified T : Any> get(builtCacheKey: CacheKey.BuiltCacheKey): T? {
         try {
-            log.debug("[CACHE GET] {}", key)
-            val redisValue = redisTemplate.opsForValue().get(key)
+            log.debug("[CACHE GET] {}", builtCacheKey.key)
+            val redisValue = redisTemplate.opsForValue().get(builtCacheKey.key)
             redisValue?.let {
                 return objectMapper.readValue(it)
             }
         } catch (e: Exception) {
             log.error(e.message, e)
         }
-
-        val value = supplier()
-
-        set(key, value, cacheKey.ttl ?: defaultTtl)
-
-        return value
+        return null
     }
 
-    fun <T : Any> set(key: String, value: T?, ttl: Duration) {
+    fun <T : Any> set(builtCacheKey: CacheKey.BuiltCacheKey, value: T?) {
         value?.let {
             try {
-                log.debug("[CACHE SET] {}", key)
+                log.debug("[CACHE SET] {}", builtCacheKey.key)
                 val redisValue = objectMapper.writeValueAsString(value)
-                redisTemplate.opsForValue().set(key, redisValue, ttl)
+                redisTemplate.opsForValue().set(builtCacheKey.key, redisValue, builtCacheKey.ttl ?: defaultTtl)
             } catch (e: Exception) {
                 log.error(e.message, e)
             }
         }
     }
 
-    fun delete(cacheKey: CacheKey, vararg args: Any) {
-        val key = cacheKey.key.format(*args)
+    fun delete(builtCacheKey: CacheKey.BuiltCacheKey) {
         try {
-            log.debug("[CACHE DELETE] {}", key)
-            redisTemplate.delete(key)
+            log.debug("[CACHE DELETE] {}", builtCacheKey.key)
+            redisTemplate.delete(builtCacheKey.key)
         } catch (e: Exception) {
             log.error(e.message, e)
         }
     }
 
     fun deleteAll(cacheKey: CacheKey) {
-        val keys = redisTemplate.keys(cacheKey.key.replace("%s", "*"))
+        val keys = redisTemplate.keys(cacheKey.keyFormat.replace("%s", "*"))
         try {
             log.debug("[CACHE DELETE ALL] {}", keys)
             redisTemplate.delete(keys)

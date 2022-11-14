@@ -181,8 +181,9 @@ class EvaluationService internal constructor(
         val classification = LectureClassification.LIBERAL_EDUCATION
 
         var evaluationWithLectureDtos = cache.withCache(
-            CacheKey.EVALUATIONS_BY_TAG_CLASSIFICATION_PAGE,
-            tagId, classification, evaluationIdCursor, DEFAULT_PAGE_SIZE + 1,
+            CacheKey.EVALUATIONS_BY_TAG_CLASSIFICATION_PAGE.build(
+                tagId, classification, evaluationIdCursor, DEFAULT_PAGE_SIZE + 1,
+            ),
         ) {
             val tag = tagRepository.findByIdOrNull(tagId) ?: throw TagNotFoundException
             lectureEvaluationRepository.findEvaluationWithLectureByTagAndClassification(
