@@ -12,11 +12,8 @@ class PageUtils {
     companion object {
         private const val SECRET_KEY = "cc42f94d-f47d-40cf-9968-87c5337f"
 
-        fun generateCursor(cursor: Any?): String? {
-            if (cursor == null) {
-                return null
-            }
-            val json = jacksonObjectMapper().writeValueAsString(cursor)
+        fun generateCursor(cursor: Any?): String? = cursor?.let {
+            val json = jacksonObjectMapper().writeValueAsString(it)
             val encrypted = getCipher(Cipher.ENCRYPT_MODE).doFinal(json.toByteArray())
             return Base64.getUrlEncoder().encodeToString(encrypted)
         }

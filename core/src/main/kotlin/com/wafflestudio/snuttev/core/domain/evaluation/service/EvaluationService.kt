@@ -35,12 +35,13 @@ import org.springframework.stereotype.Service
 import javax.transaction.Transactional
 
 @Service
-class EvaluationService(
+class EvaluationService internal constructor(
     private val semesterLectureRepository: SemesterLectureRepository,
     private val lectureEvaluationRepository: LectureEvaluationRepository,
     private val lectureRepository: LectureRepository,
     private val tagRepository: TagRepository,
     private val evaluationReportRepository: EvaluationReportRepository,
+    private val cache: Cache,
 ) {
     companion object {
         private const val DEFAULT_PAGE_SIZE = 20
@@ -69,7 +70,7 @@ class EvaluationService(
         )
         lectureEvaluationRepository.save(lectureEvaluation)
 
-        Cache.deleteAll(CacheKey.EVALUATIONS_BY_TAG_CLASSIFICATION_PAGE)
+        cache.deleteAll(CacheKey.EVALUATIONS_BY_TAG_CLASSIFICATION_PAGE)
 
         return genLectureEvaluationDto(lectureEvaluation)
     }
@@ -179,19 +180,18 @@ class EvaluationService(
 
         val classification = LectureClassification.LIBERAL_EDUCATION
 
-        var evaluationWithLectureDtos = Cache.get(
+        var evaluationWithLectureDtos = cache.withCache(
             CacheKey.EVALUATIONS_BY_TAG_CLASSIFICATION_PAGE,
-            {
-                val tag = tagRepository.findByIdOrNull(tagId) ?: throw TagNotFoundException
-                lectureEvaluationRepository.findEvaluationWithLectureByTagAndClassification(
-                    tag,
-                    classification,
-                    evaluationIdCursor,
-                    DEFAULT_PAGE_SIZE + 1,
-                )
-            },
             tagId, classification, evaluationIdCursor, DEFAULT_PAGE_SIZE + 1,
-        ) ?: emptyList()
+        ) {
+            val tag = tagRepository.findByIdOrNull(tagId) ?: throw TagNotFoundException
+            lectureEvaluationRepository.findEvaluationWithLectureByTagAndClassification(
+                tag,
+                classification,
+                evaluationIdCursor,
+                DEFAULT_PAGE_SIZE + 1,
+            )
+        } ?: emptyList()
 
         var nextCursor: String? = null
         if (evaluationWithLectureDtos.size > DEFAULT_PAGE_SIZE) {
@@ -221,7 +221,7 @@ class EvaluationService(
 
         lectureEvaluation.isHidden = true
 
-        Cache.deleteAll(CacheKey.EVALUATIONS_BY_TAG_CLASSIFICATION_PAGE)
+        cache.deleteAll(CacheKey.EVALUATIONS_BY_TAG_CLASSIFICATION_PAGE)
     }
 
     fun reportEvaluation(

@@ -2,7 +2,7 @@ package com.wafflestudio.snuttev.core.common.util.cache
 
 import java.time.Duration
 
-enum class CacheKey(
+internal enum class CacheKey(
     val key: String,
     val ttl: Duration? = null,
 ) {
