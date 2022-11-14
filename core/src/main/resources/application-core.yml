@@ -1,7 +1,5 @@
 spring.profiles.default: local
 spring:
-  main:
-    allow-circular-references: true
   datasource:
     url: jdbc:mysql://localhost:3306/snutt?serverTimezone=UTC
     username: snutt
@@ -12,10 +10,16 @@ spring:
   jpa:
     hibernate:
       ddl-auto: none
+    open-in-view: false
+    show-sql: true
     properties:
       hibernate:
         format_sql: true
         use_sql_comments: true
+  redis:
+    host: localhost
+    port: 6379
+    ttl: 5m
 
 ---
 
@@ -36,6 +40,13 @@ spring:
     url:
     username:
     password:
+  jpa:
+    show-sql: false
+  redis:
+    host:
+    port:
+    database:
+    ttl: 5m
 
 ---
 
@@ -48,3 +59,10 @@ spring:
     url:
     username:
     password:
+  jpa:
+    show-sql: false
+  redis:
+    host:
+    port:
+    database:
+    ttl: 1h
