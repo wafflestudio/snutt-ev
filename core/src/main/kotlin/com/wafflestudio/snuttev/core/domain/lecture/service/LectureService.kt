@@ -46,12 +46,11 @@ class LectureService(
             .filter { !it.courseNumber.isNullOrEmpty() && !it.instructor.isNullOrEmpty() }
             .associateBy { "${it.courseNumber}${it.instructor}" }
         val lectureKeys = distinctLectures.keys
-        val snuttevLectures = lectureRepository.findAllByLectureKeys(lectureKeys)
+        var snuttevLectures = lectureRepository.findAllByLectureKeys(lectureKeys)
 
         if (excludeLecturesWithEvaluations) {
-            snuttevLectures.filter {
-                lectureEvaluationRepository.findByLectureIdAndUserIdOrderByDesc(it.id!!, userId).isEmpty()
-            }
+            val lectureIdsWithEvaluation = lectureEvaluationRepository.findLectureIdsByLectureEvaluationUserId(userId)
+            snuttevLectures = snuttevLectures.filterNot { lectureIdsWithEvaluation.contains(it.id!!) }
         }
 
         return snuttevLectures.filter { distinctLectures["${it.courseNumber}${it.instructor}"] != null }.map {

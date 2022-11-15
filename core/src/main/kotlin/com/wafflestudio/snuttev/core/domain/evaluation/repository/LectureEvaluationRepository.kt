@@ -319,4 +319,8 @@ interface LectureEvaluationRepository : JpaRepository<LectureEvaluation, Long> {
     fun findByUserIdLessThanOrderByDesc(userId: String, cursorId: Long, pageable: Pageable): List<LectureEvaluationWithLecture>
 
     fun countByUserIdAndIsHiddenFalse(userId: String): Long
+
+    @Query("select le.semesterLecture.lecture.id from LectureEvaluation le where le.userId = :userId")
+    fun findLectureIdsByLectureEvaluationUserId(userId: String): List<Long>
+
 }
