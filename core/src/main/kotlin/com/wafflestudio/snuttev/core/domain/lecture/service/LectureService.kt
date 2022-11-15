@@ -40,7 +40,7 @@ class LectureService(
     fun getSnuttevLecturesWithSnuttLectureInfos(
         userId: String,
         snuttLectureInfos: List<SnuttLectureInfo>,
-        excludeLecturesWithEvaluations: Boolean
+        excludeLecturesWithEvaluations: Boolean,
     ): List<LectureTakenByUserResponse> {
         val distinctLectures = snuttLectureInfos
             .filter { !it.courseNumber.isNullOrEmpty() && !it.instructor.isNullOrEmpty() }

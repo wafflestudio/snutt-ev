@@ -48,9 +48,12 @@ class LectureController(
     @GetMapping("/v1/users/me/lectures/latest")
     fun getLecturesTakenByCurrentUser(
         @Parameter(hidden = true)
-        @RequestParam("snutt_lecture_info") snuttLectureInfoString: String? = "",
-        @RequestParam(/* value = */ "filter") filter: String?,
-        @RequestAttribute(value = "UserId") userId: String
+        @RequestParam("snutt_lecture_info")
+        snuttLectureInfoString: String? = "",
+        @RequestAttribute(value = "filter")
+        filter: String?,
+        @RequestAttribute(value = "UserId")
+        userId: String,
     ): ListResponse<LectureTakenByUserResponse> {
         val snuttLectureInfos: List<SnuttLectureInfo> =
             objectMapper.readValue(snuttLectureInfoString ?: "")
