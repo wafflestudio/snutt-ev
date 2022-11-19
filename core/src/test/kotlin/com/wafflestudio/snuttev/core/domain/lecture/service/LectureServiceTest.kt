@@ -23,7 +23,6 @@ class LectureServiceTest(
     @Autowired private val evaluationRepository: LectureEvaluationRepository,
     @Autowired private val lectureRepository: LectureRepository,
     @Autowired private val semesterLectureRepository: SemesterLectureRepository,
-    @Autowired private val lectureEvaluationRepository: LectureEvaluationRepository,
 ) {
 
     @BeforeEach
@@ -52,8 +51,8 @@ class LectureServiceTest(
         val semesterLectures = semesterLectureRepository.findAll().filter { it.semester == Semester.SPRING.value }
         val snuttLectureInfo = genSnuttLectureInfosFromSemesterLectures(semesterLectures)
 
-        for (lecture in semesterLectures) {
-            saveEvaluation(lecture, userId)
+        semesterLectures.forEach {
+            saveEvaluation(it, userId)
         }
 
         val response = lectureService.getSnuttevLecturesWithSnuttLectureInfos(
@@ -142,8 +141,8 @@ class LectureServiceTest(
             )
         )
 
-        for (lecture in lectures) {
-            for (semester in listOf(Semester.SPRING.value, Semester.AUTUMN.value)) {
+        lectures.forEach { lecture ->
+            listOf(Semester.SPRING.value, Semester.AUTUMN.value).forEach { semester ->
                 semesterLectureRepository.save(
                     SemesterLecture(
                         lecture = lecture,
@@ -160,7 +159,7 @@ class LectureServiceTest(
     }
 
     private fun genSnuttLectureInfosFromSemesterLectures(semesterLectures: List<SemesterLecture>): List<SnuttLectureInfo> {
-        val lectureInfos = semesterLectures
+        return semesterLectures
             .map {
                 SnuttLectureInfo(
                     year = it.year,
@@ -169,18 +168,17 @@ class LectureServiceTest(
                     courseNumber = it.lecture.courseNumber,
                 )
             }
-        return lectureInfos
     }
 
     private fun saveEvaluationsForMultipleLecturesFromMultipleUsers(semesterLectures: List<SemesterLecture>, userIds: List<String>) {
-        for (lecture in semesterLectures) {
-            saveEvaluationsFromMultipleUsers(lecture, userIds)
+        semesterLectures.forEach {
+            saveEvaluationsFromMultipleUsers(it, userIds)
         }
     }
 
     private fun saveEvaluationsFromMultipleUsers(semesterLecture: SemesterLecture, userIds: List<String>) {
-        for (userId in userIds) {
-            saveEvaluation(semesterLecture, userId)
+        userIds.forEach {
+            saveEvaluation(semesterLecture, it)
         }
     }
 
