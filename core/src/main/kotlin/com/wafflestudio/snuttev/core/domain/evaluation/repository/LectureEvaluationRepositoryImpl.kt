@@ -82,7 +82,7 @@ class LectureEvaluationRepositoryImpl(private val queryFactory: JPAQueryFactory)
                 "명강" -> lectureEvaluation.teachingSkill.avg().goe(4.0)
                     .and(lectureEvaluation.gains.avg().goe(4.0))
                 "꿀강" -> lectureEvaluation.gradeSatisfaction.avg().goe(4.0)
-                    .and(lectureEvaluation.lifeBalance.goe(4.0))
+                    .and(lectureEvaluation.lifeBalance.avg().goe(4.0))
                 "고진감래" -> lectureEvaluation.lifeBalance.avg().lt(2.0)
                     .and(lectureEvaluation.gains.avg().goe(4.0))
                 else -> throw WrongMainTagException
