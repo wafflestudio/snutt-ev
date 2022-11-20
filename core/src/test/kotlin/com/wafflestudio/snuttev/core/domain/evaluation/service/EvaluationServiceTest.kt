@@ -246,7 +246,7 @@ class EvaluationServiceTest(
 
         val response = evaluationService.getEvaluationsOfLecture(myUserId, semesterLecture.lecture.id!!, cursor = null)
 
-        assertThat(response.cursor).isNotNull
+        assertThat(response.cursor).isNull()
         assertThat(response.size).isEqualTo(20)
         assertThat(response.last).isTrue
         assertThat(response.totalCount).isEqualTo(6)
@@ -294,7 +294,7 @@ class EvaluationServiceTest(
         val lectureId = semesterLecture.lecture.id!!
         val response = evaluationService.getEvaluationsOfLecture(myUserId, lectureId, cursor = null)
 
-        assertThat(response.cursor).isNotNull
+        assertThat(response.cursor).isNull()
         assertThat(response.size).isEqualTo(20)
         assertThat(response.last).isTrue
         assertThat(response.totalCount).isEqualTo(10)
@@ -335,7 +335,7 @@ class EvaluationServiceTest(
         val middlePageResponse = evaluationService.getEvaluationsOfLecture(myUserId, lectureId, cursor = firstPageResponse.cursor)
         val response = evaluationService.getEvaluationsOfLecture(myUserId, lectureId, cursor = middlePageResponse.cursor)
 
-        assertThat(response.cursor).isNotNull
+        assertThat(response.cursor).isNull()
         assertThat(response.size).isEqualTo(20)
         assertThat(response.last).isTrue
         assertThat(response.totalCount).isEqualTo(61) // including my evaluations
@@ -356,7 +356,7 @@ class EvaluationServiceTest(
         val middlePageResponse = evaluationService.getEvaluationsOfLecture(myUserId, lectureId, cursor = firstPageResponse.cursor)
         val response = evaluationService.getEvaluationsOfLecture(myUserId, lectureId, cursor = middlePageResponse.cursor)
 
-        assertThat(response.cursor).isNotNull
+        assertThat(response.cursor).isNull()
         assertThat(response.size).isEqualTo(20)
         assertThat(response.last).isTrue
         assertThat(response.totalCount).isEqualTo(60) // including my evaluations
@@ -459,7 +459,7 @@ class EvaluationServiceTest(
 
         val response = evaluationService.getMyEvaluations(userId = userId, cursor = null)
 
-        assertThat(response.cursor).isNotNull
+        assertThat(response.cursor).isNull()
         assertThat(response.size).isEqualTo(20)
         assertThat(response.last).isTrue
         assertThat(response.totalCount).isEqualTo(5)
@@ -496,7 +496,7 @@ class EvaluationServiceTest(
 
         val response = evaluationService.getMyEvaluations(userId = userId, cursor = null)
 
-        assertThat(response.cursor).isNotNull
+        assertThat(response.cursor).isNull()
         assertThat(response.size).isEqualTo(20)
         assertThat(response.last).isTrue
         assertThat(response.totalCount).isEqualTo(10)
@@ -527,7 +527,7 @@ class EvaluationServiceTest(
         val middlePageResponse = evaluationService.getMyEvaluations(userId = userId, cursor = firstPageResponse.cursor)
         val response = evaluationService.getMyEvaluations(userId = userId, cursor = middlePageResponse.cursor)
 
-        assertThat(response.cursor).isNotNull
+        assertThat(response.cursor).isNull()
         assertThat(response.size).isEqualTo(20)
         assertThat(response.last).isTrue
         assertThat(response.totalCount).isEqualTo(60)
@@ -543,7 +543,7 @@ class EvaluationServiceTest(
         val middlePageResponse = evaluationService.getMyEvaluations(userId = userId, cursor = firstPageResponse.cursor)
         val response = evaluationService.getMyEvaluations(userId = userId, cursor = middlePageResponse.cursor)
 
-        assertThat(response.cursor).isNotNull
+        assertThat(response.cursor).isNull()
         assertThat(response.size).isEqualTo(20)
         assertThat(response.last).isTrue
         assertThat(response.totalCount).isEqualTo(59)

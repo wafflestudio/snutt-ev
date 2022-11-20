@@ -1,6 +1,5 @@
 package com.wafflestudio.snuttev.core.domain.evaluation.model
 
-import com.fasterxml.jackson.annotation.JsonProperty
 import com.wafflestudio.snuttev.core.common.model.BaseEntity
 import com.wafflestudio.snuttev.core.domain.lecture.model.SemesterLecture
 import java.time.LocalDateTime
@@ -55,45 +54,3 @@ class LectureEvaluation(
 
     createdAt: LocalDateTime = LocalDateTime.now(),
 ) : BaseEntity(createdAt = createdAt)
-
-data class LectureEvaluationWithLecture(
-    val id: Long? = null,
-
-    val userId: String? = null,
-
-    val content: String? = null,
-
-    val gradeSatisfaction: Double? = null,
-
-    val teachingSkill: Double? = null,
-
-    val gains: Double? = null,
-
-    val lifeBalance: Double? = null,
-
-    val rating: Double? = null,
-
-    val likeCount: Long? = null,
-
-    val dislikeCount: Long? = null,
-
-    @get:JsonProperty("isHidden")
-    @field:JsonProperty("isHidden")
-    val isHidden: Boolean? = null,
-
-    @get:JsonProperty("isReported")
-    @field:JsonProperty("isReported")
-    val isReported: Boolean? = null,
-
-    val fromSnuev: Boolean? = null,
-
-    val year: Int? = null,
-
-    val semester: Int? = null,
-
-    val lectureId: Long? = null,
-
-    val lectureTitle: String? = null,
-
-    val lectureInstructor: String? = null,
-)

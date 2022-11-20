@@ -15,6 +15,7 @@ import io.swagger.v3.oas.annotations.Parameter
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.ModelAttribute
 import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.RequestAttribute
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
@@ -46,13 +47,23 @@ class LectureController(
 
     @GetMapping("/v1/users/me/lectures/latest")
     fun getLecturesTakenByCurrentUser(
-        @Parameter(hidden = true) @RequestParam("snutt_lecture_info") snuttLectureInfoString: String? = "",
+        @Parameter(hidden = true)
+        @RequestParam("snutt_lecture_info")
+        snuttLectureInfoString: String? = "",
+        @RequestAttribute(value = "filter")
+        filter: String?,
+        @RequestAttribute(value = "UserId")
+        userId: String,
     ): ListResponse<LectureTakenByUserResponse> {
         val snuttLectureInfos: List<SnuttLectureInfo> =
             objectMapper.readValue(snuttLectureInfoString ?: "")
+        val excludeMyEvaluations = filter == "no-my-evaluations"
+
         return ListResponse(
             lectureService.getSnuttevLecturesWithSnuttLectureInfos(
-                snuttLectureInfos
+                userId,
+                snuttLectureInfos,
+                excludeMyEvaluations
             )
         )
     }

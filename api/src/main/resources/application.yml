@@ -3,39 +3,35 @@ spring.profiles.default: local
 spring:
   config:
     import: application-core.yml
-  redis:
-    host: localhost
-    port: 6379
-    ttl: 5m
   jackson:
     deserialization:
       fail-on-unknown-properties: false
       fail-on-null-for-primitives: true
-  jpa:
-    show-sql: true
+
+server:
+  tomcat:
+    accesslog:
+      enabled: true
+      directory: /dev
+      prefix: stdout
+      buffered: false
+      suffix:
+      file-date-format:
 
 ---
 
 spring.config.activate.on-profile: dev
 
-spring:
-  redis:
-    host:
-    port:
-    database:
-    ttl: 5m
-  jpa:
-    show-sql: false
+server:
+  tomcat:
+    accesslog:
+      enabled: false
 
 ---
 
 spring.config.activate.on-profile: prod
 
-spring:
-  redis:
-    host:
-    port:
-    database:
-    ttl: 10m
-  jpa:
-    show-sql: false
+server:
+  tomcat:
+    accesslog:
+      enabled: false

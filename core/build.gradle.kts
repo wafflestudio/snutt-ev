@@ -18,6 +18,8 @@ dependencies {
     implementation("software.amazon.awssdk:secretsmanager:2.17.276")
     implementation("software.amazon.awssdk:sts:2.17.276")
 
+    implementation("org.springframework.boot:spring-boot-starter-data-redis")
+
     runtimeOnly("mysql:mysql-connector-java")
     kapt("com.querydsl:querydsl-apt::jpa")
 }

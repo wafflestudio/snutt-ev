@@ -101,7 +101,7 @@ data class LectureEvaluationSummary(
     val avgRating: Double?,
 )
 
-data class LectureEvaluationWithSemesterDto(
+data class EvaluationWithSemesterResponse(
     val id: Long,
 
     @JsonProperty("user_id")
@@ -124,9 +124,6 @@ data class LectureEvaluationWithSemesterDto(
 
     @JsonProperty("like_count")
     val likeCount: Long,
-
-    @JsonProperty("dislike_count")
-    val dislikeCount: Long,
 
     @JsonProperty("is_hidden")
     val isHidden: Boolean,
@@ -151,7 +148,7 @@ data class LectureEvaluationWithSemesterDto(
     val isReportable: Boolean,
 )
 
-data class LectureEvaluationWithLectureDto(
+data class EvaluationWithLectureResponse(
     val id: Long,
 
     @JsonProperty("user_id")
@@ -175,9 +172,6 @@ data class LectureEvaluationWithLectureDto(
     @JsonProperty("like_count")
     val likeCount: Long,
 
-    @JsonProperty("dislike_count")
-    val dislikeCount: Long,
-
     @JsonProperty("is_hidden")
     val isHidden: Boolean,
 
@@ -200,16 +194,8 @@ data class LectureEvaluationWithLectureDto(
     val isReportable: Boolean,
 )
 
-data class SimpleLectureDto(
-    val id: Long,
-
-    val title: String,
-
-    val instructor: String,
-)
-
-data class LectureEvaluationsResponse(
-    val evaluations: List<LectureEvaluationWithSemesterDto>,
+data class EvaluationsResponse(
+    val evaluations: List<EvaluationWithSemesterResponse>,
 )
 
 data class EvaluationReportDto(

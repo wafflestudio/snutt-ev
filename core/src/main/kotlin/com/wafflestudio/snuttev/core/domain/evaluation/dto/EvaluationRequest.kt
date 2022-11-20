@@ -37,3 +37,9 @@ data class CreateEvaluationReportRequest(
     @field:NotBlank
     val content: String,
 )
+
+data class EvaluationCursor(
+    val year: Int,
+    val semester: Int,
+    val lectureEvaluationId: Long,
+)

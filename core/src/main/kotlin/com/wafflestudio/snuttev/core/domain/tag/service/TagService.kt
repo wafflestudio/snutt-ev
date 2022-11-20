@@ -8,16 +8,19 @@ import com.wafflestudio.snuttev.core.domain.tag.model.Tag
 import com.wafflestudio.snuttev.core.domain.tag.model.TagGroup
 import com.wafflestudio.snuttev.core.domain.tag.repository.TagGroupRepository
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class TagService(
     private val tagGroupRepository: TagGroupRepository,
 ) {
+    @Transactional(readOnly = true)
     fun getMainTags(): TagGroupDto {
         val tagGroup = tagGroupRepository.findByName(name = "main") ?: throw TagGroupNotFoundException
         return genTagGroupDto(tagGroup)
     }
 
+    @Transactional(readOnly = true)
     fun getSearchTags(): SearchTagResponse {
         val tagGroups = tagGroupRepository.findAllByNameNotOrderByOrdering(name = "main")
         return SearchTagResponse(
