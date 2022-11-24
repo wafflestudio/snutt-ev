@@ -50,7 +50,7 @@ class LectureController(
         @Parameter(hidden = true)
         @RequestParam("snutt_lecture_info")
         snuttLectureInfoString: String? = "",
-        @RequestAttribute(value = "filter")
+        @RequestParam("filter")
         filter: String?,
         @RequestAttribute(value = "UserId")
         userId: String,
