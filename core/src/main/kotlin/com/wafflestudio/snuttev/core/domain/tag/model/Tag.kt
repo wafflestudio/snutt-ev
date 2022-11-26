@@ -12,9 +12,8 @@ import javax.persistence.UniqueConstraint
 @Entity
 @Table(uniqueConstraints = [UniqueConstraint(columnNames = ["tag_group_id", "ordering"])])
 class Tag(
-
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "tag_group_id")
+    @JoinColumn(name = "tag_group_id", nullable = false)
     val tagGroup: TagGroup,
 
     @Column(nullable = false)

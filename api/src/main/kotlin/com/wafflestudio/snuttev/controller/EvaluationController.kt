@@ -109,4 +109,21 @@ class EvaluationController(
     ): EvaluationReportDto {
         return evaluationService.reportEvaluation(userId, evaluationId, createEvaluationReportRequest)
     }
+
+    @PostMapping("/v1/evaluations/{id}/likes")
+    fun likeEvaluation(
+        @PathVariable(value = "id") evaluationId: Long,
+        @RequestAttribute(value = "UserId") userId: String,
+    ) {
+        return evaluationService.likeEvaluation(userId, evaluationId)
+    }
+
+    @DeleteMapping("/v1/evaluations/{id}/likes")
+    fun cancelLikeEvaluation(
+        @PathVariable(value = "id") evaluationId: Long,
+        @RequestAttribute(value = "UserId") userId: String,
+    ) {
+        return evaluationService.cancelLikeEvaluation(userId, evaluationId)
+    }
 }
+

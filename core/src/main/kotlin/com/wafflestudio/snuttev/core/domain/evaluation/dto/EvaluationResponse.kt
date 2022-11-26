@@ -27,9 +27,6 @@ data class LectureEvaluationDto(
     @JsonProperty("like_count")
     val likeCount: Long,
 
-    @JsonProperty("dislike_count")
-    val dislikeCount: Long,
-
     @JsonProperty("is_hidden")
     val isHidden: Boolean,
 

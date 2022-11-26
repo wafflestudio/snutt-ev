@@ -110,7 +110,6 @@ class SnuevMigrationJobConfig(
                 lifeBalance = null,
                 rating = ((item.score + 1) / 2).toDouble(),
                 likeCount = 0,
-                dislikeCount = 0,
                 isHidden = false,
                 isReported = false,
                 fromSnuev = true,

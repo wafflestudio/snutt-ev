@@ -10,7 +10,6 @@ import javax.persistence.OrderBy
 
 @Entity
 class TagGroup(
-
     @Column(nullable = false, unique = true)
     val name: String,
 
@@ -26,7 +25,6 @@ class TagGroup(
     @OneToMany(mappedBy = "tagGroup")
     @OrderBy("ordering ASC")
     var tags: MutableList<Tag> = mutableListOf()
-
 ) : BaseEntity()
 
 enum class TagValueType {
