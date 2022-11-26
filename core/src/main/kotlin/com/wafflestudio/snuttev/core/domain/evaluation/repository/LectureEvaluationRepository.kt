@@ -15,4 +15,7 @@ interface LectureEvaluationRepository : JpaRepository<LectureEvaluation, Long>, 
     fun countByLectureId(lectureId: Long): Long
 
     fun countByUserIdAndIsHiddenFalse(userId: String): Long
+
+    @Query("select le.semesterLecture.lecture.id from LectureEvaluation le where le.userId = :userId and le.isHidden = false ")
+    fun findLectureIdsByLectureEvaluationUserId(userId: String): List<Long>
 }

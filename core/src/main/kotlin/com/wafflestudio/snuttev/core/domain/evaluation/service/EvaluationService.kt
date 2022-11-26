@@ -38,13 +38,14 @@ import org.springframework.stereotype.Service
 import javax.transaction.Transactional
 
 @Service
-class EvaluationService(
+class EvaluationService internal constructor(
     private val semesterLectureRepository: SemesterLectureRepository,
     private val lectureEvaluationRepository: LectureEvaluationRepository,
     private val lectureRepository: LectureRepository,
     private val tagRepository: TagRepository,
     private val evaluationReportRepository: EvaluationReportRepository,
     private val evaluationLikeRepository: EvaluationLikeRepository,
+    private val cache: Cache,
 ) {
     companion object {
         private const val DEFAULT_PAGE_SIZE = 20
@@ -73,7 +74,7 @@ class EvaluationService(
         )
         lectureEvaluationRepository.save(lectureEvaluation)
 
-        Cache.deleteAll(CacheKey.EVALUATIONS_BY_TAG_CLASSIFICATION_PAGE)
+        cache.deleteAll(CacheKey.EVALUATIONS_BY_TAG_CLASSIFICATION_PAGE)
 
         return genLectureEvaluationDto(lectureEvaluation)
     }
@@ -183,19 +184,19 @@ class EvaluationService(
 
         val classification = LectureClassification.LIBERAL_EDUCATION
 
-        var evaluationWithLectureDtos = Cache.get(
-            CacheKey.EVALUATIONS_BY_TAG_CLASSIFICATION_PAGE,
-            {
-                val tag = tagRepository.findByIdOrNull(tagId) ?: throw TagNotFoundException
-                lectureEvaluationRepository.findEvaluationWithLectureByTagAndClassification(
-                    tag,
-                    classification,
-                    evaluationIdCursor,
-                    DEFAULT_PAGE_SIZE + 1,
-                )
-            },
-            tagId, classification, evaluationIdCursor, DEFAULT_PAGE_SIZE + 1,
-        ) ?: emptyList()
+        var evaluationWithLectureDtos = cache.withCache(
+            CacheKey.EVALUATIONS_BY_TAG_CLASSIFICATION_PAGE.build(
+                tagId, classification, evaluationIdCursor, DEFAULT_PAGE_SIZE + 1,
+            ),
+        ) {
+            val tag = tagRepository.findByIdOrNull(tagId) ?: throw TagNotFoundException
+            lectureEvaluationRepository.findEvaluationWithLectureByTagAndClassification(
+                tag,
+                classification,
+                evaluationIdCursor,
+                DEFAULT_PAGE_SIZE + 1,
+            )
+        } ?: emptyList()
 
         var nextCursor: String? = null
         if (evaluationWithLectureDtos.size > DEFAULT_PAGE_SIZE) {
@@ -225,7 +226,7 @@ class EvaluationService(
 
         lectureEvaluation.isHidden = true
 
-        Cache.deleteAll(CacheKey.EVALUATIONS_BY_TAG_CLASSIFICATION_PAGE)
+        cache.deleteAll(CacheKey.EVALUATIONS_BY_TAG_CLASSIFICATION_PAGE)
     }
 
     fun reportEvaluation(
@@ -285,7 +286,8 @@ class EvaluationService(
         evaluation.likeCount -= 1
     }
 
-    private fun genLectureEvaluationDto(lectureEvaluation: LectureEvaluation) = LectureEvaluationDto(
+    private fun genLectureEvaluationDto(lectureEvaluation: LectureEvaluation): LectureEvaluationDto =
+        LectureEvaluationDto(
             id = lectureEvaluation.id!!,
             userId = lectureEvaluation.userId,
             content = lectureEvaluation.content,
@@ -300,7 +302,8 @@ class EvaluationService(
             fromSnuev = lectureEvaluation.fromSnuev,
         )
 
-    private fun genEvaluationReportDto(evaluationReport: EvaluationReport) = EvaluationReportDto(
+    private fun genEvaluationReportDto(evaluationReport: EvaluationReport): EvaluationReportDto =
+        EvaluationReportDto(
             id = evaluationReport.id!!,
             lectureEvaluationId = evaluationReport.lectureEvaluation.id!!,
             userId = evaluationReport.userId,

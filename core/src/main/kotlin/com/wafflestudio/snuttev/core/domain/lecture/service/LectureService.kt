@@ -3,6 +3,7 @@ package com.wafflestudio.snuttev.core.domain.lecture.service
 import com.wafflestudio.snuttev.core.common.dto.SearchQueryDto
 import com.wafflestudio.snuttev.core.common.error.LectureNotFoundException
 import com.wafflestudio.snuttev.core.domain.evaluation.dto.SemesterLectureDto
+import com.wafflestudio.snuttev.core.domain.evaluation.repository.LectureEvaluationRepository
 import com.wafflestudio.snuttev.core.domain.lecture.dto.LectureAndSemesterLecturesResponse
 import com.wafflestudio.snuttev.core.domain.lecture.dto.LectureDto
 import com.wafflestudio.snuttev.core.domain.lecture.dto.LectureIdResponse
@@ -22,7 +23,8 @@ import org.springframework.stereotype.Service
 class LectureService(
     private val lectureRepository: LectureRepository,
     private val semesterLectureRepository: SemesterLectureRepository,
-    private val tagRepository: TagRepository
+    private val tagRepository: TagRepository,
+    private val lectureEvaluationRepository: LectureEvaluationRepository
 ) {
     fun search(param: SearchLectureRequest): Page<LectureDto> {
         val request = mappingTagsToLectureProperty(param)
@@ -35,12 +37,22 @@ class LectureService(
         }
     }
 
-    fun getSnuttevLecturesWithSnuttLectureInfos(snuttLectureInfos: List<SnuttLectureInfo>): List<LectureTakenByUserResponse> {
+    fun getSnuttevLecturesWithSnuttLectureInfos(
+        userId: String,
+        snuttLectureInfos: List<SnuttLectureInfo>,
+        excludeLecturesWithEvaluations: Boolean,
+    ): List<LectureTakenByUserResponse> {
         val distinctLectures = snuttLectureInfos
             .filter { !it.courseNumber.isNullOrEmpty() && !it.instructor.isNullOrEmpty() }
             .associateBy { "${it.courseNumber}${it.instructor}" }
         val lectureKeys = distinctLectures.keys
-        val snuttevLectures = lectureRepository.findAllByLectureKeys(lectureKeys)
+        var snuttevLectures = lectureRepository.findAllByLectureKeys(lectureKeys)
+
+        if (excludeLecturesWithEvaluations) {
+            val lectureIdsWithEvaluation = lectureEvaluationRepository.findLectureIdsByLectureEvaluationUserId(userId)
+            snuttevLectures = snuttevLectures.filterNot { lectureIdsWithEvaluation.contains(it.id!!) }
+        }
+
         return snuttevLectures.filter { distinctLectures["${it.courseNumber}${it.instructor}"] != null }.map {
             val snuttInfo = distinctLectures["${it.courseNumber}${it.instructor}"]!!
             LectureTakenByUserResponse(

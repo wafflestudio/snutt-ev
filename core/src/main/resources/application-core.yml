@@ -43,9 +43,6 @@ spring:
   jpa:
     show-sql: false
   redis:
-    host:
-    port:
-    database:
     ttl: 5m
 
 ---
@@ -62,7 +59,4 @@ spring:
   jpa:
     show-sql: false
   redis:
-    host:
-    port:
-    database:
     ttl: 1h
