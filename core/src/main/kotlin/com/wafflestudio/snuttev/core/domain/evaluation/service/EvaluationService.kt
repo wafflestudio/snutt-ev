@@ -2,6 +2,7 @@ package com.wafflestudio.snuttev.core.domain.evaluation.service
 
 import com.wafflestudio.snuttev.core.common.dto.common.CursorPaginationResponse
 import com.wafflestudio.snuttev.core.common.error.EvaluationAlreadyExistsException
+import com.wafflestudio.snuttev.core.common.error.EvaluationLikeAlreadyExistsException
 import com.wafflestudio.snuttev.core.common.error.EvaluationReportAlreadyExistsException
 import com.wafflestudio.snuttev.core.common.error.LectureEvaluationNotFoundException
 import com.wafflestudio.snuttev.core.common.error.LectureNotFoundException
@@ -23,13 +24,16 @@ import com.wafflestudio.snuttev.core.domain.evaluation.dto.EvaluationsResponse
 import com.wafflestudio.snuttev.core.domain.evaluation.dto.LectureEvaluationDto
 import com.wafflestudio.snuttev.core.domain.evaluation.dto.LectureEvaluationSummary
 import com.wafflestudio.snuttev.core.domain.evaluation.dto.LectureEvaluationSummaryResponse
+import com.wafflestudio.snuttev.core.domain.evaluation.model.EvaluationLike
 import com.wafflestudio.snuttev.core.domain.evaluation.model.EvaluationReport
 import com.wafflestudio.snuttev.core.domain.evaluation.model.LectureEvaluation
+import com.wafflestudio.snuttev.core.domain.evaluation.repository.EvaluationLikeRepository
 import com.wafflestudio.snuttev.core.domain.evaluation.repository.EvaluationReportRepository
 import com.wafflestudio.snuttev.core.domain.evaluation.repository.LectureEvaluationRepository
 import com.wafflestudio.snuttev.core.domain.lecture.repository.LectureRepository
 import com.wafflestudio.snuttev.core.domain.lecture.repository.SemesterLectureRepository
 import com.wafflestudio.snuttev.core.domain.tag.repository.TagRepository
+import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import javax.transaction.Transactional
@@ -41,6 +45,7 @@ class EvaluationService internal constructor(
     private val lectureRepository: LectureRepository,
     private val tagRepository: TagRepository,
     private val evaluationReportRepository: EvaluationReportRepository,
+    private val evaluationLikeRepository: EvaluationLikeRepository,
     private val cache: Cache,
 ) {
     companion object {
@@ -54,7 +59,7 @@ class EvaluationService internal constructor(
     ): LectureEvaluationDto {
         val semesterLecture = semesterLectureRepository.findByIdOrNull(semesterLectureId) ?: throw SemesterLectureNotFoundException
 
-        if (lectureEvaluationRepository.existsBySemesterLectureIdAndUserIdAndIsHiddenFalse(semesterLectureId, userId)) {
+        if (lectureEvaluationRepository.existsBySemesterLectureAndUserIdAndIsHiddenFalse(semesterLecture, userId)) {
             throw EvaluationAlreadyExistsException
         }
 
@@ -248,6 +253,40 @@ class EvaluationService internal constructor(
         return genEvaluationReportDto(evaluationReport)
     }
 
+    @Transactional
+    fun likeEvaluation(
+        userId: String,
+        lectureEvaluationId: Long,
+    ) {
+        val evaluation = lectureEvaluationRepository.findByIdAndIsHiddenFalse(lectureEvaluationId) ?: throw LectureEvaluationNotFoundException
+
+        try {
+            evaluationLikeRepository.save(
+                EvaluationLike(
+                    lectureEvaluation = evaluation,
+                    userId = userId,
+                )
+            )
+        } catch (e: DataIntegrityViolationException) {
+            throw EvaluationLikeAlreadyExistsException
+        }
+
+        evaluation.likeCount++
+    }
+
+    @Transactional
+    fun cancelLikeEvaluation(
+        userId: String,
+        lectureEvaluationId: Long,
+    ) {
+        val evaluation = lectureEvaluationRepository.findByIdAndIsHiddenFalse(lectureEvaluationId) ?: throw LectureEvaluationNotFoundException
+
+        val deletedRowCount = evaluationLikeRepository.deleteByLectureEvaluationAndUserId(evaluation, userId)
+        if (deletedRowCount == 0L) return
+
+        evaluation.likeCount--
+    }
+
     private fun genLectureEvaluationDto(lectureEvaluation: LectureEvaluation): LectureEvaluationDto =
         LectureEvaluationDto(
             id = lectureEvaluation.id!!,
@@ -259,7 +298,6 @@ class EvaluationService internal constructor(
             lifeBalance = lectureEvaluation.lifeBalance,
             rating = lectureEvaluation.rating,
             likeCount = lectureEvaluation.likeCount,
-            dislikeCount = lectureEvaluation.dislikeCount,
             isHidden = lectureEvaluation.isHidden,
             isReported = lectureEvaluation.isReported,
             fromSnuev = lectureEvaluation.fromSnuev,

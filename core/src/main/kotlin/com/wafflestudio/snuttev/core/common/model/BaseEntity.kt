@@ -10,7 +10,6 @@ import javax.persistence.MappedSuperclass
 
 @MappedSuperclass
 open class BaseEntity(
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     open val id: Long? = null,
@@ -21,5 +20,4 @@ open class BaseEntity(
     @field:UpdateTimestamp
     @Column(name = "updated_at", nullable = false)
     open val updatedAt: LocalDateTime? = LocalDateTime.now(),
-
 )

@@ -11,9 +11,8 @@ import javax.persistence.ManyToOne
 
 @Entity
 class LectureEvaluation(
-
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "semester_lecture_id")
+    @JoinColumn(name = "semester_lecture_id", nullable = false)
     var semesterLecture: SemesterLecture,
 
     @Column(name = "user_id", nullable = false)
@@ -38,10 +37,7 @@ class LectureEvaluation(
     val rating: Double,
 
     @Column(name = "like_count", nullable = false)
-    val likeCount: Long = 0,
-
-    @Column(name = "dislike_count", nullable = false)
-    val dislikeCount: Long = 0,
+    var likeCount: Long = 0,
 
     @Column(name = "is_hidden", nullable = false)
     var isHidden: Boolean = false,

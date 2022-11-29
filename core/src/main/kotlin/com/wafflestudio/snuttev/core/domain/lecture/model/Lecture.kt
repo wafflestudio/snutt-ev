@@ -14,7 +14,6 @@ import javax.validation.constraints.NotBlank
 @Entity
 @Table(uniqueConstraints = [UniqueConstraint(columnNames = ["course_number", "instructor"])])
 class Lecture(
-
     val title: String,
 
     val instructor: String,
@@ -48,30 +47,17 @@ class LectureClassificationConverter : AttributeConverter<LectureClassification,
 
 data class LectureEvaluationSummaryDao(
     val id: Long?,
-
     val title: String?,
-
     val instructor: String?,
-
     val department: String?,
-
     val courseNumber: String?,
-
     val credit: Int?,
-
     val academicYear: String?,
-
     val category: String?,
-
     val classification: LectureClassification?,
-
     val avgGradeSatisfaction: Double?,
-
     val avgTeachingSkill: Double?,
-
     val avgGains: Double?,
-
     val avgLifeBalance: Double?,
-
     val avgRating: Double?,
 )
