@@ -126,4 +126,3 @@ class EvaluationController(
         return evaluationService.cancelLikeEvaluation(userId, evaluationId)
     }
 }
-

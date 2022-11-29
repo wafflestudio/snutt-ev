@@ -2,6 +2,7 @@ package com.wafflestudio.snuttev.core.domain.evaluation.service
 
 import com.wafflestudio.snuttev.core.common.dto.common.CursorPaginationResponse
 import com.wafflestudio.snuttev.core.common.error.EvaluationAlreadyExistsException
+import com.wafflestudio.snuttev.core.common.error.EvaluationLikeAlreadyExistsException
 import com.wafflestudio.snuttev.core.common.error.EvaluationReportAlreadyExistsException
 import com.wafflestudio.snuttev.core.common.error.LectureEvaluationNotFoundException
 import com.wafflestudio.snuttev.core.common.error.LectureNotFoundException
@@ -267,11 +268,10 @@ class EvaluationService internal constructor(
                 )
             )
         } catch (e: DataIntegrityViolationException) {
-            println("DUPLICATED!")
-            return
+            throw EvaluationLikeAlreadyExistsException
         }
 
-        evaluation.likeCount += 1
+        evaluation.likeCount ++
     }
 
     @Transactional
@@ -281,9 +281,10 @@ class EvaluationService internal constructor(
     ) {
         val evaluation = lectureEvaluationRepository.findByIdAndIsHiddenFalse(lectureEvaluationId) ?: throw LectureEvaluationNotFoundException
 
-        evaluationLikeRepository.deleteByLectureEvaluationAndUserId(evaluation, userId)
+        val deletedRowCount = evaluationLikeRepository.deleteByLectureEvaluationAndUserId(evaluation, userId)
+        if (deletedRowCount == 0L) return
 
-        evaluation.likeCount -= 1
+        evaluation.likeCount --
     }
 
     private fun genLectureEvaluationDto(lectureEvaluation: LectureEvaluation): LectureEvaluationDto =

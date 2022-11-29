@@ -39,9 +39,6 @@ class LectureEvaluation(
     @Column(name = "like_count", nullable = false)
     var likeCount: Long = 0,
 
-    @Column(name = "dislike_count", nullable = false)
-    val dislikeCount: Long = 0,
-
     @Column(name = "is_hidden", nullable = false)
     var isHidden: Boolean = false,
 

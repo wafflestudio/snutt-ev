@@ -6,6 +6,9 @@ enum class ErrorType(
     val code: Int,
     val httpStatus: HttpStatus,
 ) {
+    // 200
+    EVALUATION_LIKE_ALREADY_EXISTS(20001, HttpStatus.OK),
+
     // 400
     WRONG_CURSOR_FORMAT(20001, HttpStatus.BAD_REQUEST),
     WRONG_MAIN_TAG(20002, HttpStatus.BAD_REQUEST),
