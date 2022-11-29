@@ -271,7 +271,7 @@ class EvaluationService internal constructor(
             throw EvaluationLikeAlreadyExistsException
         }
 
-        evaluation.likeCount ++
+        evaluation.likeCount++
     }
 
     @Transactional
@@ -284,7 +284,7 @@ class EvaluationService internal constructor(
         val deletedRowCount = evaluationLikeRepository.deleteByLectureEvaluationAndUserId(evaluation, userId)
         if (deletedRowCount == 0L) return
 
-        evaluation.likeCount --
+        evaluation.likeCount--
     }
 
     private fun genLectureEvaluationDto(lectureEvaluation: LectureEvaluation): LectureEvaluationDto =
