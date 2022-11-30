@@ -17,8 +17,12 @@ internal final class Cache(
 ) {
     private val log: Logger get() = LoggerFactory.getLogger(Cache::class.java)
 
-    inline fun <reified T : Any> withCache(builtCacheKey: CacheKey.BuiltCacheKey, supplier: () -> T?): T? {
-        get<T>(builtCacheKey)?.let { return it }
+    inline fun <reified T : Any> withCache(
+        builtCacheKey: CacheKey.BuiltCacheKey,
+        postHitProcessor: (T) -> T = { it },
+        supplier: () -> T?,
+    ): T? {
+        get<T>(builtCacheKey)?.let { return postHitProcessor(it) }
 
         val value = supplier()
         set(builtCacheKey, value)

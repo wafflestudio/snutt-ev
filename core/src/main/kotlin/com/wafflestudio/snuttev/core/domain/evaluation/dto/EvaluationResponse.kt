@@ -128,6 +128,9 @@ data class EvaluationWithSemesterResponse(
     @JsonProperty("is_reported")
     val isReported: Boolean,
 
+    @JsonProperty("is_liked")
+    val isLiked: Boolean,
+
     @JsonProperty("from_snuev")
     val fromSnuev: Boolean,
 
@@ -174,6 +177,9 @@ data class EvaluationWithLectureResponse(
 
     @JsonProperty("is_reported")
     val isReported: Boolean,
+
+    @JsonProperty("is_liked")
+    val isLiked: Boolean,
 
     @JsonProperty("from_snuev")
     val fromSnuev: Boolean,

@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.http.converter.HttpMessageNotReadableException
+import org.springframework.orm.ObjectOptimisticLockingFailureException
 import org.springframework.web.HttpMediaTypeNotSupportedException
 import org.springframework.web.HttpRequestMethodNotSupportedException
 import org.springframework.web.bind.MethodArgumentNotValidException
@@ -47,6 +48,17 @@ class ErrorHandler {
         response: HttpServletResponse,
     ): ResponseEntity<Any> {
         return ResponseEntity(HttpStatus.BAD_REQUEST)
+    }
+
+    @ExceptionHandler(
+        ObjectOptimisticLockingFailureException::class,
+    )
+    fun handleHttpMessageConflict(
+        e: Exception,
+        request: HttpServletRequest,
+        response: HttpServletResponse,
+    ): ResponseEntity<Any> {
+        return ResponseEntity(HttpStatus.CONFLICT)
     }
 
     @ExceptionHandler(SnuttException::class)

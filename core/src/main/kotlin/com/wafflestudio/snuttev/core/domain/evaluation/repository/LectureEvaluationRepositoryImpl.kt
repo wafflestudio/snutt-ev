@@ -1,6 +1,7 @@
 package com.wafflestudio.snuttev.core.domain.evaluation.repository
 
 import com.querydsl.core.BooleanBuilder
+import com.querydsl.core.types.dsl.CaseBuilder
 import com.querydsl.jpa.JPAExpressions.select
 import com.querydsl.jpa.impl.JPAQueryFactory
 import com.wafflestudio.snuttev.core.common.error.WrongMainTagException
@@ -10,6 +11,7 @@ import com.wafflestudio.snuttev.core.domain.evaluation.dto.EvaluationWithLecture
 import com.wafflestudio.snuttev.core.domain.evaluation.dto.EvaluationWithSemesterDto
 import com.wafflestudio.snuttev.core.domain.evaluation.dto.QEvaluationWithLectureDto
 import com.wafflestudio.snuttev.core.domain.evaluation.dto.QEvaluationWithSemesterDto
+import com.wafflestudio.snuttev.core.domain.evaluation.model.QEvaluationLike.evaluationLike
 import com.wafflestudio.snuttev.core.domain.evaluation.model.QLectureEvaluation.lectureEvaluation
 import com.wafflestudio.snuttev.core.domain.lecture.model.QLecture.lecture
 import com.wafflestudio.snuttev.core.domain.lecture.model.QSemesterLecture.semesterLecture
@@ -23,7 +25,7 @@ class LectureEvaluationRepositoryImpl(private val queryFactory: JPAQueryFactory)
         cursor: EvaluationCursor?,
         pageSize: Int,
     ): List<EvaluationWithSemesterDto> = queryFactory
-        .selectEvaluationWithSemesterDto()
+        .selectEvaluationWithSemesterDto(userId)
         .where(semesterLecture.lecture.id.eq(lectureId))
         .where(lectureEvaluation.userId.ne(userId))
         .where(lectureEvaluation.isHidden.isFalse)
@@ -36,7 +38,7 @@ class LectureEvaluationRepositoryImpl(private val queryFactory: JPAQueryFactory)
         lectureId: Long,
         userId: String,
     ): List<EvaluationWithSemesterDto> = queryFactory
-        .selectEvaluationWithSemesterDto()
+        .selectEvaluationWithSemesterDto(userId)
         .where(semesterLecture.lecture.id.eq(lectureId))
         .where(lectureEvaluation.userId.eq(userId))
         .where(lectureEvaluation.isHidden.isFalse)
@@ -48,7 +50,7 @@ class LectureEvaluationRepositoryImpl(private val queryFactory: JPAQueryFactory)
         cursor: Long?,
         pageSize: Int,
     ): List<EvaluationWithLectureDto> = queryFactory
-        .selectEvaluationWithLectureDto()
+        .selectEvaluationWithLectureDto(userId)
         .where(lectureEvaluation.userId.eq(userId))
         .where(lectureEvaluation.isHidden.isFalse)
         .where(getEvaluationIdCursorPredicate(cursor))
@@ -57,12 +59,13 @@ class LectureEvaluationRepositoryImpl(private val queryFactory: JPAQueryFactory)
         .fetch()
 
     override fun findEvaluationWithLectureByTagAndClassification(
+        userId: String,
         tag: Tag,
         classification: LectureClassification,
         cursor: Long?,
-        pageSize: Int
+        pageSize: Int,
     ): List<EvaluationWithLectureDto> = queryFactory
-        .selectEvaluationWithLectureDto()
+        .selectEvaluationWithLectureDto(userId)
         .where(getMainTagPredicate(tag))
         .where(semesterLecture.classification.eq(classification))
         .where(lectureEvaluation.isHidden.isFalse)
@@ -101,7 +104,7 @@ class LectureEvaluationRepositoryImpl(private val queryFactory: JPAQueryFactory)
         )
     }
 
-    private fun JPAQueryFactory.selectEvaluationWithSemesterDto() = select(
+    private fun JPAQueryFactory.selectEvaluationWithSemesterDto(userId: String) = select(
         QEvaluationWithSemesterDto(
             lectureEvaluation.id,
             lectureEvaluation.userId,
@@ -114,6 +117,7 @@ class LectureEvaluationRepositoryImpl(private val queryFactory: JPAQueryFactory)
             lectureEvaluation.likeCount,
             lectureEvaluation.isHidden,
             lectureEvaluation.isReported,
+            CaseBuilder().`when`(evaluationLike.id.isNull).then(false).otherwise(true).`as`("isLiked"),
             lectureEvaluation.fromSnuev,
             semesterLecture.year,
             semesterLecture.semester,
@@ -122,8 +126,9 @@ class LectureEvaluationRepositoryImpl(private val queryFactory: JPAQueryFactory)
     )
         .from(lectureEvaluation)
         .innerJoin(lectureEvaluation.semesterLecture, semesterLecture)
+        .leftJoin(lectureEvaluation.evaluationLikes, evaluationLike).on(evaluationLike.userId.eq(userId))
 
-    private fun JPAQueryFactory.selectEvaluationWithLectureDto() = select(
+    private fun JPAQueryFactory.selectEvaluationWithLectureDto(userId: String) = select(
         QEvaluationWithLectureDto(
             lectureEvaluation.id,
             lectureEvaluation.userId,
@@ -136,6 +141,7 @@ class LectureEvaluationRepositoryImpl(private val queryFactory: JPAQueryFactory)
             lectureEvaluation.likeCount,
             lectureEvaluation.isHidden,
             lectureEvaluation.isReported,
+            CaseBuilder().`when`(evaluationLike.id.isNull).then(false).otherwise(true).`as`("isLiked"),
             lectureEvaluation.fromSnuev,
             semesterLecture.year,
             semesterLecture.semester,
@@ -146,6 +152,7 @@ class LectureEvaluationRepositoryImpl(private val queryFactory: JPAQueryFactory)
     )
         .from(lectureEvaluation)
         .innerJoin(lectureEvaluation.semesterLecture, semesterLecture)
+        .leftJoin(lectureEvaluation.evaluationLikes, evaluationLike).on(evaluationLike.userId.eq(userId))
         .innerJoin(semesterLecture.lecture, lecture)
 
     private fun getEvaluationCursorPredicate(cursor: EvaluationCursor?) = BooleanBuilder(

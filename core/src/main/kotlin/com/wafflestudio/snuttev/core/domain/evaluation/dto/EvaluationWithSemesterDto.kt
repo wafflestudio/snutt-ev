@@ -1,6 +1,5 @@
 package com.wafflestudio.snuttev.core.domain.evaluation.dto
 
-import com.fasterxml.jackson.annotation.JsonProperty
 import com.querydsl.core.annotations.QueryProjection
 
 data class EvaluationWithSemesterDto @QueryProjection constructor(
@@ -13,12 +12,9 @@ data class EvaluationWithSemesterDto @QueryProjection constructor(
     val lifeBalance: Double,
     val rating: Double,
     val likeCount: Long,
-    @get:JsonProperty("isHidden")
-    @field:JsonProperty("isHidden")
     val isHidden: Boolean,
-    @get:JsonProperty("isReported")
-    @field:JsonProperty("isReported")
     val isReported: Boolean,
+    val isLiked: Boolean,
     val fromSnuev: Boolean,
     val year: Int,
     val semester: Int,
@@ -36,6 +32,7 @@ data class EvaluationWithSemesterDto @QueryProjection constructor(
         likeCount = this.likeCount,
         isHidden = this.isHidden,
         isReported = this.isReported,
+        isLiked = this.isLiked,
         fromSnuev = this.fromSnuev,
         year = this.year,
         semester = this.semester,
