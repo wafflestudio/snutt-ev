@@ -1,18 +1,12 @@
 package com.wafflestudio.snuttev.core.common.dto.common
 
-import com.fasterxml.jackson.annotation.JsonProperty
 import org.springframework.data.domain.Page
 
 data class PaginationResponse<T>(
     val content: List<T>,
-
     val page: Int,
-
     val size: Int,
-
     val last: Boolean,
-
-    @JsonProperty("total_count")
     val totalCount: Long? = null
 ) {
     constructor(page: Page<T>) : this(
@@ -26,13 +20,8 @@ data class PaginationResponse<T>(
 
 data class CursorPaginationResponse<T> (
     val content: List<T>,
-
     val cursor: String?,
-
     val size: Int,
-
     val last: Boolean,
-
-    @JsonProperty("total_count")
     val totalCount: Long? = null
 )
