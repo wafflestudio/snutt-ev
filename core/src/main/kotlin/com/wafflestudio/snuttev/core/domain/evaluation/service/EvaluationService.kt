@@ -3,6 +3,7 @@ package com.wafflestudio.snuttev.core.domain.evaluation.service
 import com.wafflestudio.snuttev.core.common.dto.common.CursorPaginationResponse
 import com.wafflestudio.snuttev.core.common.error.EvaluationAlreadyExistsException
 import com.wafflestudio.snuttev.core.common.error.EvaluationLikeAlreadyExistsException
+import com.wafflestudio.snuttev.core.common.error.EvaluationLikeAlreadyNotExistsException
 import com.wafflestudio.snuttev.core.common.error.EvaluationReportAlreadyExistsException
 import com.wafflestudio.snuttev.core.common.error.LectureEvaluationNotFoundException
 import com.wafflestudio.snuttev.core.common.error.LectureNotFoundException
@@ -186,12 +187,23 @@ class EvaluationService internal constructor(
         val classification = LectureClassification.LIBERAL_EDUCATION
 
         var evaluationWithLectureDtos = cache.withCache(
-            CacheKey.EVALUATIONS_BY_TAG_CLASSIFICATION_PAGE.build(
+            builtCacheKey = CacheKey.EVALUATIONS_BY_TAG_CLASSIFICATION_PAGE.build(
                 tagId, classification, evaluationIdCursor, DEFAULT_PAGE_SIZE + 1,
             ),
+            postHitProcessor = { dtos ->
+                val evaluationsIds = dtos.map { it.id }
+                val likes = evaluationLikeRepository.findAllByLectureEvaluationIdIn(evaluationsIds)
+                dtos.map { dto ->
+                    dto.copy(
+                        likeCount = likes.count { it.lectureEvaluation.id == dto.id }.toLong(),
+                        isLiked = likes.any { it.lectureEvaluation.id == dto.id && it.userId == userId },
+                    )
+                }
+            },
         ) {
             val tag = tagRepository.findByIdOrNull(tagId) ?: throw TagNotFoundException
             lectureEvaluationRepository.findEvaluationWithLectureByTagAndClassification(
+                userId,
                 tag,
                 classification,
                 evaluationIdCursor,
@@ -282,7 +294,7 @@ class EvaluationService internal constructor(
         val evaluation = lectureEvaluationRepository.findByIdAndIsHiddenFalse(lectureEvaluationId) ?: throw LectureEvaluationNotFoundException
 
         val deletedRowCount = evaluationLikeRepository.deleteByLectureEvaluationAndUserId(evaluation, userId)
-        if (deletedRowCount == 0L) return
+        if (deletedRowCount == 0L) throw EvaluationLikeAlreadyNotExistsException
 
         evaluation.likeCount--
     }

@@ -27,6 +27,7 @@ interface LectureEvaluationRepositoryCustom {
     ): List<EvaluationWithLectureDto>
 
     fun findEvaluationWithLectureByTagAndClassification(
+        userId: String,
         tag: Tag,
         classification: LectureClassification,
         cursor: Long?,

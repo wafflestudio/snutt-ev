@@ -2,6 +2,7 @@ package com.wafflestudio.snuttev.core.domain.evaluation.service
 
 import com.wafflestudio.snuttev.core.common.error.EvaluationAlreadyExistsException
 import com.wafflestudio.snuttev.core.common.error.EvaluationLikeAlreadyExistsException
+import com.wafflestudio.snuttev.core.common.error.EvaluationLikeAlreadyNotExistsException
 import com.wafflestudio.snuttev.core.common.error.NotMyLectureEvaluationException
 import com.wafflestudio.snuttev.core.common.type.LectureClassification
 import com.wafflestudio.snuttev.core.common.type.Semester
@@ -643,7 +644,9 @@ class EvaluationServiceTest @Autowired constructor(
         assertThat(evaluation.likeCount).isEqualTo(0)
 
         // duplicated
-        evaluationService.cancelLikeEvaluation(userId = likeUserId, lectureEvaluationId = evaluationId)
+        assertThatThrownBy {
+            evaluationService.cancelLikeEvaluation(userId = likeUserId, lectureEvaluationId = evaluationId)
+        }.isInstanceOf(EvaluationLikeAlreadyNotExistsException::class.java)
         assertThat(evaluation.likeCount).isEqualTo(0)
     }
 
