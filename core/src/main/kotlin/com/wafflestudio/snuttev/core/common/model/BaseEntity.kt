@@ -1,5 +1,6 @@
 package com.wafflestudio.snuttev.core.common.model
 
+import org.hibernate.annotations.OptimisticLock
 import org.hibernate.annotations.UpdateTimestamp
 import java.time.LocalDateTime
 import javax.persistence.Column
@@ -10,7 +11,6 @@ import javax.persistence.MappedSuperclass
 
 @MappedSuperclass
 open class BaseEntity(
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     open val id: Long? = null,
@@ -20,6 +20,6 @@ open class BaseEntity(
 
     @field:UpdateTimestamp
     @Column(name = "updated_at", nullable = false)
+    @OptimisticLock(excluded = true)
     open val updatedAt: LocalDateTime? = LocalDateTime.now(),
-
 )

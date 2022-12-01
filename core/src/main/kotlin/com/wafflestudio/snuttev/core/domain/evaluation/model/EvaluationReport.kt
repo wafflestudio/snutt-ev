@@ -12,9 +12,8 @@ import javax.persistence.UniqueConstraint
 @Entity
 @Table(uniqueConstraints = [UniqueConstraint(columnNames = ["lecture_evaluation_id", "user_id"])])
 class EvaluationReport(
-
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "lecture_evaluation_id")
+    @JoinColumn(name = "lecture_evaluation_id", nullable = false)
     val lectureEvaluation: LectureEvaluation,
 
     @Column(name = "user_id", nullable = false)

@@ -2,18 +2,23 @@ package com.wafflestudio.snuttev.core.domain.evaluation.model
 
 import com.wafflestudio.snuttev.core.common.model.BaseEntity
 import com.wafflestudio.snuttev.core.domain.lecture.model.SemesterLecture
+import org.hibernate.annotations.DynamicUpdate
+import org.hibernate.annotations.OptimisticLockType
+import org.hibernate.annotations.OptimisticLocking
 import java.time.LocalDateTime
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.FetchType
 import javax.persistence.JoinColumn
 import javax.persistence.ManyToOne
+import javax.persistence.OneToMany
 
 @Entity
+@DynamicUpdate
+@OptimisticLocking(type = OptimisticLockType.DIRTY)
 class LectureEvaluation(
-
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "semester_lecture_id")
+    @JoinColumn(name = "semester_lecture_id", nullable = false)
     var semesterLecture: SemesterLecture,
 
     @Column(name = "user_id", nullable = false)
@@ -38,10 +43,7 @@ class LectureEvaluation(
     val rating: Double,
 
     @Column(name = "like_count", nullable = false)
-    val likeCount: Long = 0,
-
-    @Column(name = "dislike_count", nullable = false)
-    val dislikeCount: Long = 0,
+    var likeCount: Long = 0,
 
     @Column(name = "is_hidden", nullable = false)
     var isHidden: Boolean = false,
@@ -53,4 +55,7 @@ class LectureEvaluation(
     val fromSnuev: Boolean = false,
 
     createdAt: LocalDateTime = LocalDateTime.now(),
+
+    @OneToMany(mappedBy = "lectureEvaluation")
+    val evaluationLikes: List<EvaluationLike> = listOf()
 ) : BaseEntity(createdAt = createdAt)

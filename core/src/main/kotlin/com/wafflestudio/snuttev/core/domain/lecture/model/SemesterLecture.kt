@@ -16,9 +16,8 @@ import javax.persistence.UniqueConstraint
 @Entity
 @Table(uniqueConstraints = [UniqueConstraint(columnNames = ["lecture_id", "year", "semester"])])
 class SemesterLecture(
-
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "lecture_id")
+    @JoinColumn(name = "lecture_id", nullable = false)
     var lecture: Lecture,
 
     val year: Int,
@@ -44,28 +43,16 @@ class SemesterLecture(
 
 data class SemesterLectureWithLecture(
     val id: Long? = null,
-
     val year: Int,
-
     val semester: Int,
-
     var credit: Int,
-
     var extraInfo: String,
-
     var academicYear: String,
-
     var category: String,
-
     var classification: LectureClassification,
-
     val lectureId: Long,
-
     val title: String,
-
     val instructor: String,
-
     val department: String,
-
     val courseNumber: String,
 )

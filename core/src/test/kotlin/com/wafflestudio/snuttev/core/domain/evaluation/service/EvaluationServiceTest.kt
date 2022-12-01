@@ -1,11 +1,14 @@
 package com.wafflestudio.snuttev.core.domain.evaluation.service
 
 import com.wafflestudio.snuttev.core.common.error.EvaluationAlreadyExistsException
+import com.wafflestudio.snuttev.core.common.error.EvaluationLikeAlreadyExistsException
+import com.wafflestudio.snuttev.core.common.error.EvaluationLikeAlreadyNotExistsException
 import com.wafflestudio.snuttev.core.common.error.NotMyLectureEvaluationException
 import com.wafflestudio.snuttev.core.common.type.LectureClassification
 import com.wafflestudio.snuttev.core.common.type.Semester
 import com.wafflestudio.snuttev.core.domain.evaluation.dto.CreateEvaluationRequest
 import com.wafflestudio.snuttev.core.domain.evaluation.model.LectureEvaluation
+import com.wafflestudio.snuttev.core.domain.evaluation.repository.EvaluationLikeRepository
 import com.wafflestudio.snuttev.core.domain.evaluation.repository.LectureEvaluationRepository
 import com.wafflestudio.snuttev.core.domain.lecture.model.Lecture
 import com.wafflestudio.snuttev.core.domain.lecture.model.SemesterLecture
@@ -25,11 +28,12 @@ import kotlin.random.nextInt
 
 @SpringBootTest
 @Transactional
-class EvaluationServiceTest(
-    @Autowired private val evaluationService: EvaluationService,
-    @Autowired private val lectureEvaluationRepository: LectureEvaluationRepository,
-    @Autowired private val lectureRepository: LectureRepository,
-    @Autowired private val semesterLectureRepository: SemesterLectureRepository,
+class EvaluationServiceTest @Autowired constructor(
+    private val evaluationService: EvaluationService,
+    private val lectureEvaluationRepository: LectureEvaluationRepository,
+    private val lectureRepository: LectureRepository,
+    private val semesterLectureRepository: SemesterLectureRepository,
+    private val evaluationLikeRepository: EvaluationLikeRepository,
 ) {
     @BeforeEach
     fun setup() {
@@ -548,6 +552,102 @@ class EvaluationServiceTest(
         assertThat(response.last).isTrue
         assertThat(response.totalCount).isEqualTo(59)
         assertThat(response.content).hasSize(19)
+    }
+
+    @Test
+    fun `test - likeEvaluation`() {
+        val semesterLectureId = semesterLectureRepository.findAll().first().id!!
+        val userId = "1"
+
+        saveLectureEvaluation(userId = userId, semesterLectureId = semesterLectureId)
+        val evaluationId = lectureEvaluationRepository.findAll().first { it.userId == userId }.id!!
+
+        val likeUserId = "2"
+        evaluationService.likeEvaluation(userId = likeUserId, lectureEvaluationId = evaluationId)
+
+        val evaluationLike = evaluationLikeRepository.findAll().firstOrNull { it.userId == likeUserId }
+        assertThat(evaluationLike).isNotNull
+        assertThat(evaluationLike!!.userId).isEqualTo(likeUserId)
+        assertThat(evaluationLike.lectureEvaluation.id).isEqualTo(evaluationId)
+
+        val evaluation = lectureEvaluationRepository.findById(evaluationId).get()
+        assertThat(evaluation.likeCount).isEqualTo(1)
+    }
+
+    @Test
+    fun `test - likeEvaluation - duplicated`() {
+        val semesterLectureId = semesterLectureRepository.findAll().first().id!!
+        val userId = "1"
+
+        saveLectureEvaluation(userId = userId, semesterLectureId = semesterLectureId)
+        val evaluationId = lectureEvaluationRepository.findAll().first { it.userId == userId }.id!!
+
+        val likeUserId = "2"
+        evaluationService.likeEvaluation(userId = likeUserId, lectureEvaluationId = evaluationId)
+
+        val evaluationLike = evaluationLikeRepository.findAll().firstOrNull { it.userId == likeUserId }
+        assertThat(evaluationLike).isNotNull
+
+        val evaluation = lectureEvaluationRepository.findById(evaluationId).get()
+        assertThat(evaluation.likeCount).isEqualTo(1)
+
+        // duplicated
+        assertThatThrownBy {
+            evaluationService.likeEvaluation(userId = likeUserId, lectureEvaluationId = evaluationId)
+        }.isInstanceOf(EvaluationLikeAlreadyExistsException::class.java)
+        assertThat(evaluation.likeCount).isEqualTo(1)
+    }
+
+    @Test
+    fun `test - cancelLikeEvaluation`() {
+        val semesterLectureId = semesterLectureRepository.findAll().first().id!!
+        val userId = "1"
+
+        saveLectureEvaluation(userId = userId, semesterLectureId = semesterLectureId)
+        val evaluationId = lectureEvaluationRepository.findAll().first { it.userId == userId }.id!!
+
+        val likeUserId = "2"
+        evaluationService.likeEvaluation(userId = likeUserId, lectureEvaluationId = evaluationId)
+
+        val evaluationLike = evaluationLikeRepository.findAll().firstOrNull { it.userId == likeUserId }
+        assertThat(evaluationLike).isNotNull
+
+        val evaluation = lectureEvaluationRepository.findById(evaluationId).get()
+        assertThat(evaluation.likeCount).isEqualTo(1)
+
+        evaluationService.cancelLikeEvaluation(userId = likeUserId, lectureEvaluationId = evaluationId)
+        val evaluationLikes = evaluationLikeRepository.findAll()
+        assertThat(evaluationLikes).isEmpty()
+        assertThat(evaluation.likeCount).isEqualTo(0)
+    }
+
+    @Test
+    fun `test - cancelLikeEvaluation - duplicated`() {
+        val semesterLectureId = semesterLectureRepository.findAll().first().id!!
+        val userId = "1"
+
+        saveLectureEvaluation(userId = userId, semesterLectureId = semesterLectureId)
+        val evaluationId = lectureEvaluationRepository.findAll().first { it.userId == userId }.id!!
+
+        val likeUserId = "2"
+        evaluationService.likeEvaluation(userId = likeUserId, lectureEvaluationId = evaluationId)
+
+        val evaluationLike = evaluationLikeRepository.findAll().firstOrNull { it.userId == likeUserId }
+        assertThat(evaluationLike).isNotNull
+
+        val evaluation = lectureEvaluationRepository.findById(evaluationId).get()
+        assertThat(evaluation.likeCount).isEqualTo(1)
+
+        evaluationService.cancelLikeEvaluation(userId = likeUserId, lectureEvaluationId = evaluationId)
+        val evaluationLikes = evaluationLikeRepository.findAll()
+        assertThat(evaluationLikes).isEmpty()
+        assertThat(evaluation.likeCount).isEqualTo(0)
+
+        // duplicated
+        assertThatThrownBy {
+            evaluationService.cancelLikeEvaluation(userId = likeUserId, lectureEvaluationId = evaluationId)
+        }.isInstanceOf(EvaluationLikeAlreadyNotExistsException::class.java)
+        assertThat(evaluation.likeCount).isEqualTo(0)
     }
 
     private fun saveLectureEvaluationsForMultipleLectures(userId: String, count: Int) {
