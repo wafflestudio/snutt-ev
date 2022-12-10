@@ -20,6 +20,6 @@ spring:
         use_sql_comments: true
   batch:
     job:
-      names: ${job.name:EMPTY}
+      names: ${job.names:EMPTY}
   main:
     web-application-type: none
