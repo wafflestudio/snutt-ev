@@ -1,6 +1,5 @@
 package com.wafflestudio.snuttev.core.domain.evaluation.repository
 
-import com.wafflestudio.snuttev.core.common.type.LectureClassification
 import com.wafflestudio.snuttev.core.domain.evaluation.dto.EvaluationCursor
 import com.wafflestudio.snuttev.core.domain.evaluation.dto.EvaluationWithLectureDto
 import com.wafflestudio.snuttev.core.domain.evaluation.dto.EvaluationWithSemesterDto

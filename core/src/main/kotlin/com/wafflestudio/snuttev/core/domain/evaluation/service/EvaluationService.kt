@@ -11,7 +11,6 @@ import com.wafflestudio.snuttev.core.common.error.MyLectureEvaluationException
 import com.wafflestudio.snuttev.core.common.error.NotMyLectureEvaluationException
 import com.wafflestudio.snuttev.core.common.error.SemesterLectureNotFoundException
 import com.wafflestudio.snuttev.core.common.error.TagNotFoundException
-import com.wafflestudio.snuttev.core.common.type.LectureClassification
 import com.wafflestudio.snuttev.core.common.util.PageUtils
 import com.wafflestudio.snuttev.core.common.util.cache.Cache
 import com.wafflestudio.snuttev.core.common.util.cache.CacheKey
