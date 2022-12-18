@@ -4,7 +4,6 @@ import com.querydsl.core.BooleanBuilder
 import com.querydsl.core.types.dsl.CaseBuilder
 import com.querydsl.jpa.JPAExpressions.select
 import com.querydsl.jpa.impl.JPAQueryFactory
-import com.wafflestudio.snuttev.core.common.error.WrongMainTagException
 import com.wafflestudio.snuttev.core.common.type.LectureClassification
 import com.wafflestudio.snuttev.core.domain.evaluation.dto.EvaluationCursor
 import com.wafflestudio.snuttev.core.domain.evaluation.dto.EvaluationWithLectureDto
@@ -58,16 +57,14 @@ class LectureEvaluationRepositoryImpl(private val queryFactory: JPAQueryFactory)
         .limit(pageSize.toLong())
         .fetch()
 
-    override fun findEvaluationWithLectureByTagAndClassification(
+    override fun findEvaluationWithLectureByTag(
         userId: String,
         tag: Tag,
-        classification: LectureClassification,
         cursor: Long?,
         pageSize: Int,
     ): List<EvaluationWithLectureDto> = queryFactory
         .selectEvaluationWithLectureDto(userId)
         .where(getMainTagPredicate(tag))
-        .where(semesterLecture.classification.eq(classification))
         .where(lectureEvaluation.isHidden.isFalse)
         .where(getEvaluationIdCursorPredicate(cursor))
         .orderBy(lectureEvaluation.id.desc())
@@ -79,6 +76,12 @@ class LectureEvaluationRepositoryImpl(private val queryFactory: JPAQueryFactory)
             return BooleanBuilder()
         }
 
+        val wherePredicate = BooleanBuilder(
+            if (tag.name == "교양") {
+                semesterLecture.classification.eq(LectureClassification.LIBERAL_EDUCATION)
+            } else null
+        )
+
         val havingPredicate = BooleanBuilder(
             when (tag.name) {
                 "추천" -> lectureEvaluation.rating.avg().goe(4.0)
@@ -88,7 +91,7 @@ class LectureEvaluationRepositoryImpl(private val queryFactory: JPAQueryFactory)
                     .and(lectureEvaluation.lifeBalance.avg().goe(4.0))
                 "고진감래" -> lectureEvaluation.lifeBalance.avg().lt(2.0)
                     .and(lectureEvaluation.gains.avg().goe(4.0))
-                else -> throw WrongMainTagException
+                else -> null
             }
         )
 
@@ -98,6 +101,7 @@ class LectureEvaluationRepositoryImpl(private val queryFactory: JPAQueryFactory)
                     .from(lectureEvaluation)
                     .innerJoin(lectureEvaluation.semesterLecture, semesterLecture)
                     .where(lectureEvaluation.isHidden.isFalse)
+                    .where(wherePredicate)
                     .groupBy(semesterLecture.lecture.id)
                     .having(havingPredicate)
             )

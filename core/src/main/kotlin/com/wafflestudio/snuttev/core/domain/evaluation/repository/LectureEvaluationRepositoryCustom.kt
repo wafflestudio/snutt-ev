@@ -26,10 +26,9 @@ interface LectureEvaluationRepositoryCustom {
         pageSize: Int,
     ): List<EvaluationWithLectureDto>
 
-    fun findEvaluationWithLectureByTagAndClassification(
+    fun findEvaluationWithLectureByTag(
         userId: String,
         tag: Tag,
-        classification: LectureClassification,
         cursor: Long?,
         pageSize: Int,
     ): List<EvaluationWithLectureDto>
