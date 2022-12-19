@@ -1,6 +1,8 @@
 package com.wafflestudio.snuttev.core.domain.tag.service
 
 import com.wafflestudio.snuttev.core.common.error.TagGroupNotFoundException
+import com.wafflestudio.snuttev.core.common.util.cache.Cache
+import com.wafflestudio.snuttev.core.common.util.cache.CacheKey
 import com.wafflestudio.snuttev.core.domain.tag.dto.SearchTagResponse
 import com.wafflestudio.snuttev.core.domain.tag.dto.TagDto
 import com.wafflestudio.snuttev.core.domain.tag.dto.TagGroupDto
@@ -11,20 +13,27 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
-class TagService(
+class TagService internal constructor(
     private val tagGroupRepository: TagGroupRepository,
+    private val cache: Cache,
 ) {
     @Transactional(readOnly = true)
     fun getMainTags(): TagGroupDto {
-        val tagGroup = tagGroupRepository.findByName(name = "main") ?: throw TagGroupNotFoundException
-        return genTagGroupDto(tagGroup)
+        return cache.withCache(CacheKey.MAIN_TAGS.build()) {
+            val tagGroup = tagGroupRepository.findByName(name = "main") ?: throw TagGroupNotFoundException
+            genTagGroupDto(tagGroup)
+        }!!
     }
 
     @Transactional(readOnly = true)
     fun getSearchTags(): SearchTagResponse {
-        val tagGroups = tagGroupRepository.findAllByNameNotOrderByOrdering(name = "main")
+        val tagGroupDtos = cache.withCache(CacheKey.SEARCH_TAGS.build()) {
+            val tagGroups = tagGroupRepository.findAllByNameNot(name = "main")
+            tagGroups.map { genTagGroupDto(it) }
+        } ?: emptyList()
+
         return SearchTagResponse(
-            tagGroups = tagGroups.map { genTagGroupDto(it) }
+            tagGroups = tagGroupDtos,
         )
     }
 

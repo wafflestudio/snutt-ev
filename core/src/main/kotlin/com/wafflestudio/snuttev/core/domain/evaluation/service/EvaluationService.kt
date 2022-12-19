@@ -11,7 +11,6 @@ import com.wafflestudio.snuttev.core.common.error.MyLectureEvaluationException
 import com.wafflestudio.snuttev.core.common.error.NotMyLectureEvaluationException
 import com.wafflestudio.snuttev.core.common.error.SemesterLectureNotFoundException
 import com.wafflestudio.snuttev.core.common.error.TagNotFoundException
-import com.wafflestudio.snuttev.core.common.type.LectureClassification
 import com.wafflestudio.snuttev.core.common.util.PageUtils
 import com.wafflestudio.snuttev.core.common.util.cache.Cache
 import com.wafflestudio.snuttev.core.common.util.cache.CacheKey
@@ -76,7 +75,7 @@ class EvaluationService internal constructor(
         )
         lectureEvaluationRepository.save(lectureEvaluation)
 
-        cache.deleteAll(CacheKey.EVALUATIONS_BY_TAG_CLASSIFICATION_PAGE)
+        cache.deleteAll(CacheKey.EVALUATIONS_BY_TAG_PAGE)
 
         return genLectureEvaluationDto(lectureEvaluation)
     }
@@ -184,11 +183,9 @@ class EvaluationService internal constructor(
     ): CursorPaginationResponse<EvaluationWithLectureResponse> {
         val evaluationIdCursor = PageUtils.getCursor<Long>(cursor)
 
-        val classification = LectureClassification.LIBERAL_EDUCATION
-
         var evaluationWithLectureDtos = cache.withCache(
-            builtCacheKey = CacheKey.EVALUATIONS_BY_TAG_CLASSIFICATION_PAGE.build(
-                tagId, classification, evaluationIdCursor, DEFAULT_PAGE_SIZE + 1,
+            builtCacheKey = CacheKey.EVALUATIONS_BY_TAG_PAGE.build(
+                tagId, evaluationIdCursor, DEFAULT_PAGE_SIZE + 1,
             ),
             postHitProcessor = { dtos ->
                 val evaluationsIds = dtos.map { it.id }
@@ -202,10 +199,9 @@ class EvaluationService internal constructor(
             },
         ) {
             val tag = tagRepository.findByIdOrNull(tagId) ?: throw TagNotFoundException
-            lectureEvaluationRepository.findEvaluationWithLectureByTagAndClassification(
+            lectureEvaluationRepository.findEvaluationWithLectureByTag(
                 userId,
                 tag,
-                classification,
                 evaluationIdCursor,
                 DEFAULT_PAGE_SIZE + 1,
             )
@@ -239,7 +235,7 @@ class EvaluationService internal constructor(
 
         lectureEvaluation.isHidden = true
 
-        cache.deleteAll(CacheKey.EVALUATIONS_BY_TAG_CLASSIFICATION_PAGE)
+        cache.deleteAll(CacheKey.EVALUATIONS_BY_TAG_PAGE)
     }
 
     fun reportEvaluation(
