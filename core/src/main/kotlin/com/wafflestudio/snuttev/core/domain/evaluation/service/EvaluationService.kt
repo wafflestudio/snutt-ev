@@ -2,6 +2,7 @@ package com.wafflestudio.snuttev.core.domain.evaluation.service
 
 import com.wafflestudio.snuttev.core.common.dto.common.CursorPaginationResponse
 import com.wafflestudio.snuttev.core.common.error.EvaluationAlreadyExistsException
+import com.wafflestudio.snuttev.core.common.error.EvaluationContentBlankException
 import com.wafflestudio.snuttev.core.common.error.EvaluationLikeAlreadyExistsException
 import com.wafflestudio.snuttev.core.common.error.EvaluationLikeAlreadyNotExistsException
 import com.wafflestudio.snuttev.core.common.error.EvaluationReportAlreadyExistsException
@@ -14,7 +15,17 @@ import com.wafflestudio.snuttev.core.common.error.TagNotFoundException
 import com.wafflestudio.snuttev.core.common.util.PageUtils
 import com.wafflestudio.snuttev.core.common.util.cache.Cache
 import com.wafflestudio.snuttev.core.common.util.cache.CacheKey
-import com.wafflestudio.snuttev.core.domain.evaluation.dto.*
+import com.wafflestudio.snuttev.core.domain.evaluation.dto.CreateEvaluationReportRequest
+import com.wafflestudio.snuttev.core.domain.evaluation.dto.CreateEvaluationRequest
+import com.wafflestudio.snuttev.core.domain.evaluation.dto.EvaluationCursor
+import com.wafflestudio.snuttev.core.domain.evaluation.dto.EvaluationReportDto
+import com.wafflestudio.snuttev.core.domain.evaluation.dto.EvaluationWithLectureResponse
+import com.wafflestudio.snuttev.core.domain.evaluation.dto.EvaluationWithSemesterResponse
+import com.wafflestudio.snuttev.core.domain.evaluation.dto.EvaluationsResponse
+import com.wafflestudio.snuttev.core.domain.evaluation.dto.LectureEvaluationDto
+import com.wafflestudio.snuttev.core.domain.evaluation.dto.LectureEvaluationSummary
+import com.wafflestudio.snuttev.core.domain.evaluation.dto.LectureEvaluationSummaryResponse
+import com.wafflestudio.snuttev.core.domain.evaluation.dto.UpdateEvaluationRequest
 import com.wafflestudio.snuttev.core.domain.evaluation.model.EvaluationLike
 import com.wafflestudio.snuttev.core.domain.evaluation.model.EvaluationReport
 import com.wafflestudio.snuttev.core.domain.evaluation.model.LectureEvaluation
@@ -234,7 +245,7 @@ class EvaluationService internal constructor(
 
         updateEvaluationRequest.run {
             content?.let {
-                if (it.isBlank()) throw IllegalArgumentException("내용이 비어있습니다.")
+                if (it.isBlank()) throw EvaluationContentBlankException
                 evaluation.content = it
             }
 

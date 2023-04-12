@@ -23,7 +23,6 @@ data class CreateEvaluationRequest(
 )
 
 data class UpdateEvaluationRequest(
-    @field:NotBlank
     val content: String?,
 
     @field:Range(min = 0, max = 10)
