@@ -33,8 +33,9 @@ class LectureController(
     @GetMapping("/v1/lectures/{id}/semester-lectures")
     fun getSemesterLectures(
         @PathVariable(value = "id") lectureId: Long,
+        @RequestAttribute(value = "UserId") userId: String,
     ): LectureAndSemesterLecturesResponse {
-        return lectureService.getSemesterLectures(lectureId)
+        return lectureService.getSemesterLectures(lectureId, userId)
     }
 
     @GetMapping("/v1/lectures/id")

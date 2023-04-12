@@ -6,6 +6,10 @@ import com.wafflestudio.snuttev.core.domain.evaluation.dto.EvaluationWithSemeste
 import com.wafflestudio.snuttev.core.domain.tag.model.Tag
 
 interface LectureEvaluationRepositoryCustom {
+    fun findEvaluationWithSemesterById(
+        id: Long,
+        userId: String,
+    ): EvaluationWithSemesterDto?
 
     fun findNotMyEvaluationsWithSemesterByLectureId(
         lectureId: Long,

@@ -10,6 +10,7 @@ import com.wafflestudio.snuttev.core.domain.evaluation.dto.EvaluationWithSemeste
 import com.wafflestudio.snuttev.core.domain.evaluation.dto.EvaluationsResponse
 import com.wafflestudio.snuttev.core.domain.evaluation.dto.LectureEvaluationDto
 import com.wafflestudio.snuttev.core.domain.evaluation.dto.LectureEvaluationSummaryResponse
+import com.wafflestudio.snuttev.core.domain.evaluation.dto.UpdateEvaluationRequest
 import com.wafflestudio.snuttev.core.domain.evaluation.service.EvaluationService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
@@ -17,6 +18,7 @@ import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestAttribute
@@ -29,7 +31,6 @@ import javax.validation.Valid
 class EvaluationController(
     private val evaluationService: EvaluationService,
 ) {
-
     @Operation(
         responses = [
             ApiResponse(responseCode = "200"),
@@ -85,6 +86,23 @@ class EvaluationController(
         @RequestAttribute(value = "UserId") userId: String,
     ): CursorPaginationResponse<EvaluationWithLectureResponse> {
         return evaluationService.getMainTagEvaluations(userId, tagId, cursor)
+    }
+
+    @GetMapping("/v1/evaluations/{id}")
+    fun getLectureEvaluation(
+        @PathVariable(value = "id") evaluationId: Long,
+        @RequestAttribute(value = "UserId") userId: String,
+    ): EvaluationWithSemesterResponse {
+        return evaluationService.getEvaluation(userId, evaluationId)
+    }
+
+    @PatchMapping("/v1/evaluations/{id}")
+    fun updateLectureEvaluation(
+        @PathVariable(value = "id") evaluationId: Long,
+        @RequestBody @Valid updateEvaluationRequest: UpdateEvaluationRequest,
+        @RequestAttribute(value = "UserId") userId: String,
+    ): EvaluationWithSemesterResponse {
+        return evaluationService.updateEvaluation(userId, evaluationId, updateEvaluationRequest)
     }
 
     @DeleteMapping("/v1/evaluations/{id}")

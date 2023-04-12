@@ -25,22 +25,22 @@ class LectureEvaluation(
     val userId: String,
 
     @Column(columnDefinition = "longtext", nullable = false)
-    val content: String,
+    var content: String,
 
     @Column(name = "grade_satisfaction", nullable = true)
-    val gradeSatisfaction: Double?,
+    var gradeSatisfaction: Double?,
 
     @Column(name = "teaching_skill", nullable = true)
-    val teachingSkill: Double?,
+    var teachingSkill: Double?,
 
     @Column(nullable = true)
-    val gains: Double?,
+    var gains: Double?,
 
     @Column(name = "life_balance", nullable = true)
-    val lifeBalance: Double?,
+    var lifeBalance: Double?,
 
     @Column(nullable = false)
-    val rating: Double,
+    var rating: Double,
 
     @Column(name = "like_count", nullable = false)
     var likeCount: Long = 0,

@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RestController
 class TagController(
     private val tagService: TagService,
 ) {
-
     @GetMapping("/v1/tags/main")
     fun getMainTags(): TagGroupDto {
         return tagService.getMainTags()

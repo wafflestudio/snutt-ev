@@ -3,6 +3,7 @@ package com.wafflestudio.snuttev.core.domain.lecture.service
 import com.wafflestudio.snuttev.core.common.dto.SearchQueryDto
 import com.wafflestudio.snuttev.core.common.error.LectureNotFoundException
 import com.wafflestudio.snuttev.core.domain.evaluation.dto.SemesterLectureDto
+import com.wafflestudio.snuttev.core.domain.evaluation.model.LectureEvaluation
 import com.wafflestudio.snuttev.core.domain.evaluation.repository.LectureEvaluationRepository
 import com.wafflestudio.snuttev.core.domain.lecture.dto.LectureAndSemesterLecturesResponse
 import com.wafflestudio.snuttev.core.domain.lecture.dto.LectureDto
@@ -72,7 +73,8 @@ class LectureService(
     }
 
     fun getSemesterLectures(
-        lectureId: Long
+        lectureId: Long,
+        userId: String,
     ): LectureAndSemesterLecturesResponse {
         val semesterLecturesWithLecture =
             semesterLectureRepository.findAllByLectureIdOrderByYearDescSemesterDesc(lectureId)
@@ -81,6 +83,11 @@ class LectureService(
         }
 
         val firstSemesterLectureWithLecture = semesterLecturesWithLecture.first()
+
+        val semesterLectureIds = semesterLecturesWithLecture.map { it.id!! }
+        val evaluations = lectureEvaluationRepository.findBySemesterLectureIdInAndUserIdAndIsHiddenFalse(
+            semesterLectureIds, userId,
+        )
 
         return LectureAndSemesterLecturesResponse(
             id = firstSemesterLectureWithLecture.lectureId,
@@ -92,8 +99,11 @@ class LectureService(
             academicYear = firstSemesterLectureWithLecture.academicYear,
             category = firstSemesterLectureWithLecture.category,
             classification = firstSemesterLectureWithLecture.classification,
-            semesterLectures = semesterLecturesWithLecture.map {
-                genSemesterLectureDto(it)
+            semesterLectures = semesterLecturesWithLecture.map { semesterLecture ->
+                genSemesterLectureDto(
+                    semesterLecture,
+                    evaluations.find { it.semesterLecture.id == semesterLecture.id },
+                )
             },
         )
     }
@@ -128,7 +138,10 @@ class LectureService(
         )
     }
 
-    private fun genSemesterLectureDto(semesterLectureWithLecture: SemesterLectureWithLecture): SemesterLectureDto =
+    private fun genSemesterLectureDto(
+        semesterLectureWithLecture: SemesterLectureWithLecture,
+        evaluation: LectureEvaluation?
+    ): SemesterLectureDto =
         SemesterLectureDto(
             id = semesterLectureWithLecture.id!!,
             year = semesterLectureWithLecture.year,
@@ -138,5 +151,6 @@ class LectureService(
             academicYear = semesterLectureWithLecture.academicYear,
             category = semesterLectureWithLecture.category,
             classification = semesterLectureWithLecture.classification,
+            myEvaluationExists = evaluation != null,
         )
 }
