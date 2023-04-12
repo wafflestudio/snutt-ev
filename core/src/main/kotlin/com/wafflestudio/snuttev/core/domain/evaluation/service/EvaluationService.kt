@@ -7,6 +7,7 @@ import com.wafflestudio.snuttev.core.common.error.EvaluationLikeAlreadyExistsExc
 import com.wafflestudio.snuttev.core.common.error.EvaluationLikeAlreadyNotExistsException
 import com.wafflestudio.snuttev.core.common.error.EvaluationReportAlreadyExistsException
 import com.wafflestudio.snuttev.core.common.error.LectureEvaluationNotFoundException
+import com.wafflestudio.snuttev.core.common.error.LectureMismatchException
 import com.wafflestudio.snuttev.core.common.error.LectureNotFoundException
 import com.wafflestudio.snuttev.core.common.error.MyLectureEvaluationException
 import com.wafflestudio.snuttev.core.common.error.NotMyLectureEvaluationException
@@ -257,7 +258,9 @@ class EvaluationService internal constructor(
 
             semesterLectureId?.let {
                 if (it != evaluation.semesterLecture.id) {
-                    evaluation.semesterLecture = getSemesterLectureToWriteEvaluation(it, userId)
+                    val semesterLecture = getSemesterLectureToWriteEvaluation(it, userId)
+                    if (evaluation.semesterLecture.lecture != semesterLecture.lecture) throw LectureMismatchException
+                    evaluation.semesterLecture = semesterLecture
                 }
             }
         }

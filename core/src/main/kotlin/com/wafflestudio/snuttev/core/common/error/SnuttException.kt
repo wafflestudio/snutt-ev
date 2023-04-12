@@ -16,3 +16,4 @@ object EvaluationReportAlreadyExistsException : SnuttException(ErrorType.EVALUAT
 object EvaluationLikeAlreadyExistsException : SnuttException(ErrorType.EVALUATION_LIKE_ALREADY_EXISTS)
 object EvaluationLikeAlreadyNotExistsException : SnuttException(ErrorType.EVALUATION_LIKE_ALREADY_NOT_EXISTS)
 object EvaluationContentBlankException : SnuttException(ErrorType.EVALUATION_CONTENT_BLANK)
+object LectureMismatchException : SnuttException(ErrorType.LECTURE_MISMATCH)
