@@ -72,7 +72,8 @@ class LectureService(
     }
 
     fun getSemesterLectures(
-        lectureId: Long
+        lectureId: Long,
+        userId: String,
     ): LectureAndSemesterLecturesResponse {
         val semesterLecturesWithLecture =
             semesterLectureRepository.findAllByLectureIdOrderByYearDescSemesterDesc(lectureId)
@@ -81,6 +82,11 @@ class LectureService(
         }
 
         val firstSemesterLectureWithLecture = semesterLecturesWithLecture.first()
+
+        val semesterLectureIds = semesterLecturesWithLecture.map { it.id!! }
+        val evaluations = lectureEvaluationRepository.findBySemesterLectureIdInAndUserIdAndIsHiddenFalse(
+            semesterLectureIds, userId,
+        )
 
         return LectureAndSemesterLecturesResponse(
             id = firstSemesterLectureWithLecture.lectureId,
@@ -92,8 +98,11 @@ class LectureService(
             academicYear = firstSemesterLectureWithLecture.academicYear,
             category = firstSemesterLectureWithLecture.category,
             classification = firstSemesterLectureWithLecture.classification,
-            semesterLectures = semesterLecturesWithLecture.map {
-                genSemesterLectureDto(it)
+            semesterLectures = semesterLecturesWithLecture.map { semesterLecture ->
+                genSemesterLectureDto(
+                    semesterLecture,
+                    evaluations.any { it.semesterLecture.id == semesterLecture.id },
+                )
             },
         )
     }
@@ -128,7 +137,10 @@ class LectureService(
         )
     }
 
-    private fun genSemesterLectureDto(semesterLectureWithLecture: SemesterLectureWithLecture): SemesterLectureDto =
+    private fun genSemesterLectureDto(
+        semesterLectureWithLecture: SemesterLectureWithLecture,
+        myEvaluationExists: Boolean,
+    ): SemesterLectureDto =
         SemesterLectureDto(
             id = semesterLectureWithLecture.id!!,
             year = semesterLectureWithLecture.year,
@@ -138,5 +150,6 @@ class LectureService(
             academicYear = semesterLectureWithLecture.academicYear,
             category = semesterLectureWithLecture.category,
             classification = semesterLectureWithLecture.classification,
+            myEvaluationExists = myEvaluationExists,
         )
 }

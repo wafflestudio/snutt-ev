@@ -1,6 +1,7 @@
 package com.wafflestudio.snuttev.core.domain.evaluation.dto
 
 import com.wafflestudio.snuttev.core.common.type.LectureClassification
+import com.wafflestudio.snuttev.core.domain.evaluation.model.LectureEvaluation
 
 data class LectureEvaluationDto(
     val id: Long,
@@ -26,6 +27,7 @@ data class SemesterLectureDto(
     val academicYear: String,
     val category: String,
     val classification: LectureClassification,
+    val myEvaluationExists: Boolean,
 )
 
 data class LectureEvaluationSummaryResponse(
@@ -68,7 +70,51 @@ data class EvaluationWithSemesterResponse(
     val lectureId: Long,
     val isModifiable: Boolean,
     val isReportable: Boolean,
-)
+) {
+    companion object {
+        fun of(dto: EvaluationWithSemesterDto, userId: String) = EvaluationWithSemesterResponse(
+            id = dto.id,
+            userId = dto.userId,
+            content = dto.content,
+            gradeSatisfaction = dto.gradeSatisfaction,
+            teachingSkill = dto.teachingSkill,
+            gains = dto.gains,
+            lifeBalance = dto.lifeBalance,
+            rating = dto.rating,
+            likeCount = dto.likeCount,
+            isHidden = dto.isHidden,
+            isReported = dto.isReported,
+            isLiked = dto.isLiked,
+            fromSnuev = dto.fromSnuev,
+            year = dto.year,
+            semester = dto.semester,
+            lectureId = dto.lectureId,
+            isModifiable = dto.userId == userId,
+            isReportable = dto.userId != userId,
+        )
+
+        fun of(evaluation: LectureEvaluation, userId: String, isLiked: Boolean) = EvaluationWithSemesterResponse(
+            id = evaluation.id!!,
+            userId = evaluation.userId,
+            content = evaluation.content,
+            gradeSatisfaction = evaluation.gradeSatisfaction,
+            teachingSkill = evaluation.teachingSkill,
+            gains = evaluation.gains,
+            lifeBalance = evaluation.lifeBalance,
+            rating = evaluation.rating,
+            likeCount = evaluation.likeCount,
+            isHidden = evaluation.isHidden,
+            isReported = evaluation.isReported,
+            isLiked = isLiked,
+            fromSnuev = evaluation.fromSnuev,
+            year = evaluation.semesterLecture.year,
+            semester = evaluation.semesterLecture.semester,
+            lectureId = evaluation.semesterLecture.lecture.id!!,
+            isModifiable = evaluation.userId == userId,
+            isReportable = evaluation.userId != userId,
+        )
+    }
+}
 
 data class EvaluationWithLectureResponse(
     val id: Long,

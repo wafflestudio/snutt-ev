@@ -17,6 +17,14 @@ import com.wafflestudio.snuttev.core.domain.lecture.model.QSemesterLecture.semes
 import com.wafflestudio.snuttev.core.domain.tag.model.Tag
 
 class LectureEvaluationRepositoryImpl(private val queryFactory: JPAQueryFactory) : LectureEvaluationRepositoryCustom {
+    override fun findEvaluationWithSemesterById(
+        id: Long,
+        userId: String,
+    ): EvaluationWithSemesterDto? = queryFactory
+        .selectEvaluationWithSemesterDto(userId)
+        .where(lectureEvaluation.id.eq(id))
+        .where(lectureEvaluation.isHidden.isFalse)
+        .fetchOne()
 
     override fun findNotMyEvaluationsWithSemesterByLectureId(
         lectureId: Long,

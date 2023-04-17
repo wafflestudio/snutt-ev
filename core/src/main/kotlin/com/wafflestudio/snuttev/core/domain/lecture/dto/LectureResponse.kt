@@ -30,7 +30,7 @@ data class LectureAndSemesterLecturesResponse(
     val academicYear: String?,
     val category: String?,
     val classification: LectureClassification?,
-    val semesterLectures: List<SemesterLectureDto>
+    val semesterLectures: List<SemesterLectureDto>,
 )
 
 data class LectureIdResponse(
