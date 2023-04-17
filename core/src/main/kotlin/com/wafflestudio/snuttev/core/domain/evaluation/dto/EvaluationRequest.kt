@@ -7,38 +7,38 @@ import javax.validation.constraints.NotBlank
 data class CreateEvaluationRequest(
     val content: String,
 
-    @field:Range(min = 0, max = 10)
+    @field:Range(min = 1, max = 5)
     val gradeSatisfaction: Double,
 
-    @field:Range(min = 0, max = 10)
+    @field:Range(min = 1, max = 5)
     val teachingSkill: Double,
 
-    @field:Range(min = 0, max = 10)
+    @field:Range(min = 1, max = 5)
     val gains: Double,
 
-    @field:Range(min = 0, max = 10)
+    @field:Range(min = 1, max = 5)
     val lifeBalance: Double,
 
-    @field:Range(min = 0, max = 10)
+    @field:Range(min = 1, max = 5)
     val rating: Double,
 )
 
 data class UpdateEvaluationRequest(
     val content: String?,
 
-    @field:Range(min = 0, max = 10)
+    @field:Range(min = 1, max = 5)
     val gradeSatisfaction: Double?,
 
-    @field:Range(min = 0, max = 10)
+    @field:Range(min = 1, max = 5)
     val teachingSkill: Double?,
 
-    @field:Range(min = 0, max = 10)
+    @field:Range(min = 1, max = 5)
     val gains: Double?,
 
-    @field:Range(min = 0, max = 10)
+    @field:Range(min = 1, max = 5)
     val lifeBalance: Double?,
 
-    @field:Range(min = 0, max = 10)
+    @field:Range(min = 1, max = 5)
     val rating: Double?,
 
     val semesterLectureId: Long?,
