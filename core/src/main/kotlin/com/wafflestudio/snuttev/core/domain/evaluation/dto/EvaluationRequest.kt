@@ -1,5 +1,6 @@
 package com.wafflestudio.snuttev.core.domain.evaluation.dto
 
+import com.wafflestudio.snuttev.core.domain.evaluation.model.LectureEvaluation
 import org.hibernate.validator.constraints.Range
 import javax.validation.constraints.NotBlank
 
@@ -41,7 +42,17 @@ data class UpdateEvaluationRequest(
     val rating: Double?,
 
     val semesterLectureId: Long?,
-)
+) {
+    fun isUpdatingAny(evaluation: LectureEvaluation): Boolean {
+        return (content != null && content != evaluation.content) ||
+            (gradeSatisfaction != null && gradeSatisfaction != evaluation.gradeSatisfaction) ||
+            (teachingSkill != null && teachingSkill != evaluation.teachingSkill) ||
+            (gains != null && gains != evaluation.gains) ||
+            (lifeBalance != null && lifeBalance != evaluation.lifeBalance) ||
+            (rating != null && rating != evaluation.rating) ||
+            (semesterLectureId != null && semesterLectureId != evaluation.semesterLecture.id)
+    }
+}
 
 data class CreateEvaluationReportRequest(
     @field:NotBlank

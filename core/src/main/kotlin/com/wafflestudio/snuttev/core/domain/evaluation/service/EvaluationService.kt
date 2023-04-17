@@ -244,30 +244,32 @@ class EvaluationService internal constructor(
             throw NotMyLectureEvaluationException
         }
 
-        var updated = false
         updateEvaluationRequest.run {
+            if (isUpdatingAny(evaluation)) {
+                evaluation.likeCount = 0
+                evaluationLikeRepository.deleteByLectureEvaluationInBatch(evaluation)
+            }
+
             content?.let {
                 if (it.isBlank()) throw EvaluationContentBlankException
-                evaluation.content = it; updated = true
+                evaluation.content = it
             }
 
             gradeSatisfaction?.let {
-                evaluation.gradeSatisfaction = it; updated = true
+                evaluation.gradeSatisfaction = it
             }
-            teachingSkill?.let { evaluation.teachingSkill = it; updated = true }
-            gains?.let { evaluation.gains = it; updated = true }
-            lifeBalance?.let { evaluation.lifeBalance = it; updated = true }
-            rating?.let { evaluation.rating = it; updated = true }
+            teachingSkill?.let { evaluation.teachingSkill = it }
+            gains?.let { evaluation.gains = it }
+            lifeBalance?.let { evaluation.lifeBalance = it }
+            rating?.let { evaluation.rating = it }
 
             semesterLectureId?.let {
                 if (it != evaluation.semesterLecture.id) {
                     val semesterLecture = getSemesterLectureToWriteEvaluation(it, userId)
                     if (evaluation.semesterLecture.lecture != semesterLecture.lecture) throw LectureMismatchException
-                    evaluation.semesterLecture = semesterLecture; updated = true
+                    evaluation.semesterLecture = semesterLecture
                 }
             }
-
-            if (updated) evaluation.likeCount = 0
         }
 
         cache.deleteAll(CacheKey.EVALUATIONS_BY_TAG_PAGE)

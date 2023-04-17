@@ -3,7 +3,6 @@ package com.wafflestudio.snuttev.core.domain.lecture.service
 import com.wafflestudio.snuttev.core.common.dto.SearchQueryDto
 import com.wafflestudio.snuttev.core.common.error.LectureNotFoundException
 import com.wafflestudio.snuttev.core.domain.evaluation.dto.SemesterLectureDto
-import com.wafflestudio.snuttev.core.domain.evaluation.model.LectureEvaluation
 import com.wafflestudio.snuttev.core.domain.evaluation.repository.LectureEvaluationRepository
 import com.wafflestudio.snuttev.core.domain.lecture.dto.LectureAndSemesterLecturesResponse
 import com.wafflestudio.snuttev.core.domain.lecture.dto.LectureDto
@@ -102,7 +101,7 @@ class LectureService(
             semesterLectures = semesterLecturesWithLecture.map { semesterLecture ->
                 genSemesterLectureDto(
                     semesterLecture,
-                    evaluations.find { it.semesterLecture.id == semesterLecture.id },
+                    evaluations.any { it.semesterLecture.id == semesterLecture.id },
                 )
             },
         )
@@ -140,7 +139,7 @@ class LectureService(
 
     private fun genSemesterLectureDto(
         semesterLectureWithLecture: SemesterLectureWithLecture,
-        evaluation: LectureEvaluation?
+        myEvaluationExists: Boolean,
     ): SemesterLectureDto =
         SemesterLectureDto(
             id = semesterLectureWithLecture.id!!,
@@ -151,6 +150,6 @@ class LectureService(
             academicYear = semesterLectureWithLecture.academicYear,
             category = semesterLectureWithLecture.category,
             classification = semesterLectureWithLecture.classification,
-            myEvaluationExists = evaluation != null,
+            myEvaluationExists = myEvaluationExists,
         )
 }
