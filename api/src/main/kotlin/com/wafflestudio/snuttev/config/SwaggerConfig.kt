@@ -30,9 +30,9 @@ class SwaggerConfig {
                         "local_id": "string", (nullable)
                         "fb_name": "string" (nullable)
                     }
-                """
+                """,
                 )
-                .version("v0.0.1")
+                .version("v0.0.1"),
         )
     }
 }

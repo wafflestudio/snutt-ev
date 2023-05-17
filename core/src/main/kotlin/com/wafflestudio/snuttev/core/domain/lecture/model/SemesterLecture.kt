@@ -38,7 +38,7 @@ class SemesterLecture(
     var classification: LectureClassification,
 
     @OneToMany(mappedBy = "semesterLecture")
-    val evaluations: List<LectureEvaluation> = listOf()
+    val evaluations: List<LectureEvaluation> = listOf(),
 ) : BaseEntity()
 
 data class SemesterLectureWithLecture(
@@ -54,5 +54,5 @@ data class SemesterLectureWithLecture(
     val title: String,
     val instructor: String,
     val department: String,
-    val courseNumber: String
+    val courseNumber: String,
 )

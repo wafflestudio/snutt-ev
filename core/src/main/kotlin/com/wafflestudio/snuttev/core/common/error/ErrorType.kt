@@ -4,7 +4,7 @@ import org.springframework.http.HttpStatus
 
 enum class ErrorType(
     val code: Int,
-    val httpStatus: HttpStatus
+    val httpStatus: HttpStatus,
 ) {
     // 400
     WRONG_CURSOR_FORMAT(20001, HttpStatus.BAD_REQUEST),
@@ -31,5 +31,5 @@ enum class ErrorType(
     EVALUATION_REPORT_ALREADY_EXISTS(29003, HttpStatus.CONFLICT),
     EVALUATION_LIKE_ALREADY_EXISTS(29004, HttpStatus.CONFLICT),
     EVALUATION_LIKE_ALREADY_NOT_EXISTS(29005, HttpStatus.CONFLICT),
-    LECTURE_MISMATCH(29006, HttpStatus.CONFLICT)
+    LECTURE_MISMATCH(29006, HttpStatus.CONFLICT),
 }

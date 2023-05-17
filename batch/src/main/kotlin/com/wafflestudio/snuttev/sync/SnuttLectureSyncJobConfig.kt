@@ -35,7 +35,7 @@ class SnuttLectureSyncJobConfig(
     private val semesterLectureRepository: SemesterLectureRepository,
     private val lectureRepository: LectureRepository,
     private val semesterUtils: SemesterUtils,
-    private val snuttSemesterLectureRepository: SnuttSemesterLectureRepository
+    private val snuttSemesterLectureRepository: SnuttSemesterLectureRepository,
 ) {
     companion object {
         private const val JOB_NAME = "SYNC_JOB"
@@ -54,7 +54,7 @@ class SnuttLectureSyncJobConfig(
         val (targetYear, targetSemester) = when (
             snuttSemesterLectureRepository.existsByYearAndSemester(
                 yearOfNextSemester,
-                nextSemester.value
+                nextSemester.value,
             )
         ) {
             true -> yearOfNextSemester to nextSemester
@@ -73,9 +73,9 @@ class SnuttLectureSyncJobConfig(
                     Query.query(
                         Criteria
                             .where("year").isEqualTo(targetYear)
-                            .and("semester").isEqualTo(targetSemester.value)
-                    )
-                )
+                            .and("semester").isEqualTo(targetSemester.value),
+                    ),
+                ),
             )
             .build()
     }
@@ -98,7 +98,7 @@ class SnuttLectureSyncJobConfig(
                 CHUNK_SIZE,
                 JpaTransactionManager().apply {
                     this.entityManagerFactory = this@SnuttLectureSyncJobConfig.entityManagerFactory
-                }
+                },
             )
             .reader(reader(query))
             .processor(processor())
@@ -131,7 +131,7 @@ class SnuttLectureSyncJobConfig(
                 item.credit,
                 item.academicYear,
                 item.category,
-                LectureClassification.customValueOf(item.classification)!!
+                LectureClassification.customValueOf(item.classification)!!,
             ).also { lecturesMap["${item.courseNumber},${item.instructor}"] = it }
             semesterLecturesMap["${item.courseNumber},${item.instructor},${item.year},${item.semester}"]?.apply {
                 this.academicYear = item.academicYear
@@ -148,7 +148,7 @@ class SnuttLectureSyncJobConfig(
                 item.remark,
                 item.academicYear,
                 item.category,
-                LectureClassification.customValueOf(item.classification)!!
+                LectureClassification.customValueOf(item.classification)!!,
             ).also { semesterLecturesMap["${item.courseNumber},${item.instructor},${item.year},${item.semester}"] = it }
         }
     }

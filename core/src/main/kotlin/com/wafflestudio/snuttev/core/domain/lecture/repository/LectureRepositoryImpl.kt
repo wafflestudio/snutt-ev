@@ -27,7 +27,7 @@ class LectureRepositoryImpl(private val queryFactory: JPAQueryFactory) : Lecture
             lecture.classification.isIn(request.classification),
             lecture.department.isIn(request.department),
             lecture.category.isIn(request.category),
-            extractCriteriaFromQuery(request.query)
+            extractCriteriaFromQuery(request.query),
         )
 
         val queryResult = queryFactory.select(
@@ -44,9 +44,9 @@ class LectureRepositoryImpl(private val queryFactory: JPAQueryFactory) : Lecture
                 lecture.classification,
                 Projections.constructor(
                     LectureEvaluationSimpleSummary::class.java,
-                    lectureEvaluation.rating.avg()
-                )
-            )
+                    lectureEvaluation.rating.avg(),
+                ),
+            ),
         ).from(lecture)
             .leftJoin(lecture.semesterLectures, semesterLecture)
             .leftJoin(semesterLecture.evaluations, lectureEvaluation)
@@ -55,7 +55,7 @@ class LectureRepositoryImpl(private val queryFactory: JPAQueryFactory) : Lecture
             .offset(pageable.offset).limit(pageable.pageSize.toLong()).fetch()
 
         val total = queryFactory.select(
-            lecture.count()
+            lecture.count(),
         ).from(lecture)
             .where(*predicates)
             .fetchOne()!!
@@ -73,7 +73,7 @@ class LectureRepositoryImpl(private val queryFactory: JPAQueryFactory) : Lecture
             semesterLecture.classification.isIn(request.classification),
             semesterLecture.lecture.department.isIn(request.department),
             semesterLecture.category.isIn(request.category),
-            extractCriteriaFromQuery(request.query)
+            extractCriteriaFromQuery(request.query),
         )
 
         val queryResult =
@@ -91,9 +91,9 @@ class LectureRepositoryImpl(private val queryFactory: JPAQueryFactory) : Lecture
                     lecture.classification,
                     Projections.constructor(
                         LectureEvaluationSimpleSummary::class.java,
-                        lectureEvaluation.rating.avg()
-                    )
-                )
+                        lectureEvaluation.rating.avg(),
+                    ),
+                ),
             ).from(semesterLecture)
                 .innerJoin(semesterLecture.lecture, lecture)
                 .leftJoin(semesterLecture.evaluations, lectureEvaluation)
@@ -102,7 +102,7 @@ class LectureRepositoryImpl(private val queryFactory: JPAQueryFactory) : Lecture
                 .offset(pageable.offset).limit(pageable.pageSize.toLong()).fetch()
 
         val total = queryFactory.select(
-            semesterLecture.count()
+            semesterLecture.count(),
         ).from(semesterLecture)
             .innerJoin(semesterLecture.lecture, lecture)
             .where(*predicates)
@@ -138,8 +138,8 @@ class LectureRepositoryImpl(private val queryFactory: JPAQueryFactory) : Lecture
             when {
                 keyword == "전공" -> orBuilder.or(
                     lecture.classification.`in`(
-                        listOf(LectureClassification.ELECTIVE_SUBJECT, LectureClassification.REQUISITE_SUBJECT)
-                    )
+                        listOf(LectureClassification.ELECTIVE_SUBJECT, LectureClassification.REQUISITE_SUBJECT),
+                    ),
                 )
                 keyword == "체육" -> orBuilder.or(lecture.category.eq("체육"))
                 keyword in listOf("석박", "대학원") -> {

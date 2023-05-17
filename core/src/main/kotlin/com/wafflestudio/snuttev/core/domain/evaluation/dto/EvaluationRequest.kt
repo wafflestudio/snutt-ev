@@ -20,7 +20,7 @@ data class CreateEvaluationRequest(
     val lifeBalance: Double,
 
     @field:Range(min = 1, max = 5)
-    val rating: Double
+    val rating: Double,
 )
 
 data class UpdateEvaluationRequest(
@@ -41,7 +41,7 @@ data class UpdateEvaluationRequest(
     @field:Range(min = 1, max = 5)
     val rating: Double?,
 
-    val semesterLectureId: Long?
+    val semesterLectureId: Long?,
 ) {
     fun isUpdatingAny(evaluation: LectureEvaluation): Boolean {
         return (content != null && content != evaluation.content) ||
@@ -56,11 +56,11 @@ data class UpdateEvaluationRequest(
 
 data class CreateEvaluationReportRequest(
     @field:NotBlank
-    val content: String
+    val content: String,
 )
 
 data class EvaluationCursor(
     val year: Int,
     val semester: Int,
-    val lectureEvaluationId: Long
+    val lectureEvaluationId: Long,
 )

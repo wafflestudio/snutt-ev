@@ -21,5 +21,5 @@ open class BaseEntity(
     @field:UpdateTimestamp
     @Column(name = "updated_at", nullable = false)
     @OptimisticLock(excluded = true)
-    open val updatedAt: LocalDateTime? = LocalDateTime.now()
+    open val updatedAt: LocalDateTime? = LocalDateTime.now(),
 )

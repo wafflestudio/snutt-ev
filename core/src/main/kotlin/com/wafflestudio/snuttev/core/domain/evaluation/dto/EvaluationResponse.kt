@@ -15,7 +15,7 @@ data class LectureEvaluationDto(
     val likeCount: Long,
     val isHidden: Boolean,
     val isReported: Boolean,
-    val fromSnuev: Boolean
+    val fromSnuev: Boolean,
 )
 
 data class SemesterLectureDto(
@@ -27,7 +27,7 @@ data class SemesterLectureDto(
     val academicYear: String,
     val category: String,
     val classification: LectureClassification,
-    val myEvaluationExists: Boolean
+    val myEvaluationExists: Boolean,
 )
 
 data class LectureEvaluationSummaryResponse(
@@ -40,7 +40,7 @@ data class LectureEvaluationSummaryResponse(
     val academicYear: String?,
     val category: String?,
     val classification: LectureClassification?,
-    val evaluation: LectureEvaluationSummary
+    val evaluation: LectureEvaluationSummary,
 )
 
 data class LectureEvaluationSummary(
@@ -48,7 +48,7 @@ data class LectureEvaluationSummary(
     val avgTeachingSkill: Double?,
     val avgGains: Double?,
     val avgLifeBalance: Double?,
-    val avgRating: Double?
+    val avgRating: Double?,
 )
 
 data class EvaluationWithSemesterResponse(
@@ -69,7 +69,7 @@ data class EvaluationWithSemesterResponse(
     val semester: Int,
     val lectureId: Long,
     val isModifiable: Boolean,
-    val isReportable: Boolean
+    val isReportable: Boolean,
 ) {
     companion object {
         fun of(dto: EvaluationWithSemesterDto, userId: String) = EvaluationWithSemesterResponse(
@@ -90,7 +90,7 @@ data class EvaluationWithSemesterResponse(
             semester = dto.semester,
             lectureId = dto.lectureId,
             isModifiable = dto.userId == userId,
-            isReportable = dto.userId != userId
+            isReportable = dto.userId != userId,
         )
 
         fun of(evaluation: LectureEvaluation, userId: String, isLiked: Boolean) = EvaluationWithSemesterResponse(
@@ -111,7 +111,7 @@ data class EvaluationWithSemesterResponse(
             semester = evaluation.semesterLecture.semester,
             lectureId = evaluation.semesterLecture.lecture.id!!,
             isModifiable = evaluation.userId == userId,
-            isReportable = evaluation.userId != userId
+            isReportable = evaluation.userId != userId,
         )
     }
 }
@@ -134,11 +134,11 @@ data class EvaluationWithLectureResponse(
     val semester: Int,
     val lecture: SimpleLectureDto,
     val isModifiable: Boolean,
-    val isReportable: Boolean
+    val isReportable: Boolean,
 )
 
 data class EvaluationsResponse(
-    val evaluations: List<EvaluationWithSemesterResponse>
+    val evaluations: List<EvaluationWithSemesterResponse>,
 )
 
 data class EvaluationReportDto(
@@ -146,5 +146,5 @@ data class EvaluationReportDto(
     val lectureEvaluationId: Long,
     val userId: String,
     val content: String,
-    val isHidden: Boolean
+    val isHidden: Boolean,
 )

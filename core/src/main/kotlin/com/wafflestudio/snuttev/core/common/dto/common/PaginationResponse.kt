@@ -7,14 +7,14 @@ data class PaginationResponse<T>(
     val page: Int,
     val size: Int,
     val last: Boolean,
-    val totalCount: Long? = null
+    val totalCount: Long? = null,
 ) {
     constructor(page: Page<T>) : this(
         content = page.content,
         page = page.number,
         size = page.size,
         last = page.isLast,
-        totalCount = page.totalElements
+        totalCount = page.totalElements,
     )
 }
 
@@ -23,5 +23,5 @@ data class CursorPaginationResponse<T> (
     val cursor: String?,
     val size: Int,
     val last: Boolean,
-    val totalCount: Long? = null
+    val totalCount: Long? = null,
 )

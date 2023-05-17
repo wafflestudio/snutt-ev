@@ -22,7 +22,7 @@ class LectureServiceTest(
     @Autowired private val lectureService: LectureService,
     @Autowired private val evaluationRepository: LectureEvaluationRepository,
     @Autowired private val lectureRepository: LectureRepository,
-    @Autowired private val semesterLectureRepository: SemesterLectureRepository
+    @Autowired private val semesterLectureRepository: SemesterLectureRepository,
 ) {
 
     @BeforeEach
@@ -39,7 +39,7 @@ class LectureServiceTest(
         val response = lectureService.getSnuttevLecturesWithSnuttLectureInfos(
             userId = userId,
             snuttLectureInfos = snuttLectureInfo,
-            excludeLecturesWithEvaluations = false
+            excludeLecturesWithEvaluations = false,
         )
 
         assertThat(response.size).isEqualTo(semesterLectures.size)
@@ -58,7 +58,7 @@ class LectureServiceTest(
         val response = lectureService.getSnuttevLecturesWithSnuttLectureInfos(
             userId = userId,
             snuttLectureInfos = snuttLectureInfo,
-            excludeLecturesWithEvaluations = false
+            excludeLecturesWithEvaluations = false,
         )
 
         assertThat(response.size).isEqualTo(semesterLectures.size)
@@ -73,7 +73,7 @@ class LectureServiceTest(
         val response = lectureService.getSnuttevLecturesWithSnuttLectureInfos(
             userId = userId,
             snuttLectureInfos = snuttLectureInfo,
-            excludeLecturesWithEvaluations = true
+            excludeLecturesWithEvaluations = true,
         )
 
         assertThat(response.size).isEqualTo(semesterLectures.size)
@@ -91,7 +91,7 @@ class LectureServiceTest(
         val response = lectureService.getSnuttevLecturesWithSnuttLectureInfos(
             userId = userId,
             snuttLectureInfos = snuttLectureInfo,
-            excludeLecturesWithEvaluations = true
+            excludeLecturesWithEvaluations = true,
         )
 
         assertThat(response.size).isEqualTo(1)
@@ -109,7 +109,7 @@ class LectureServiceTest(
         val response = lectureService.getSnuttevLecturesWithSnuttLectureInfos(
             userId = userId,
             snuttLectureInfos = snuttLectureInfo,
-            excludeLecturesWithEvaluations = true
+            excludeLecturesWithEvaluations = true,
         )
 
         assertThat(response.size).isEqualTo(0)
@@ -126,7 +126,7 @@ class LectureServiceTest(
                     credit = 4,
                     academicYear = "3학년",
                     category = "",
-                    classification = LectureClassification.ELECTIVE_SUBJECT
+                    classification = LectureClassification.ELECTIVE_SUBJECT,
                 ),
                 Lecture(
                     title = "소프트웨어 개발의 원리와 실습",
@@ -136,9 +136,9 @@ class LectureServiceTest(
                     credit = 4,
                     academicYear = "3학년",
                     category = "",
-                    classification = LectureClassification.ELECTIVE_SUBJECT
-                )
-            )
+                    classification = LectureClassification.ELECTIVE_SUBJECT,
+                ),
+            ),
         )
 
         lectures.forEach { lecture ->
@@ -151,8 +151,8 @@ class LectureServiceTest(
                         credit = 4,
                         academicYear = "3학년",
                         category = "",
-                        classification = LectureClassification.ELECTIVE_SUBJECT
-                    )
+                        classification = LectureClassification.ELECTIVE_SUBJECT,
+                    ),
                 )
             }
         }
@@ -165,7 +165,7 @@ class LectureServiceTest(
                     year = it.year,
                     semester = it.semester,
                     instructor = it.lecture.instructor,
-                    courseNumber = it.lecture.courseNumber
+                    courseNumber = it.lecture.courseNumber,
                 )
             }
     }
@@ -192,8 +192,8 @@ class LectureServiceTest(
                 teachingSkill = 5.0,
                 gains = 5.0,
                 lifeBalance = 5.0,
-                rating = 5.0
-            )
+                rating = 5.0,
+            ),
         )
     }
 }

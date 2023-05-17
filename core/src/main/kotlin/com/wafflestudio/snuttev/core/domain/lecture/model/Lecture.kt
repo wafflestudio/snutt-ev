@@ -35,7 +35,7 @@ class Lecture(
     var classification: LectureClassification,
 
     @OneToMany(mappedBy = "lecture")
-    val semesterLectures: List<SemesterLecture> = listOf()
+    val semesterLectures: List<SemesterLecture> = listOf(),
 ) : BaseEntity()
 
 class LectureClassificationConverter : AttributeConverter<LectureClassification, String> {
@@ -59,5 +59,5 @@ data class LectureEvaluationSummaryDao(
     val avgTeachingSkill: Double?,
     val avgGains: Double?,
     val avgLifeBalance: Double?,
-    val avgRating: Double?
+    val avgRating: Double?,
 )

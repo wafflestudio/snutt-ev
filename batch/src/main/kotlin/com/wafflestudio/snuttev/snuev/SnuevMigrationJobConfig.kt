@@ -28,7 +28,7 @@ class SnuevMigrationJobConfig(
     private val entityManagerFactory: EntityManagerFactory,
     private val lectureEvaluationRepository: LectureEvaluationRepository,
     private val semesterLectureRepository: SemesterLectureRepository,
-    private val lectureRepository: LectureRepository
+    private val lectureRepository: LectureRepository,
 ) {
     companion object {
         private const val JOB_NAME = "SNUEV_MIGRATION_JOB"
@@ -56,7 +56,7 @@ class SnuevMigrationJobConfig(
                 CHUNK_SIZE,
                 JpaTransactionManager().apply {
                     this.entityManagerFactory = this@SnuevMigrationJobConfig.entityManagerFactory
-                }
+                },
             )
             .reader(reader())
             .processor(processor())
@@ -78,7 +78,7 @@ class SnuevMigrationJobConfig(
                     INNER JOIN professors pr ON pr.id  = le.professor_id
                     INNER JOIN semesters se ON ev.semester_id = se.id
                     INNER JOIN courses c ON c.id = le.course_id;
-                """.trimIndent()
+                """.trimIndent(),
             )
             .build()
     }
@@ -98,8 +98,8 @@ class SnuevMigrationJobConfig(
                             "",
                             lecture.academicYear,
                             lecture.category,
-                            lecture.classification
-                        )
+                            lecture.classification,
+                        ),
                     )
             val userId = "62c1c0f2ccb19a00111d37af" // snuevUser
             LectureEvaluation(
@@ -115,7 +115,7 @@ class SnuevMigrationJobConfig(
                 isHidden = false,
                 isReported = false,
                 fromSnuev = true,
-                createdAt = item.createdAt
+                createdAt = item.createdAt,
             )
         }
     }

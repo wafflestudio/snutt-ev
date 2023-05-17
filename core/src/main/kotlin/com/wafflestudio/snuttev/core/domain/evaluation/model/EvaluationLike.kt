@@ -17,5 +17,5 @@ class EvaluationLike(
     val lectureEvaluation: LectureEvaluation,
 
     @Column(name = "user_id", nullable = false)
-    val userId: String
+    val userId: String,
 ) : BaseEntity()

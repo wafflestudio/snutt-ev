@@ -13,7 +13,7 @@ interface LectureEvaluationRepository : JpaRepository<LectureEvaluation, Long>, 
 
     fun findBySemesterLectureIdInAndUserIdAndIsHiddenFalse(
         semesterLectureIds: List<Long>,
-        userId: String
+        userId: String,
     ): List<LectureEvaluation>
 
     @Query("select count(le.id) from LectureEvaluation le inner join le.semesterLecture sl where sl.lecture.id = :lectureId and le.isHidden = false")

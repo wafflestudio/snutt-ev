@@ -24,11 +24,11 @@ class TagGroup(
 
     @OneToMany(mappedBy = "tagGroup")
     @OrderBy("ordering ASC")
-    var tags: MutableList<Tag> = mutableListOf()
+    var tags: MutableList<Tag> = mutableListOf(),
 ) : BaseEntity()
 
 enum class TagValueType {
     INT,
     STRING,
-    LOGIC
+    LOGIC,
 }

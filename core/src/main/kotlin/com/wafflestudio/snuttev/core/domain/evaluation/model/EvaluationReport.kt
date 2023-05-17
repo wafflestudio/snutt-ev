@@ -23,5 +23,5 @@ class EvaluationReport(
     val content: String,
 
     @Column(name = "is_hidden", nullable = false)
-    val isHidden: Boolean = false
+    val isHidden: Boolean = false,
 ) : BaseEntity()

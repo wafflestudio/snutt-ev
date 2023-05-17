@@ -66,5 +66,5 @@ class LectureEvaluation(
     createdAt: LocalDateTime = LocalDateTime.now(),
 
     @OneToMany(mappedBy = "lectureEvaluation")
-    val evaluationLikes: List<EvaluationLike> = listOf()
+    val evaluationLikes: List<EvaluationLike> = listOf(),
 ) : BaseEntity(createdAt = createdAt)

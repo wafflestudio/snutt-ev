@@ -13,14 +13,14 @@ import java.time.Duration
 internal final class Cache(
     private val redisTemplate: StringRedisTemplate,
     @Value("\${spring.data.redis.default-ttl}") private val defaultTtl: Duration,
-    private val objectMapper: ObjectMapper
+    private val objectMapper: ObjectMapper,
 ) {
     private val log: Logger get() = LoggerFactory.getLogger(Cache::class.java)
 
     inline fun <reified T : Any> withCache(
         builtCacheKey: CacheKey.BuiltCacheKey,
         postHitProcessor: (T) -> T = { it },
-        supplier: () -> T?
+        supplier: () -> T?,
     ): T? {
         get<T>(builtCacheKey)?.let { return postHitProcessor(it) }
 

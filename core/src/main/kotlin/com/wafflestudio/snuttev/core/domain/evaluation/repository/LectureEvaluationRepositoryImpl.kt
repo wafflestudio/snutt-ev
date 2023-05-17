@@ -19,7 +19,7 @@ import com.wafflestudio.snuttev.core.domain.tag.model.Tag
 class LectureEvaluationRepositoryImpl(private val queryFactory: JPAQueryFactory) : LectureEvaluationRepositoryCustom {
     override fun findEvaluationWithSemesterById(
         id: Long,
-        userId: String
+        userId: String,
     ): EvaluationWithSemesterDto? = queryFactory
         .selectEvaluationWithSemesterDto(userId)
         .where(lectureEvaluation.id.eq(id))
@@ -30,7 +30,7 @@ class LectureEvaluationRepositoryImpl(private val queryFactory: JPAQueryFactory)
         lectureId: Long,
         userId: String,
         cursor: EvaluationCursor?,
-        pageSize: Int
+        pageSize: Int,
     ): List<EvaluationWithSemesterDto> = queryFactory
         .selectEvaluationWithSemesterDto(userId)
         .where(semesterLecture.lecture.id.eq(lectureId))
@@ -43,7 +43,7 @@ class LectureEvaluationRepositoryImpl(private val queryFactory: JPAQueryFactory)
 
     override fun findMyEvaluationsWithSemesterByLectureId(
         lectureId: Long,
-        userId: String
+        userId: String,
     ): List<EvaluationWithSemesterDto> = queryFactory
         .selectEvaluationWithSemesterDto(userId)
         .where(semesterLecture.lecture.id.eq(lectureId))
@@ -55,7 +55,7 @@ class LectureEvaluationRepositoryImpl(private val queryFactory: JPAQueryFactory)
     override fun findMyEvaluationsWithLecture(
         userId: String,
         cursor: Long?,
-        pageSize: Int
+        pageSize: Int,
     ): List<EvaluationWithLectureDto> = queryFactory
         .selectEvaluationWithLectureDto(userId)
         .where(lectureEvaluation.userId.eq(userId))
@@ -69,7 +69,7 @@ class LectureEvaluationRepositoryImpl(private val queryFactory: JPAQueryFactory)
         userId: String,
         tag: Tag,
         cursor: Long?,
-        pageSize: Int
+        pageSize: Int,
     ): List<EvaluationWithLectureDto> = queryFactory
         .selectEvaluationWithLectureDto(userId)
         .where(getMainTagPredicate(tag))
@@ -89,7 +89,7 @@ class LectureEvaluationRepositoryImpl(private val queryFactory: JPAQueryFactory)
                 semesterLecture.classification.eq(LectureClassification.LIBERAL_EDUCATION)
             } else {
                 null
-            }
+            },
         )
 
         val havingPredicate = BooleanBuilder(
@@ -102,7 +102,7 @@ class LectureEvaluationRepositoryImpl(private val queryFactory: JPAQueryFactory)
                 "고진감래" -> lectureEvaluation.lifeBalance.avg().lt(2.0)
                     .and(lectureEvaluation.gains.avg().goe(4.0))
                 else -> null
-            }
+            },
         )
 
         return BooleanBuilder(
@@ -113,8 +113,8 @@ class LectureEvaluationRepositoryImpl(private val queryFactory: JPAQueryFactory)
                     .where(lectureEvaluation.isHidden.isFalse)
                     .where(wherePredicate)
                     .groupBy(semesterLecture.lecture.id)
-                    .having(havingPredicate)
-            )
+                    .having(havingPredicate),
+            ),
         )
     }
 
@@ -135,8 +135,8 @@ class LectureEvaluationRepositoryImpl(private val queryFactory: JPAQueryFactory)
             lectureEvaluation.fromSnuev,
             semesterLecture.year,
             semesterLecture.semester,
-            semesterLecture.lecture.id
-        )
+            semesterLecture.lecture.id,
+        ),
     )
         .from(lectureEvaluation)
         .innerJoin(lectureEvaluation.semesterLecture, semesterLecture)
@@ -161,8 +161,8 @@ class LectureEvaluationRepositoryImpl(private val queryFactory: JPAQueryFactory)
             semesterLecture.semester,
             semesterLecture.lecture.id,
             lecture.title,
-            lecture.instructor
-        )
+            lecture.instructor,
+        ),
     )
         .from(lectureEvaluation)
         .innerJoin(lectureEvaluation.semesterLecture, semesterLecture)
@@ -175,14 +175,14 @@ class LectureEvaluationRepositoryImpl(private val queryFactory: JPAQueryFactory)
                 .or(semesterLecture.year.eq(it.year).and(semesterLecture.semester.lt(it.semester)))
                 .or(
                     semesterLecture.year.eq(it.year).and(semesterLecture.semester.eq(it.semester))
-                        .and(lectureEvaluation.id.lt(it.lectureEvaluationId))
+                        .and(lectureEvaluation.id.lt(it.lectureEvaluationId)),
                 )
-        }
+        },
     )
 
     private fun getEvaluationIdCursorPredicate(cursor: Long?) = BooleanBuilder(
         cursor?.let {
             lectureEvaluation.id.lt(it)
-        }
+        },
     )
 }

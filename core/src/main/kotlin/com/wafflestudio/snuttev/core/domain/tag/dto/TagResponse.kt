@@ -5,16 +5,16 @@ data class TagGroupDto(
     val name: String,
     val ordering: Int,
     val color: String?,
-    val tags: List<TagDto>
+    val tags: List<TagDto>,
 )
 
 data class TagDto(
     val id: Long,
     val name: String,
     val description: String?,
-    val ordering: Int
+    val ordering: Int,
 )
 
 data class SearchTagResponse(
-    val tagGroups: List<TagGroupDto>
+    val tagGroups: List<TagGroupDto>,
 )

@@ -16,7 +16,7 @@ import java.time.Duration
 @Configuration
 @EnableCaching
 class RedisConfig(
-    @Value("\${spring.data.redis.default-ttl}") private val redisTtl: Duration
+    @Value("\${spring.data.redis.default-ttl}") private val redisTtl: Duration,
 ) {
     @Bean
     fun cacheManager(connectionFactory: RedisConnectionFactory): CacheManager {

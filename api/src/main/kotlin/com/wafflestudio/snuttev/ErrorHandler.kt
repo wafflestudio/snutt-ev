@@ -27,7 +27,7 @@ class ErrorHandler {
     fun handleException(
         e: Exception,
         request: HttpServletRequest,
-        response: HttpServletResponse
+        response: HttpServletResponse,
     ): ResponseEntity<Any> {
         log.error(e.message + e.stackTraceToString(), e)
         return ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -40,23 +40,23 @@ class ErrorHandler {
         HttpRequestMethodNotSupportedException::class,
         MethodArgumentNotValidException::class,
         MethodArgumentTypeMismatchException::class,
-        MissingServletRequestParameterException::class
+        MissingServletRequestParameterException::class,
     )
     fun handleHttpMessageBadRequest(
         e: Exception,
         request: HttpServletRequest,
-        response: HttpServletResponse
+        response: HttpServletResponse,
     ): ResponseEntity<Any> {
         return ResponseEntity(HttpStatus.BAD_REQUEST)
     }
 
     @ExceptionHandler(
-        ObjectOptimisticLockingFailureException::class
+        ObjectOptimisticLockingFailureException::class,
     )
     fun handleHttpMessageConflict(
         e: Exception,
         request: HttpServletRequest,
-        response: HttpServletResponse
+        response: HttpServletResponse,
     ): ResponseEntity<Any> {
         return ResponseEntity(HttpStatus.CONFLICT)
     }
@@ -65,7 +65,7 @@ class ErrorHandler {
     fun handlerSnuttException(e: SnuttException): ResponseEntity<ErrorResponse> {
         return ResponseEntity(
             ErrorResponse(ErrorInfo(e.errorType.code, e.errorType.name)),
-            e.errorType.httpStatus
+            e.errorType.httpStatus,
         )
     }
 }
