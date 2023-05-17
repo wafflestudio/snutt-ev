@@ -20,15 +20,6 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 
 @RestControllerAdvice
 class ErrorHandler {
-    @ExceptionHandler(Exception::class)
-    fun handleException(
-        e: Exception,
-        request: HttpServletRequest,
-        response: HttpServletResponse,
-    ): ResponseEntity<Any> {
-        return ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR)
-    }
-
     @ExceptionHandler(
         ConstraintViolationException::class,
         HttpMessageNotReadableException::class,
