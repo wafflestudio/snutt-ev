@@ -7,10 +7,12 @@ import com.wafflestudio.snuttev.core.domain.lecture.repository.LectureRepository
 import com.wafflestudio.snuttev.core.domain.lecture.repository.SemesterLectureRepository
 import com.wafflestudio.snuttev.sync.model.SnuttSemesterLecture
 import com.wafflestudio.snuttev.sync.repository.SnuttSemesterLectureRepository
+import jakarta.persistence.EntityManagerFactory
 import org.springframework.batch.core.Job
 import org.springframework.batch.core.Step
-import org.springframework.batch.core.configuration.annotation.JobBuilderFactory
-import org.springframework.batch.core.configuration.annotation.StepBuilderFactory
+import org.springframework.batch.core.job.builder.JobBuilder
+import org.springframework.batch.core.repository.JobRepository
+import org.springframework.batch.core.step.builder.StepBuilder
 import org.springframework.batch.item.ItemProcessor
 import org.springframework.batch.item.ItemWriter
 import org.springframework.batch.item.data.MongoItemReader
@@ -24,13 +26,10 @@ import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.data.mongodb.core.query.Query
 import org.springframework.data.mongodb.core.query.isEqualTo
 import org.springframework.orm.jpa.JpaTransactionManager
-import javax.persistence.EntityManagerFactory
 
 @Configuration
 @Profile(value = ["!test"])
 class SnuttLectureSyncJobConfig(
-    private val jobBuilderFactory: JobBuilderFactory,
-    private val stepBuilderFactory: StepBuilderFactory,
     private val entityManagerFactory: EntityManagerFactory,
     private val mongoTemplate: MongoTemplate,
     private val semesterLectureRepository: SemesterLectureRepository,
@@ -38,21 +37,24 @@ class SnuttLectureSyncJobConfig(
     private val semesterUtils: SemesterUtils,
     private val snuttSemesterLectureRepository: SnuttSemesterLectureRepository,
 ) {
-    private val JOB_NAME = "SYNC_JOB"
-    private val NEXT_SEMESTER_JOB_NAME = "NEXT_SEMESTER_SYNC_JOB"
-    private val CUSTOM_READER_JOB_STEP = JOB_NAME + "_STEP"
-    private final val CHUNK_SIZE = 100
+    companion object {
+        private const val JOB_NAME = "SYNC_JOB"
+        private const val NEXT_SEMESTER_JOB_NAME = "NEXT_SEMESTER_SYNC_JOB"
+        private const val CUSTOM_READER_JOB_STEP = JOB_NAME + "_STEP"
+        private const val CHUNK_SIZE = 100
+    }
 
     private var lecturesMap: MutableMap<String, Lecture> = mutableMapOf()
     private var semesterLecturesMap: MutableMap<String, SemesterLecture> = mutableMapOf()
 
     @Bean
-    fun syncJobNextSemester(): Job {
+    fun syncJobNextSemester(jobRepository: JobRepository): Job {
         val (currentYear, currentSemester) = semesterUtils.getCurrentYearAndSemester()
         val (yearOfNextSemester, nextSemester) = semesterUtils.getYearAndSemesterOfNextSemester()
         val (targetYear, targetSemester) = when (
             snuttSemesterLectureRepository.existsByYearAndSemester(
-                yearOfNextSemester, nextSemester.value
+                yearOfNextSemester,
+                nextSemester.value,
             )
         ) {
             true -> yearOfNextSemester to nextSemester
@@ -64,42 +66,43 @@ class SnuttLectureSyncJobConfig(
                 .associateBy { "${it.lecture.courseNumber},${it.lecture.instructor},${it.year},${it.semester}" }
                 .toMutableMap()
 
-        return jobBuilderFactory.get(NEXT_SEMESTER_JOB_NAME)
+        return JobBuilder(NEXT_SEMESTER_JOB_NAME, jobRepository)
             .start(
                 customReaderStep(
+                    jobRepository,
                     Query.query(
                         Criteria
                             .where("year").isEqualTo(targetYear)
-                            .and("semester").isEqualTo(targetSemester.value)
-                    )
-                )
+                            .and("semester").isEqualTo(targetSemester.value),
+                    ),
+                ),
             )
             .build()
     }
 
     @Bean
-    fun syncJob(): Job {
+    fun syncJob(jobRepository: JobRepository): Job {
         lecturesMap = lectureRepository.findAll().associateBy { "${it.courseNumber},${it.instructor}" }.toMutableMap()
         semesterLecturesMap =
             semesterLectureRepository.findAllWithLecture()
                 .associateBy { "${it.lecture.courseNumber},${it.lecture.instructor},${it.year},${it.semester}" }
                 .toMutableMap()
-        return jobBuilderFactory.get(JOB_NAME)
-            .start(customReaderStep(Query()))
+        return JobBuilder(JOB_NAME, jobRepository)
+            .start(customReaderStep(jobRepository, Query()))
             .build()
     }
 
-    private fun customReaderStep(query: Query): Step {
-        return stepBuilderFactory.get(CUSTOM_READER_JOB_STEP)
-            .chunk<SnuttSemesterLecture, SemesterLecture>(CHUNK_SIZE)
+    private fun customReaderStep(jobRepository: JobRepository, query: Query): Step {
+        return StepBuilder(CUSTOM_READER_JOB_STEP, jobRepository)
+            .chunk<SnuttSemesterLecture, SemesterLecture>(
+                CHUNK_SIZE,
+                JpaTransactionManager().apply {
+                    this.entityManagerFactory = this@SnuttLectureSyncJobConfig.entityManagerFactory
+                },
+            )
             .reader(reader(query))
             .processor(processor())
             .writer(writer())
-            .transactionManager(
-                JpaTransactionManager().apply {
-                    this.entityManagerFactory = this@SnuttLectureSyncJobConfig.entityManagerFactory
-                }
-            )
             .build()
     }
 

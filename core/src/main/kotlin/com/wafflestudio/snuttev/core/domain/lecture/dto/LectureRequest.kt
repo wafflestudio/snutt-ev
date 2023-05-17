@@ -3,7 +3,7 @@ package com.wafflestudio.snuttev.core.domain.lecture.dto
 data class SearchLectureRequest(
     val query: String = "",
     val tags: List<Long> = emptyList(),
-    val page: Int = 0
+    val page: Int = 0,
 )
 
 data class SnuttLectureInfo(

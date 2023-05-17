@@ -22,7 +22,7 @@ class SecretsManagerConfig : EnvironmentAware, BeanFactoryPostProcessor {
     }
 
     override fun postProcessBeanFactory(beanFactory: ConfigurableListableBeanFactory) {
-        val secretNames = env.getProperty("secretNames", "").split(",")
+        val secretNames = env.getProperty("secret-names", "").split(",")
         val region = Region.AP_NORTHEAST_2
         val objectMapper = jacksonObjectMapper()
 

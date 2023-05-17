@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 class LectureController(
     private val lectureService: LectureService,
-    private val objectMapper: ObjectMapper
+    private val objectMapper: ObjectMapper,
 ) {
 
     @GetMapping("/v1/lectures")
@@ -64,8 +64,8 @@ class LectureController(
             lectureService.getSnuttevLecturesWithSnuttLectureInfos(
                 userId,
                 snuttLectureInfos,
-                excludeMyEvaluations
-            )
+                excludeMyEvaluations,
+            ),
         )
     }
 }

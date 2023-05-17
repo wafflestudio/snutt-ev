@@ -11,7 +11,7 @@ spring:
       database: snutt
   batch:
     job:
-      names: ${job.names:EMPTY}
+      name: ${job.name:EMPTY}
   main:
     web-application-type: none
 

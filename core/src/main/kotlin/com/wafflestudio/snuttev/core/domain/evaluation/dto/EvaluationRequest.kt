@@ -1,8 +1,8 @@
 package com.wafflestudio.snuttev.core.domain.evaluation.dto
 
 import com.wafflestudio.snuttev.core.domain.evaluation.model.LectureEvaluation
+import jakarta.validation.constraints.NotBlank
 import org.hibernate.validator.constraints.Range
-import javax.validation.constraints.NotBlank
 
 data class CreateEvaluationRequest(
     val content: String,

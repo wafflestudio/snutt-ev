@@ -170,28 +170,28 @@ class DataLoader(
                 name = "1학년",
                 description = null,
                 ordering = 1,
-                stringValue = "1학년"
+                stringValue = "1학년",
             ),
             Tag(
                 tagGroup = academicYearTagGroup,
                 name = "2학년",
                 description = null,
                 ordering = 2,
-                stringValue = "2학년"
+                stringValue = "2학년",
             ),
             Tag(
                 tagGroup = academicYearTagGroup,
                 name = "3학년",
                 description = null,
                 ordering = 3,
-                stringValue = "3학년"
+                stringValue = "3학년",
             ),
             Tag(
                 tagGroup = academicYearTagGroup,
                 name = "4학년",
                 description = null,
                 ordering = 4,
-                stringValue = "4학년"
+                stringValue = "4학년",
             ),
             Tag(
                 tagGroup = creditTagGroup,

@@ -59,7 +59,7 @@ class EvaluationService internal constructor(
     fun createEvaluation(
         userId: String,
         semesterLectureId: Long,
-        createEvaluationRequest: CreateEvaluationRequest
+        createEvaluationRequest: CreateEvaluationRequest,
     ): LectureEvaluationDto {
         val semesterLecture = getSemesterLectureToWriteEvaluation(semesterLectureId, userId)
 
@@ -141,7 +141,8 @@ class EvaluationService internal constructor(
 
     fun getMyEvaluationsOfLecture(userId: String, lectureId: Long): EvaluationsResponse {
         val evaluationWithSemesterDtos = lectureEvaluationRepository.findMyEvaluationsWithSemesterByLectureId(
-            lectureId, userId,
+            lectureId,
+            userId,
         )
         return EvaluationsResponse(
             evaluations = evaluationWithSemesterDtos.map { EvaluationWithSemesterResponse.of(it, userId) },
@@ -185,7 +186,9 @@ class EvaluationService internal constructor(
 
         var evaluationWithLectureDtos = cache.withCache(
             builtCacheKey = CacheKey.EVALUATIONS_BY_TAG_PAGE.build(
-                tagId, evaluationIdCursor, DEFAULT_PAGE_SIZE + 1,
+                tagId,
+                evaluationIdCursor,
+                DEFAULT_PAGE_SIZE + 1,
             ),
             postHitProcessor = { dtos ->
                 val evaluationsIds = dtos.map { it.id }
@@ -285,8 +288,9 @@ class EvaluationService internal constructor(
         val semesterLecture = semesterLectureRepository.findByIdOrNull(semesterLectureId)
             ?: throw SemesterLectureNotFoundException
 
-        if (lectureEvaluationRepository.existsBySemesterLectureAndUserIdAndIsHiddenFalse(semesterLecture, userId))
+        if (lectureEvaluationRepository.existsBySemesterLectureAndUserIdAndIsHiddenFalse(semesterLecture, userId)) {
             throw EvaluationAlreadyExistsException
+        }
 
         return semesterLecture
     }
@@ -341,7 +345,7 @@ class EvaluationService internal constructor(
                 EvaluationLike(
                     lectureEvaluation = evaluation,
                     userId = userId,
-                )
+                ),
             )
         } catch (e: DataIntegrityViolationException) {
             throw EvaluationLikeAlreadyExistsException

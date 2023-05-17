@@ -3,6 +3,9 @@ package com.wafflestudio.snuttev
 import com.wafflestudio.snuttev.core.common.error.ErrorInfo
 import com.wafflestudio.snuttev.core.common.error.ErrorResponse
 import com.wafflestudio.snuttev.core.common.error.SnuttException
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
+import jakarta.validation.ConstraintViolationException
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -15,9 +18,6 @@ import org.springframework.web.bind.MissingServletRequestParameterException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException
-import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpServletResponse
-import javax.validation.ConstraintViolationException
 
 @RestControllerAdvice
 class ErrorHandler {

@@ -24,7 +24,7 @@ class LectureService(
     private val lectureRepository: LectureRepository,
     private val semesterLectureRepository: SemesterLectureRepository,
     private val tagRepository: TagRepository,
-    private val lectureEvaluationRepository: LectureEvaluationRepository
+    private val lectureEvaluationRepository: LectureEvaluationRepository,
 ) {
     fun search(param: SearchLectureRequest): Page<LectureDto> {
         val request = mappingTagsToLectureProperty(param)
@@ -85,7 +85,8 @@ class LectureService(
 
         val semesterLectureIds = semesterLecturesWithLecture.map { it.id!! }
         val evaluations = lectureEvaluationRepository.findBySemesterLectureIdInAndUserIdAndIsHiddenFalse(
-            semesterLectureIds, userId,
+            semesterLectureIds,
+            userId,
         )
 
         return LectureAndSemesterLecturesResponse(
@@ -121,7 +122,7 @@ class LectureService(
                 TagValueType.STRING -> it.stringValue!!
                 TagValueType.LOGIC -> ""
             }
-        })
+        },)
         val yearSemesters = tagMap["학기"]?.filterIsInstance<String>()?.map {
             val (year, semester) = it.split(",")
             year.toInt() to semester.toInt()

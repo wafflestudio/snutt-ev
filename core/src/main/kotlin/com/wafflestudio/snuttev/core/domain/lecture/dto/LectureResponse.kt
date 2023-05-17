@@ -13,7 +13,7 @@ data class LectureDto(
     val academicYear: String?,
     val category: String?,
     val classification: LectureClassification?,
-    val evaluation: LectureEvaluationSimpleSummary
+    val evaluation: LectureEvaluationSimpleSummary,
 )
 
 data class LectureEvaluationSimpleSummary(
@@ -48,5 +48,5 @@ data class LectureTakenByUserResponse(
     val category: String?,
     val classification: LectureClassification?,
     val takenYear: Int,
-    val takenSemester: Int
+    val takenSemester: Int,
 )

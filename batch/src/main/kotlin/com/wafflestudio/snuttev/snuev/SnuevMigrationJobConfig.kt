@@ -6,10 +6,12 @@ import com.wafflestudio.snuttev.core.domain.lecture.model.SemesterLecture
 import com.wafflestudio.snuttev.core.domain.lecture.repository.LectureRepository
 import com.wafflestudio.snuttev.core.domain.lecture.repository.SemesterLectureRepository
 import com.wafflestudio.snuttev.snuev.model.SnuevEvaluation
+import jakarta.persistence.EntityManagerFactory
 import org.springframework.batch.core.Job
 import org.springframework.batch.core.Step
-import org.springframework.batch.core.configuration.annotation.JobBuilderFactory
-import org.springframework.batch.core.configuration.annotation.StepBuilderFactory
+import org.springframework.batch.core.job.builder.JobBuilder
+import org.springframework.batch.core.repository.JobRepository
+import org.springframework.batch.core.step.builder.StepBuilder
 import org.springframework.batch.item.ItemProcessor
 import org.springframework.batch.item.ItemWriter
 import org.springframework.batch.item.database.JdbcCursorItemReader
@@ -19,21 +21,21 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.jdbc.core.DataClassRowMapper
 import org.springframework.orm.jpa.JpaTransactionManager
-import javax.persistence.EntityManagerFactory
 import javax.sql.DataSource
 
 @Configuration
 class SnuevMigrationJobConfig(
-    private val jobBuilderFactory: JobBuilderFactory,
-    private val stepBuilderFactory: StepBuilderFactory,
     private val entityManagerFactory: EntityManagerFactory,
     private val lectureEvaluationRepository: LectureEvaluationRepository,
     private val semesterLectureRepository: SemesterLectureRepository,
     private val lectureRepository: LectureRepository,
 ) {
-    private val JOB_NAME = "SNUEV_MIGRATION_JOB"
-    private val CUSTOM_READER_JOB_STEP = JOB_NAME + "_STEP"
-    private val CHUNK_SIZE = 100
+    companion object {
+        private const val JOB_NAME = "SNUEV_MIGRATION_JOB"
+        private const val CUSTOM_READER_JOB_STEP = JOB_NAME + "_STEP"
+        private const val CHUNK_SIZE = 100
+    }
+
     private val snuevDataSource: DataSource = DataSourceBuilder
         .create()
         .driverClassName("org.postgresql.Driver")
@@ -42,23 +44,23 @@ class SnuevMigrationJobConfig(
         .password("password").build()
 
     @Bean
-    fun customReaderJob(): Job {
-        return jobBuilderFactory.get(JOB_NAME)
-            .start(customReaderStep())
+    fun customReaderJob(jobRepository: JobRepository): Job {
+        return JobBuilder(JOB_NAME, jobRepository)
+            .start(customReaderStep(jobRepository))
             .build()
     }
 
-    private fun customReaderStep(): Step {
-        return stepBuilderFactory.get(CUSTOM_READER_JOB_STEP)
-            .chunk<SnuevEvaluation, LectureEvaluation>(CHUNK_SIZE)
+    fun customReaderStep(jobRepository: JobRepository): Step {
+        return StepBuilder(CUSTOM_READER_JOB_STEP, jobRepository)
+            .chunk<SnuevEvaluation, LectureEvaluation>(
+                CHUNK_SIZE,
+                JpaTransactionManager().apply {
+                    this.entityManagerFactory = this@SnuevMigrationJobConfig.entityManagerFactory
+                },
+            )
             .reader(reader())
             .processor(processor())
             .writer(writer())
-            .transactionManager(
-                JpaTransactionManager().apply {
-                    this.entityManagerFactory = this@SnuevMigrationJobConfig.entityManagerFactory
-                }
-            )
             .build()
     }
 
@@ -76,7 +78,7 @@ class SnuevMigrationJobConfig(
                     INNER JOIN professors pr ON pr.id  = le.professor_id
                     INNER JOIN semesters se ON ev.semester_id = se.id
                     INNER JOIN courses c ON c.id = le.course_id;
-                """.trimIndent()
+                """.trimIndent(),
             )
             .build()
     }
@@ -96,8 +98,8 @@ class SnuevMigrationJobConfig(
                             "",
                             lecture.academicYear,
                             lecture.category,
-                            lecture.classification
-                        )
+                            lecture.classification,
+                        ),
                     )
             val userId = "62c1c0f2ccb19a00111d37af" // snuevUser
             LectureEvaluation(

@@ -2,17 +2,17 @@ package com.wafflestudio.snuttev.core.domain.evaluation.model
 
 import com.wafflestudio.snuttev.core.common.model.BaseEntity
 import com.wafflestudio.snuttev.core.domain.lecture.model.SemesterLecture
+import jakarta.persistence.Column
+import jakarta.persistence.Entity
+import jakarta.persistence.FetchType
+import jakarta.persistence.JoinColumn
+import jakarta.persistence.ManyToOne
+import jakarta.persistence.OneToMany
 import org.hibernate.annotations.DynamicUpdate
 import org.hibernate.annotations.OptimisticLock
 import org.hibernate.annotations.OptimisticLockType
 import org.hibernate.annotations.OptimisticLocking
 import java.time.LocalDateTime
-import javax.persistence.Column
-import javax.persistence.Entity
-import javax.persistence.FetchType
-import javax.persistence.JoinColumn
-import javax.persistence.ManyToOne
-import javax.persistence.OneToMany
 
 @Entity
 @DynamicUpdate
@@ -66,5 +66,5 @@ class LectureEvaluation(
     createdAt: LocalDateTime = LocalDateTime.now(),
 
     @OneToMany(mappedBy = "lectureEvaluation")
-    val evaluationLikes: List<EvaluationLike> = listOf()
+    val evaluationLikes: List<EvaluationLike> = listOf(),
 ) : BaseEntity(createdAt = createdAt)
