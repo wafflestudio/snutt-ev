@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 class LectureController(
     private val lectureService: LectureService,
-    private val objectMapper: ObjectMapper
+    private val objectMapper: ObjectMapper,
 ) {
 
     @GetMapping("/v1/lectures")
@@ -33,8 +33,9 @@ class LectureController(
     @GetMapping("/v1/lectures/{id}/semester-lectures")
     fun getSemesterLectures(
         @PathVariable(value = "id") lectureId: Long,
+        @RequestAttribute(value = "UserId") userId: String,
     ): LectureAndSemesterLecturesResponse {
-        return lectureService.getSemesterLectures(lectureId)
+        return lectureService.getSemesterLectures(lectureId, userId)
     }
 
     @GetMapping("/v1/lectures/id")
@@ -63,8 +64,8 @@ class LectureController(
             lectureService.getSnuttevLecturesWithSnuttLectureInfos(
                 userId,
                 snuttLectureInfos,
-                excludeMyEvaluations
-            )
+                excludeMyEvaluations,
+            ),
         )
     }
 }

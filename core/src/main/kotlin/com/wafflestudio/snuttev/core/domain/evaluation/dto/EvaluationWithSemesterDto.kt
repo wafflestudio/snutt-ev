@@ -19,25 +19,4 @@ data class EvaluationWithSemesterDto @QueryProjection constructor(
     val year: Int,
     val semester: Int,
     val lectureId: Long,
-) {
-    fun toResponse(userId: String) = EvaluationWithSemesterResponse(
-        id = this.id,
-        userId = this.userId,
-        content = this.content,
-        gradeSatisfaction = this.gradeSatisfaction,
-        teachingSkill = this.teachingSkill,
-        gains = this.gains,
-        lifeBalance = this.lifeBalance,
-        rating = this.rating,
-        likeCount = this.likeCount,
-        isHidden = this.isHidden,
-        isReported = this.isReported,
-        isLiked = this.isLiked,
-        fromSnuev = this.fromSnuev,
-        year = this.year,
-        semester = this.semester,
-        lectureId = this.lectureId,
-        isModifiable = this.userId == userId,
-        isReportable = this.userId != userId,
-    )
-}
+)

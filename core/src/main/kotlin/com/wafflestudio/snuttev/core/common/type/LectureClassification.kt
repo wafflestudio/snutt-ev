@@ -10,7 +10,8 @@ enum class LectureClassification(@get:JsonValue val value: String) {
     READING_AND_RESEARCH("논문"),
     TEACHING_CERTIFICATION("교직"),
     GRADUATE("대학원"),
-    CORE_SUBJECT("공통");
+    CORE_SUBJECT("공통"),
+    ;
 
     companion object {
         private val mapping = values().associateBy { e -> e.value }

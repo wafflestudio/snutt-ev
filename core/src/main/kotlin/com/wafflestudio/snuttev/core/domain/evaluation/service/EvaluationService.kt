@@ -2,10 +2,12 @@ package com.wafflestudio.snuttev.core.domain.evaluation.service
 
 import com.wafflestudio.snuttev.core.common.dto.common.CursorPaginationResponse
 import com.wafflestudio.snuttev.core.common.error.EvaluationAlreadyExistsException
+import com.wafflestudio.snuttev.core.common.error.EvaluationContentBlankException
 import com.wafflestudio.snuttev.core.common.error.EvaluationLikeAlreadyExistsException
 import com.wafflestudio.snuttev.core.common.error.EvaluationLikeAlreadyNotExistsException
 import com.wafflestudio.snuttev.core.common.error.EvaluationReportAlreadyExistsException
 import com.wafflestudio.snuttev.core.common.error.LectureEvaluationNotFoundException
+import com.wafflestudio.snuttev.core.common.error.LectureMismatchException
 import com.wafflestudio.snuttev.core.common.error.LectureNotFoundException
 import com.wafflestudio.snuttev.core.common.error.MyLectureEvaluationException
 import com.wafflestudio.snuttev.core.common.error.NotMyLectureEvaluationException
@@ -24,19 +26,21 @@ import com.wafflestudio.snuttev.core.domain.evaluation.dto.EvaluationsResponse
 import com.wafflestudio.snuttev.core.domain.evaluation.dto.LectureEvaluationDto
 import com.wafflestudio.snuttev.core.domain.evaluation.dto.LectureEvaluationSummary
 import com.wafflestudio.snuttev.core.domain.evaluation.dto.LectureEvaluationSummaryResponse
+import com.wafflestudio.snuttev.core.domain.evaluation.dto.UpdateEvaluationRequest
 import com.wafflestudio.snuttev.core.domain.evaluation.model.EvaluationLike
 import com.wafflestudio.snuttev.core.domain.evaluation.model.EvaluationReport
 import com.wafflestudio.snuttev.core.domain.evaluation.model.LectureEvaluation
 import com.wafflestudio.snuttev.core.domain.evaluation.repository.EvaluationLikeRepository
 import com.wafflestudio.snuttev.core.domain.evaluation.repository.EvaluationReportRepository
 import com.wafflestudio.snuttev.core.domain.evaluation.repository.LectureEvaluationRepository
+import com.wafflestudio.snuttev.core.domain.lecture.model.SemesterLecture
 import com.wafflestudio.snuttev.core.domain.lecture.repository.LectureRepository
 import com.wafflestudio.snuttev.core.domain.lecture.repository.SemesterLectureRepository
 import com.wafflestudio.snuttev.core.domain.tag.repository.TagRepository
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
-import javax.transaction.Transactional
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class EvaluationService internal constructor(
@@ -55,13 +59,9 @@ class EvaluationService internal constructor(
     fun createEvaluation(
         userId: String,
         semesterLectureId: Long,
-        createEvaluationRequest: CreateEvaluationRequest
+        createEvaluationRequest: CreateEvaluationRequest,
     ): LectureEvaluationDto {
-        val semesterLecture = semesterLectureRepository.findByIdOrNull(semesterLectureId) ?: throw SemesterLectureNotFoundException
-
-        if (lectureEvaluationRepository.existsBySemesterLectureAndUserIdAndIsHiddenFalse(semesterLecture, userId)) {
-            throw EvaluationAlreadyExistsException
-        }
+        val semesterLecture = getSemesterLectureToWriteEvaluation(semesterLectureId, userId)
 
         val lectureEvaluation = LectureEvaluation(
             semesterLecture = semesterLecture,
@@ -131,7 +131,7 @@ class EvaluationService internal constructor(
         }
 
         return CursorPaginationResponse(
-            content = evaluationWithSemesterDtos.map { it.toResponse(userId) },
+            content = evaluationWithSemesterDtos.map { EvaluationWithSemesterResponse.of(it, userId) },
             cursor = nextCursor,
             size = DEFAULT_PAGE_SIZE,
             last = nextCursor == null,
@@ -141,10 +141,11 @@ class EvaluationService internal constructor(
 
     fun getMyEvaluationsOfLecture(userId: String, lectureId: Long): EvaluationsResponse {
         val evaluationWithSemesterDtos = lectureEvaluationRepository.findMyEvaluationsWithSemesterByLectureId(
-            lectureId, userId,
+            lectureId,
+            userId,
         )
         return EvaluationsResponse(
-            evaluations = evaluationWithSemesterDtos.map { it.toResponse(userId) },
+            evaluations = evaluationWithSemesterDtos.map { EvaluationWithSemesterResponse.of(it, userId) },
         )
     }
 
@@ -185,7 +186,9 @@ class EvaluationService internal constructor(
 
         var evaluationWithLectureDtos = cache.withCache(
             builtCacheKey = CacheKey.EVALUATIONS_BY_TAG_PAGE.build(
-                tagId, evaluationIdCursor, DEFAULT_PAGE_SIZE + 1,
+                tagId,
+                evaluationIdCursor,
+                DEFAULT_PAGE_SIZE + 1,
             ),
             postHitProcessor = { dtos ->
                 val evaluationsIds = dtos.map { it.id }
@@ -223,12 +226,81 @@ class EvaluationService internal constructor(
         )
     }
 
+    fun getEvaluation(
+        userId: String,
+        evaluationId: Long,
+    ): EvaluationWithSemesterResponse {
+        return lectureEvaluationRepository.findEvaluationWithSemesterById(evaluationId, userId)
+            ?.let { EvaluationWithSemesterResponse.of(it, userId) }
+            ?: throw LectureEvaluationNotFoundException
+    }
+
+    @Transactional
+    fun updateEvaluation(
+        userId: String,
+        evaluationId: Long,
+        updateEvaluationRequest: UpdateEvaluationRequest,
+    ): EvaluationWithSemesterResponse {
+        val evaluation = lectureEvaluationRepository.findByIdAndIsHiddenFalse(evaluationId)
+            ?: throw LectureEvaluationNotFoundException
+        if (evaluation.userId != userId) {
+            throw NotMyLectureEvaluationException
+        }
+
+        updateEvaluationRequest.run {
+            if (isUpdatingAny(evaluation)) {
+                evaluation.likeCount = 0
+                evaluationLikeRepository.deleteByLectureEvaluationInBatch(evaluation)
+            }
+
+            content?.let {
+                if (it.isBlank()) throw EvaluationContentBlankException
+                evaluation.content = it
+            }
+
+            gradeSatisfaction?.let {
+                evaluation.gradeSatisfaction = it
+            }
+            teachingSkill?.let { evaluation.teachingSkill = it }
+            gains?.let { evaluation.gains = it }
+            lifeBalance?.let { evaluation.lifeBalance = it }
+            rating?.let { evaluation.rating = it }
+
+            semesterLectureId?.let {
+                if (it != evaluation.semesterLecture.id) {
+                    val semesterLecture = getSemesterLectureToWriteEvaluation(it, userId)
+                    if (evaluation.semesterLecture.lecture != semesterLecture.lecture) throw LectureMismatchException
+                    evaluation.semesterLecture = semesterLecture
+                }
+            }
+        }
+
+        cache.deleteAll(CacheKey.EVALUATIONS_BY_TAG_PAGE)
+
+        val isLiked = evaluationLikeRepository.existsByLectureEvaluationAndUserId(evaluation, userId)
+        return EvaluationWithSemesterResponse.of(evaluation, userId, isLiked)
+    }
+
+    private fun getSemesterLectureToWriteEvaluation(
+        semesterLectureId: Long,
+        userId: String,
+    ): SemesterLecture {
+        val semesterLecture = semesterLectureRepository.findByIdOrNull(semesterLectureId)
+            ?: throw SemesterLectureNotFoundException
+
+        if (lectureEvaluationRepository.existsBySemesterLectureAndUserIdAndIsHiddenFalse(semesterLecture, userId)) {
+            throw EvaluationAlreadyExistsException
+        }
+
+        return semesterLecture
+    }
+
     @Transactional
     fun deleteEvaluation(
         userId: String,
-        lectureEvaluationId: Long,
+        evaluationId: Long,
     ) {
-        val lectureEvaluation = lectureEvaluationRepository.findByIdAndIsHiddenFalse(lectureEvaluationId) ?: throw LectureEvaluationNotFoundException
+        val lectureEvaluation = lectureEvaluationRepository.findByIdAndIsHiddenFalse(evaluationId) ?: throw LectureEvaluationNotFoundException
         if (lectureEvaluation.userId != userId) {
             throw NotMyLectureEvaluationException
         }
@@ -240,15 +312,15 @@ class EvaluationService internal constructor(
 
     fun reportEvaluation(
         userId: String,
-        lectureEvaluationId: Long,
+        evaluationId: Long,
         createEvaluationReportRequest: CreateEvaluationReportRequest,
     ): EvaluationReportDto {
-        val lectureEvaluation = lectureEvaluationRepository.findByIdAndIsHiddenFalse(lectureEvaluationId) ?: throw LectureEvaluationNotFoundException
+        val lectureEvaluation = lectureEvaluationRepository.findByIdAndIsHiddenFalse(evaluationId) ?: throw LectureEvaluationNotFoundException
         if (lectureEvaluation.userId == userId) {
             throw MyLectureEvaluationException
         }
 
-        if (evaluationReportRepository.existsByLectureEvaluationIdAndUserId(lectureEvaluationId, userId)) {
+        if (evaluationReportRepository.existsByLectureEvaluationIdAndUserId(evaluationId, userId)) {
             throw EvaluationReportAlreadyExistsException
         }
 
@@ -264,16 +336,16 @@ class EvaluationService internal constructor(
     @Transactional
     fun likeEvaluation(
         userId: String,
-        lectureEvaluationId: Long,
+        evaluationId: Long,
     ) {
-        val evaluation = lectureEvaluationRepository.findByIdAndIsHiddenFalse(lectureEvaluationId) ?: throw LectureEvaluationNotFoundException
+        val evaluation = lectureEvaluationRepository.findByIdAndIsHiddenFalse(evaluationId) ?: throw LectureEvaluationNotFoundException
 
         try {
             evaluationLikeRepository.save(
                 EvaluationLike(
                     lectureEvaluation = evaluation,
                     userId = userId,
-                )
+                ),
             )
         } catch (e: DataIntegrityViolationException) {
             throw EvaluationLikeAlreadyExistsException
@@ -285,9 +357,9 @@ class EvaluationService internal constructor(
     @Transactional
     fun cancelLikeEvaluation(
         userId: String,
-        lectureEvaluationId: Long,
+        evaluationId: Long,
     ) {
-        val evaluation = lectureEvaluationRepository.findByIdAndIsHiddenFalse(lectureEvaluationId) ?: throw LectureEvaluationNotFoundException
+        val evaluation = lectureEvaluationRepository.findByIdAndIsHiddenFalse(evaluationId) ?: throw LectureEvaluationNotFoundException
 
         val deletedRowCount = evaluationLikeRepository.deleteByLectureEvaluationAndUserId(evaluation, userId)
         if (deletedRowCount == 0L) throw EvaluationLikeAlreadyNotExistsException

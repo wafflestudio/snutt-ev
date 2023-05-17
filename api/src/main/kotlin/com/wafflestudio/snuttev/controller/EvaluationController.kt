@@ -10,36 +10,38 @@ import com.wafflestudio.snuttev.core.domain.evaluation.dto.EvaluationWithSemeste
 import com.wafflestudio.snuttev.core.domain.evaluation.dto.EvaluationsResponse
 import com.wafflestudio.snuttev.core.domain.evaluation.dto.LectureEvaluationDto
 import com.wafflestudio.snuttev.core.domain.evaluation.dto.LectureEvaluationSummaryResponse
+import com.wafflestudio.snuttev.core.domain.evaluation.dto.UpdateEvaluationRequest
 import com.wafflestudio.snuttev.core.domain.evaluation.service.EvaluationService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
+import jakarta.validation.Valid
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestAttribute
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
-import javax.validation.Valid
 
 @RestController
 class EvaluationController(
     private val evaluationService: EvaluationService,
 ) {
-
     @Operation(
         responses = [
             ApiResponse(responseCode = "200"),
             ApiResponse(responseCode = "409", description = "29001 EVALUATION_ALREADY_EXISTS", content = [Content(schema = Schema(implementation = ErrorResponse::class))]),
-        ]
+        ],
     )
     @PostMapping("/v1/semester-lectures/{id}/evaluations")
     fun createEvaluation(
         @PathVariable(value = "id") semesterLectureId: Long,
-        @RequestBody @Valid createEvaluationRequest: CreateEvaluationRequest,
+        @RequestBody @Valid
+        createEvaluationRequest: CreateEvaluationRequest,
         @RequestAttribute(value = "UserId") userId: String,
     ): LectureEvaluationDto {
         return evaluationService.createEvaluation(userId, semesterLectureId, createEvaluationRequest)
@@ -87,6 +89,24 @@ class EvaluationController(
         return evaluationService.getMainTagEvaluations(userId, tagId, cursor)
     }
 
+    @GetMapping("/v1/evaluations/{id}")
+    fun getLectureEvaluation(
+        @PathVariable(value = "id") evaluationId: Long,
+        @RequestAttribute(value = "UserId") userId: String,
+    ): EvaluationWithSemesterResponse {
+        return evaluationService.getEvaluation(userId, evaluationId)
+    }
+
+    @PatchMapping("/v1/evaluations/{id}")
+    fun updateLectureEvaluation(
+        @PathVariable(value = "id") evaluationId: Long,
+        @RequestBody @Valid
+        updateEvaluationRequest: UpdateEvaluationRequest,
+        @RequestAttribute(value = "UserId") userId: String,
+    ): EvaluationWithSemesterResponse {
+        return evaluationService.updateEvaluation(userId, evaluationId, updateEvaluationRequest)
+    }
+
     @DeleteMapping("/v1/evaluations/{id}")
     fun deleteLectureEvaluation(
         @PathVariable(value = "id") evaluationId: Long,
@@ -99,12 +119,13 @@ class EvaluationController(
         responses = [
             ApiResponse(responseCode = "200"),
             ApiResponse(responseCode = "409", description = "29003 EVALUATION_REPORT_ALREADY_EXISTS", content = [Content(schema = Schema(implementation = ErrorResponse::class))]),
-        ]
+        ],
     )
     @PostMapping("/v1/evaluations/{id}/report")
     fun reportLectureEvaluation(
         @PathVariable(value = "id") evaluationId: Long,
-        @RequestBody @Valid createEvaluationReportRequest: CreateEvaluationReportRequest,
+        @RequestBody @Valid
+        createEvaluationReportRequest: CreateEvaluationReportRequest,
         @RequestAttribute(value = "UserId") userId: String,
     ): EvaluationReportDto {
         return evaluationService.reportEvaluation(userId, evaluationId, createEvaluationReportRequest)

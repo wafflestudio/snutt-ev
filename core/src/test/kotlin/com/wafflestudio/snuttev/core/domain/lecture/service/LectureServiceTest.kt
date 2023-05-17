@@ -138,7 +138,7 @@ class LectureServiceTest(
                     category = "",
                     classification = LectureClassification.ELECTIVE_SUBJECT,
                 ),
-            )
+            ),
         )
 
         lectures.forEach { lecture ->
@@ -152,7 +152,7 @@ class LectureServiceTest(
                         academicYear = "3학년",
                         category = "",
                         classification = LectureClassification.ELECTIVE_SUBJECT,
-                    )
+                    ),
                 )
             }
         }
@@ -192,8 +192,8 @@ class LectureServiceTest(
                 teachingSkill = 5.0,
                 gains = 5.0,
                 lifeBalance = 5.0,
-                rating = 5.0
-            )
+                rating = 5.0,
+            ),
         )
     }
 }

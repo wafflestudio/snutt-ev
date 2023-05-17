@@ -2,14 +2,14 @@ package com.wafflestudio.snuttev.core.domain.lecture.model
 
 import com.wafflestudio.snuttev.core.common.model.BaseEntity
 import com.wafflestudio.snuttev.core.common.type.LectureClassification
-import javax.persistence.AttributeConverter
-import javax.persistence.Column
-import javax.persistence.Convert
-import javax.persistence.Entity
-import javax.persistence.OneToMany
-import javax.persistence.Table
-import javax.persistence.UniqueConstraint
-import javax.validation.constraints.NotBlank
+import jakarta.persistence.AttributeConverter
+import jakarta.persistence.Column
+import jakarta.persistence.Convert
+import jakarta.persistence.Entity
+import jakarta.persistence.OneToMany
+import jakarta.persistence.Table
+import jakarta.persistence.UniqueConstraint
+import jakarta.validation.constraints.NotBlank
 
 @Entity
 @Table(uniqueConstraints = [UniqueConstraint(columnNames = ["course_number", "instructor"])])
@@ -35,7 +35,7 @@ class Lecture(
     var classification: LectureClassification,
 
     @OneToMany(mappedBy = "lecture")
-    val semesterLectures: List<SemesterLecture> = listOf()
+    val semesterLectures: List<SemesterLecture> = listOf(),
 ) : BaseEntity()
 
 class LectureClassificationConverter : AttributeConverter<LectureClassification, String> {

@@ -22,7 +22,7 @@ interface SemesterLectureRepository : JpaRepository<SemesterLecture, Long> {
         from SemesterLecture sl 
         where sl.lecture.id = :lectureId 
         order by sl.year desc, sl.semester desc
-    """
+    """,
     )
     fun findAllByLectureIdOrderByYearDescSemesterDesc(lectureId: Long): List<SemesterLectureWithLecture>
 

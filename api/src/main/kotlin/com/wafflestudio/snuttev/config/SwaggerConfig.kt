@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration
 class SwaggerConfig {
 
     @Bean
-    fun modelResolver(objectMapper: ObjectMapper?): ModelResolver {
+    fun modelResolver(objectMapper: ObjectMapper): ModelResolver {
         return ModelResolver(objectMapper)
     }
 
@@ -30,9 +30,9 @@ class SwaggerConfig {
                         "local_id": "string", (nullable)
                         "fb_name": "string" (nullable)
                     }
-                """
+                """,
                 )
-                .version("v0.0.1")
+                .version("v0.0.1"),
         )
     }
 }

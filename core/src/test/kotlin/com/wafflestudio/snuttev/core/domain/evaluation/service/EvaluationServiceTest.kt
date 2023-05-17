@@ -47,7 +47,7 @@ class EvaluationServiceTest @Autowired constructor(
                 academicYear = "3학년",
                 category = "",
                 classification = LectureClassification.ELECTIVE_SUBJECT,
-            )
+            ),
         )
         for (year in 2001..2030) { // save 60 semesterLectures
             for (semester in listOf(Semester.SPRING.value, Semester.AUTUMN.value)) {
@@ -60,7 +60,7 @@ class EvaluationServiceTest @Autowired constructor(
                         academicYear = "3학년",
                         category = "",
                         classification = LectureClassification.ELECTIVE_SUBJECT,
-                    )
+                    ),
                 )
             }
         }
@@ -148,7 +148,7 @@ class EvaluationServiceTest @Autowired constructor(
 
         val myEvaluationId = lectureEvaluationRepository.findAll().first { it.userId == myUserId }.id!!
 
-        evaluationService.deleteEvaluation(userId = myUserId, lectureEvaluationId = myEvaluationId)
+        evaluationService.deleteEvaluation(userId = myUserId, evaluationId = myEvaluationId)
 
         val myEvaluation = lectureEvaluationRepository.findByIdOrNull(myEvaluationId)
         assertThat(myEvaluation).isNotNull // soft delete
@@ -166,7 +166,7 @@ class EvaluationServiceTest @Autowired constructor(
         val otherEvaluationId = lectureEvaluationRepository.findAll().first { it.userId != myUserId }.id!!
 
         assertThatThrownBy {
-            evaluationService.deleteEvaluation(userId = myUserId, lectureEvaluationId = otherEvaluationId)
+            evaluationService.deleteEvaluation(userId = myUserId, evaluationId = otherEvaluationId)
         }.isInstanceOf(NotMyLectureEvaluationException::class.java)
     }
 
@@ -195,7 +195,7 @@ class EvaluationServiceTest @Autowired constructor(
         }.isInstanceOf(EvaluationAlreadyExistsException::class.java)
 
         val myEvaluationId = lectureEvaluationRepository.findAll().first { it.userId == myUserId }.id!!
-        evaluationService.deleteEvaluation(userId = myUserId, lectureEvaluationId = myEvaluationId)
+        evaluationService.deleteEvaluation(userId = myUserId, evaluationId = myEvaluationId)
 
         assertThatNoException().isThrownBy {
             evaluationService.createEvaluation(
@@ -371,24 +371,34 @@ class EvaluationServiceTest @Autowired constructor(
     fun `test - getEvaluationsOfLecture - ordering`() {
         val lecture = lectureRepository.findAll().first()
         val semesterLecture2010Spring = semesterLectureRepository.findByYearAndSemesterAndLecture(
-            2010, Semester.SPRING.value, lecture,
+            2010,
+            Semester.SPRING.value,
+            lecture,
         )!!
         val semesterLecture2010Autumn = semesterLectureRepository.findByYearAndSemesterAndLecture(
-            2010, Semester.AUTUMN.value, lecture,
+            2010,
+            Semester.AUTUMN.value,
+            lecture,
         )!!
         val semesterLecture2020Spring = semesterLectureRepository.findByYearAndSemesterAndLecture(
-            2020, Semester.SPRING.value, lecture,
+            2020,
+            Semester.SPRING.value,
+            lecture,
         )!!
         val semesterLecture2020Autumn = semesterLectureRepository.findByYearAndSemesterAndLecture(
-            2020, Semester.AUTUMN.value, lecture,
+            2020,
+            Semester.AUTUMN.value,
+            lecture,
         )!!
 
         val myUserId = "1"
 
         (1..60).map { it.toString() }.map { userId ->
             val semesterLecture = listOf(
-                semesterLecture2010Spring, semesterLecture2010Autumn,
-                semesterLecture2020Spring, semesterLecture2020Autumn,
+                semesterLecture2010Spring,
+                semesterLecture2010Autumn,
+                semesterLecture2020Spring,
+                semesterLecture2020Autumn,
             ).random()
             saveLectureEvaluation(userId, semesterLecture.id!!)
         }
@@ -412,16 +422,24 @@ class EvaluationServiceTest @Autowired constructor(
     fun `test - getMyEvaluationsOfLecture`() {
         val lecture = lectureRepository.findAll().first()
         val semesterLecture2010Spring = semesterLectureRepository.findByYearAndSemesterAndLecture(
-            2010, Semester.SPRING.value, lecture,
+            2010,
+            Semester.SPRING.value,
+            lecture,
         )!!
         val semesterLecture2010Autumn = semesterLectureRepository.findByYearAndSemesterAndLecture(
-            2010, Semester.AUTUMN.value, lecture,
+            2010,
+            Semester.AUTUMN.value,
+            lecture,
         )!!
         val semesterLecture2020Spring = semesterLectureRepository.findByYearAndSemesterAndLecture(
-            2020, Semester.SPRING.value, lecture,
+            2020,
+            Semester.SPRING.value,
+            lecture,
         )!!
         val semesterLecture2020Autumn = semesterLectureRepository.findByYearAndSemesterAndLecture(
-            2020, Semester.AUTUMN.value, lecture,
+            2020,
+            Semester.AUTUMN.value,
+            lecture,
         )!!
         val myUserId = "1"
 
@@ -563,7 +581,7 @@ class EvaluationServiceTest @Autowired constructor(
         val evaluationId = lectureEvaluationRepository.findAll().first { it.userId == userId }.id!!
 
         val likeUserId = "2"
-        evaluationService.likeEvaluation(userId = likeUserId, lectureEvaluationId = evaluationId)
+        evaluationService.likeEvaluation(userId = likeUserId, evaluationId = evaluationId)
 
         val evaluationLike = evaluationLikeRepository.findAll().firstOrNull { it.userId == likeUserId }
         assertThat(evaluationLike).isNotNull
@@ -583,7 +601,7 @@ class EvaluationServiceTest @Autowired constructor(
         val evaluationId = lectureEvaluationRepository.findAll().first { it.userId == userId }.id!!
 
         val likeUserId = "2"
-        evaluationService.likeEvaluation(userId = likeUserId, lectureEvaluationId = evaluationId)
+        evaluationService.likeEvaluation(userId = likeUserId, evaluationId = evaluationId)
 
         val evaluationLike = evaluationLikeRepository.findAll().firstOrNull { it.userId == likeUserId }
         assertThat(evaluationLike).isNotNull
@@ -593,7 +611,7 @@ class EvaluationServiceTest @Autowired constructor(
 
         // duplicated
         assertThatThrownBy {
-            evaluationService.likeEvaluation(userId = likeUserId, lectureEvaluationId = evaluationId)
+            evaluationService.likeEvaluation(userId = likeUserId, evaluationId = evaluationId)
         }.isInstanceOf(EvaluationLikeAlreadyExistsException::class.java)
         assertThat(evaluation.likeCount).isEqualTo(1)
     }
@@ -607,7 +625,7 @@ class EvaluationServiceTest @Autowired constructor(
         val evaluationId = lectureEvaluationRepository.findAll().first { it.userId == userId }.id!!
 
         val likeUserId = "2"
-        evaluationService.likeEvaluation(userId = likeUserId, lectureEvaluationId = evaluationId)
+        evaluationService.likeEvaluation(userId = likeUserId, evaluationId = evaluationId)
 
         val evaluationLike = evaluationLikeRepository.findAll().firstOrNull { it.userId == likeUserId }
         assertThat(evaluationLike).isNotNull
@@ -615,7 +633,7 @@ class EvaluationServiceTest @Autowired constructor(
         val evaluation = lectureEvaluationRepository.findById(evaluationId).get()
         assertThat(evaluation.likeCount).isEqualTo(1)
 
-        evaluationService.cancelLikeEvaluation(userId = likeUserId, lectureEvaluationId = evaluationId)
+        evaluationService.cancelLikeEvaluation(userId = likeUserId, evaluationId = evaluationId)
         val evaluationLikes = evaluationLikeRepository.findAll()
         assertThat(evaluationLikes).isEmpty()
         assertThat(evaluation.likeCount).isEqualTo(0)
@@ -630,7 +648,7 @@ class EvaluationServiceTest @Autowired constructor(
         val evaluationId = lectureEvaluationRepository.findAll().first { it.userId == userId }.id!!
 
         val likeUserId = "2"
-        evaluationService.likeEvaluation(userId = likeUserId, lectureEvaluationId = evaluationId)
+        evaluationService.likeEvaluation(userId = likeUserId, evaluationId = evaluationId)
 
         val evaluationLike = evaluationLikeRepository.findAll().firstOrNull { it.userId == likeUserId }
         assertThat(evaluationLike).isNotNull
@@ -638,14 +656,14 @@ class EvaluationServiceTest @Autowired constructor(
         val evaluation = lectureEvaluationRepository.findById(evaluationId).get()
         assertThat(evaluation.likeCount).isEqualTo(1)
 
-        evaluationService.cancelLikeEvaluation(userId = likeUserId, lectureEvaluationId = evaluationId)
+        evaluationService.cancelLikeEvaluation(userId = likeUserId, evaluationId = evaluationId)
         val evaluationLikes = evaluationLikeRepository.findAll()
         assertThat(evaluationLikes).isEmpty()
         assertThat(evaluation.likeCount).isEqualTo(0)
 
         // duplicated
         assertThatThrownBy {
-            evaluationService.cancelLikeEvaluation(userId = likeUserId, lectureEvaluationId = evaluationId)
+            evaluationService.cancelLikeEvaluation(userId = likeUserId, evaluationId = evaluationId)
         }.isInstanceOf(EvaluationLikeAlreadyNotExistsException::class.java)
         assertThat(evaluation.likeCount).isEqualTo(0)
     }
@@ -666,7 +684,7 @@ class EvaluationServiceTest @Autowired constructor(
                     gains = makeRandomScore(),
                     lifeBalance = makeRandomScore(),
                     rating = makeRandomScore(),
-                )
+                ),
             )
         }
     }
@@ -693,7 +711,7 @@ class EvaluationServiceTest @Autowired constructor(
                 gains = ratingValues.gains,
                 lifeBalance = ratingValues.lifeBalance,
                 rating = ratingValues.rating,
-            )
+            ),
         )
 
         return ratingValues

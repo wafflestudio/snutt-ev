@@ -16,10 +16,11 @@ spring:
       hibernate:
         format_sql: true
         use_sql_comments: true
-  redis:
-    host: localhost
-    port: 6379
-    ttl: 5m
+  data:
+    redis:
+      host: localhost
+      timeout: 3s
+      default-ttl: 5m
 
 ---
 
@@ -33,7 +34,7 @@ spring:
 
 spring.config.activate.on-profile: dev
 
-secretNames: dev/snutt-ev
+secret-names: dev/snutt-ev
 
 spring:
   datasource:
@@ -42,14 +43,15 @@ spring:
     password:
   jpa:
     show-sql: false
-  redis:
-    ttl: 5m
+  data:
+    redis:
+      default-ttl: 5m
 
 ---
 
 spring.config.activate.on-profile: prod
 
-secretNames: prod/snutt-ev
+secret-names: prod/snutt-ev
 
 spring:
   datasource:
@@ -58,5 +60,6 @@ spring:
     password:
   jpa:
     show-sql: false
-  redis:
-    ttl: 1h
+  data:
+    redis:
+      default-ttl: 1h
