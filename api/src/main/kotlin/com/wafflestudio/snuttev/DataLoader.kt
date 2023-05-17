@@ -22,7 +22,7 @@ class DataLoader(
     private val lectureRepository: LectureRepository,
     private val semesterLectureRepository: SemesterLectureRepository,
     private val tagGroupRepository: TagGroupRepository,
-    private val tagRepository: TagRepository,
+    private val tagRepository: TagRepository
 ) : ApplicationRunner {
 
     override fun run(args: ApplicationArguments?) {
@@ -34,7 +34,7 @@ class DataLoader(
             credit = 4,
             academicYear = "3학년",
             category = "",
-            classification = LectureClassification.ELECTIVE_SUBJECT,
+            classification = LectureClassification.ELECTIVE_SUBJECT
         )
         lectureRepository.save(lecture)
         val semesterLectures = listOf(
@@ -45,7 +45,7 @@ class DataLoader(
                 credit = 4,
                 academicYear = "3학년",
                 category = "",
-                classification = LectureClassification.ELECTIVE_SUBJECT,
+                classification = LectureClassification.ELECTIVE_SUBJECT
             ),
             SemesterLecture(
                 lecture = lecture,
@@ -54,7 +54,7 @@ class DataLoader(
                 credit = 4,
                 academicYear = "3학년",
                 category = "",
-                classification = LectureClassification.ELECTIVE_SUBJECT,
+                classification = LectureClassification.ELECTIVE_SUBJECT
             ),
             SemesterLecture(
                 lecture = lecture,
@@ -63,7 +63,7 @@ class DataLoader(
                 credit = 4,
                 academicYear = "3학년",
                 category = "",
-                classification = LectureClassification.ELECTIVE_SUBJECT,
+                classification = LectureClassification.ELECTIVE_SUBJECT
             ),
             SemesterLecture(
                 lecture = lecture,
@@ -72,8 +72,8 @@ class DataLoader(
                 credit = 4,
                 academicYear = "3학년",
                 category = "",
-                classification = LectureClassification.ELECTIVE_SUBJECT,
-            ),
+                classification = LectureClassification.ELECTIVE_SUBJECT
+            )
         )
         semesterLectureRepository.saveAll(semesterLectures)
 
@@ -85,7 +85,7 @@ class DataLoader(
             credit = 3,
             academicYear = "1학년",
             category = "인간과 사회",
-            classification = LectureClassification.LIBERAL_EDUCATION,
+            classification = LectureClassification.LIBERAL_EDUCATION
         )
         lectureRepository.save(lecture2)
         val semesterLectures2 = listOf(
@@ -96,7 +96,7 @@ class DataLoader(
                 credit = 3,
                 academicYear = "1학년",
                 category = "인간과 사회",
-                classification = LectureClassification.LIBERAL_EDUCATION,
+                classification = LectureClassification.LIBERAL_EDUCATION
             ),
             SemesterLecture(
                 lecture = lecture,
@@ -105,8 +105,8 @@ class DataLoader(
                 credit = 3,
                 academicYear = "1학년",
                 category = "인간과 사회",
-                classification = LectureClassification.LIBERAL_EDUCATION,
-            ),
+                classification = LectureClassification.LIBERAL_EDUCATION
+            )
         )
         semesterLectureRepository.saveAll(semesterLectures2)
 
@@ -114,24 +114,24 @@ class DataLoader(
             name = "main",
             ordering = -1,
             color = null,
-            valueType = TagValueType.LOGIC,
+            valueType = TagValueType.LOGIC
         )
         val academicYearTagGroup = TagGroup(
             name = "학년",
             ordering = 1,
             color = "#E54459",
-            valueType = TagValueType.STRING,
+            valueType = TagValueType.STRING
         )
         val creditTagGroup = TagGroup(
             name = "학점",
             ordering = 2,
             color = "#A6D930",
-            valueType = TagValueType.INT,
+            valueType = TagValueType.INT
         )
         val tagGroups = listOf(
             mainTagGroup,
             academicYearTagGroup,
-            creditTagGroup,
+            creditTagGroup
         )
         tagGroupRepository.saveAll(tagGroups)
         val tags = listOf(
@@ -139,31 +139,31 @@ class DataLoader(
                 tagGroup = mainTagGroup,
                 name = "최신",
                 description = "최근 등록된 강의평",
-                ordering = 1,
+                ordering = 1
             ),
             Tag(
                 tagGroup = mainTagGroup,
                 name = "추천",
                 description = "학우들의 추천 강의",
-                ordering = 2,
+                ordering = 2
             ),
             Tag(
                 tagGroup = mainTagGroup,
                 name = "명강",
                 description = "졸업하기 전에 꼭 한 번 들어볼 만한 강의",
-                ordering = 3,
+                ordering = 3
             ),
             Tag(
                 tagGroup = mainTagGroup,
                 name = "꿀강",
                 description = "수업 부담이 크지 않고, 성적도 잘 주는 강의",
-                ordering = 4,
+                ordering = 4
             ),
             Tag(
                 tagGroup = mainTagGroup,
                 name = "고진감래",
                 description = "공과 시간을 들인 만큼 거두는 것이 많은 강의",
-                ordering = 5,
+                ordering = 5
             ),
             Tag(
                 tagGroup = academicYearTagGroup,
@@ -198,29 +198,29 @@ class DataLoader(
                 name = "1학점",
                 description = null,
                 ordering = 1,
-                intValue = 1,
+                intValue = 1
             ),
             Tag(
                 tagGroup = creditTagGroup,
                 name = "2학점",
                 description = null,
                 ordering = 2,
-                intValue = 2,
+                intValue = 2
             ),
             Tag(
                 tagGroup = creditTagGroup,
                 name = "3학점",
                 description = null,
                 ordering = 3,
-                intValue = 3,
+                intValue = 3
             ),
             Tag(
                 tagGroup = creditTagGroup,
                 name = "4학점",
                 description = null,
                 ordering = 4,
-                intValue = 4,
-            ),
+                intValue = 4
+            )
         )
         tagRepository.saveAll(tags)
     }

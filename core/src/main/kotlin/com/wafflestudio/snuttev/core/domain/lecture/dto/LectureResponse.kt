@@ -17,7 +17,7 @@ data class LectureDto(
 )
 
 data class LectureEvaluationSimpleSummary(
-    val avgRating: Double?,
+    val avgRating: Double?
 )
 
 data class LectureAndSemesterLecturesResponse(
@@ -30,11 +30,11 @@ data class LectureAndSemesterLecturesResponse(
     val academicYear: String?,
     val category: String?,
     val classification: LectureClassification?,
-    val semesterLectures: List<SemesterLectureDto>,
+    val semesterLectures: List<SemesterLectureDto>
 )
 
 data class LectureIdResponse(
-    val id: Long,
+    val id: Long
 )
 
 data class LectureTakenByUserResponse(

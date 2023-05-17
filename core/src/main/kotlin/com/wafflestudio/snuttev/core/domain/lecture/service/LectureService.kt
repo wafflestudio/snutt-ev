@@ -40,7 +40,7 @@ class LectureService(
     fun getSnuttevLecturesWithSnuttLectureInfos(
         userId: String,
         snuttLectureInfos: List<SnuttLectureInfo>,
-        excludeLecturesWithEvaluations: Boolean,
+        excludeLecturesWithEvaluations: Boolean
     ): List<LectureTakenByUserResponse> {
         val distinctLectures = snuttLectureInfos
             .filter { !it.courseNumber.isNullOrEmpty() && !it.instructor.isNullOrEmpty() }
@@ -66,14 +66,14 @@ class LectureService(
                 category = it.category,
                 classification = it.classification,
                 takenYear = snuttInfo.year,
-                takenSemester = snuttInfo.semester,
+                takenSemester = snuttInfo.semester
             )
         }
     }
 
     fun getSemesterLectures(
         lectureId: Long,
-        userId: String,
+        userId: String
     ): LectureAndSemesterLecturesResponse {
         val semesterLecturesWithLecture =
             semesterLectureRepository.findAllByLectureIdOrderByYearDescSemesterDesc(lectureId)
@@ -85,7 +85,8 @@ class LectureService(
 
         val semesterLectureIds = semesterLecturesWithLecture.map { it.id!! }
         val evaluations = lectureEvaluationRepository.findBySemesterLectureIdInAndUserIdAndIsHiddenFalse(
-            semesterLectureIds, userId,
+            semesterLectureIds,
+            userId
         )
 
         return LectureAndSemesterLecturesResponse(
@@ -101,9 +102,9 @@ class LectureService(
             semesterLectures = semesterLecturesWithLecture.map { semesterLecture ->
                 genSemesterLectureDto(
                     semesterLecture,
-                    evaluations.any { it.semesterLecture.id == semesterLecture.id },
+                    evaluations.any { it.semesterLecture.id == semesterLecture.id }
                 )
-            },
+            }
         )
     }
 
@@ -133,13 +134,13 @@ class LectureService(
             academicYear = tagMap["학년"]?.filterIsInstance<String>(),
             department = tagMap["학과"]?.filterIsInstance<String>(),
             category = tagMap["교양분류"]?.filterIsInstance<String>(),
-            yearSemesters = yearSemesters,
+            yearSemesters = yearSemesters
         )
     }
 
     private fun genSemesterLectureDto(
         semesterLectureWithLecture: SemesterLectureWithLecture,
-        myEvaluationExists: Boolean,
+        myEvaluationExists: Boolean
     ): SemesterLectureDto =
         SemesterLectureDto(
             id = semesterLectureWithLecture.id!!,
@@ -150,6 +151,6 @@ class LectureService(
             academicYear = semesterLectureWithLecture.academicYear,
             category = semesterLectureWithLecture.category,
             classification = semesterLectureWithLecture.classification,
-            myEvaluationExists = myEvaluationExists,
+            myEvaluationExists = myEvaluationExists
         )
 }

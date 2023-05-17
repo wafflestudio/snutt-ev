@@ -10,5 +10,5 @@ data class SnuttLectureInfo(
     val year: Int,
     val semester: Int,
     val instructor: String?,
-    val courseNumber: String?,
+    val courseNumber: String?
 )

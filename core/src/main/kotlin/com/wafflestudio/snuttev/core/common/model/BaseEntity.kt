@@ -1,13 +1,13 @@
 package com.wafflestudio.snuttev.core.common.model
 
+import jakarta.persistence.Column
+import jakarta.persistence.GeneratedValue
+import jakarta.persistence.GenerationType
+import jakarta.persistence.Id
+import jakarta.persistence.MappedSuperclass
 import org.hibernate.annotations.OptimisticLock
 import org.hibernate.annotations.UpdateTimestamp
 import java.time.LocalDateTime
-import javax.persistence.Column
-import javax.persistence.GeneratedValue
-import javax.persistence.GenerationType
-import javax.persistence.Id
-import javax.persistence.MappedSuperclass
 
 @MappedSuperclass
 open class BaseEntity(
@@ -21,5 +21,5 @@ open class BaseEntity(
     @field:UpdateTimestamp
     @Column(name = "updated_at", nullable = false)
     @OptimisticLock(excluded = true)
-    open val updatedAt: LocalDateTime? = LocalDateTime.now(),
+    open val updatedAt: LocalDateTime? = LocalDateTime.now()
 )

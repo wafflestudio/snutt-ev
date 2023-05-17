@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 class TagService internal constructor(
     private val tagGroupRepository: TagGroupRepository,
-    private val cache: Cache,
+    private val cache: Cache
 ) {
     @Transactional(readOnly = true)
     fun getMainTags(): TagGroupDto {
@@ -33,7 +33,7 @@ class TagService internal constructor(
         } ?: emptyList()
 
         return SearchTagResponse(
-            tagGroups = tagGroupDtos,
+            tagGroups = tagGroupDtos
         )
     }
 
@@ -43,7 +43,7 @@ class TagService internal constructor(
             name = tagGroup.name,
             ordering = tagGroup.ordering,
             color = tagGroup.color,
-            tags = tagGroup.tags.map { genTagDto(it) },
+            tags = tagGroup.tags.map { genTagDto(it) }
         )
     }
 
@@ -52,6 +52,6 @@ class TagService internal constructor(
             id = tag.id!!,
             name = tag.name,
             description = tag.description,
-            ordering = tag.ordering,
+            ordering = tag.ordering
         )
 }

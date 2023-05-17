@@ -33,7 +33,7 @@ class LectureController(
     @GetMapping("/v1/lectures/{id}/semester-lectures")
     fun getSemesterLectures(
         @PathVariable(value = "id") lectureId: Long,
-        @RequestAttribute(value = "UserId") userId: String,
+        @RequestAttribute(value = "UserId") userId: String
     ): LectureAndSemesterLecturesResponse {
         return lectureService.getSemesterLectures(lectureId, userId)
     }
@@ -41,7 +41,7 @@ class LectureController(
     @GetMapping("/v1/lectures/id")
     fun getLectureId(
         @RequestParam("course_number") courseNumber: String,
-        @RequestParam("instructor") instructor: String,
+        @RequestParam("instructor") instructor: String
     ): LectureIdResponse {
         return lectureService.getLectureIdFromCourseNumber(courseNumber, instructor)
     }
@@ -54,7 +54,7 @@ class LectureController(
         @RequestParam("filter")
         filter: String?,
         @RequestAttribute(value = "UserId")
-        userId: String,
+        userId: String
     ): ListResponse<LectureTakenByUserResponse> {
         val snuttLectureInfos: List<SnuttLectureInfo> =
             objectMapper.readValue(snuttLectureInfoString ?: "")

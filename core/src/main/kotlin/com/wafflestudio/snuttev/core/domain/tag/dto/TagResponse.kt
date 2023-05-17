@@ -12,7 +12,7 @@ data class TagDto(
     val id: Long,
     val name: String,
     val description: String?,
-    val ordering: Int,
+    val ordering: Int
 )
 
 data class SearchTagResponse(

@@ -11,5 +11,5 @@ data class SnuevEvaluation(
     val instructor: String,
     val year: Int,
     val season: Int,
-    val courseNumber: String,
+    val courseNumber: String
 )

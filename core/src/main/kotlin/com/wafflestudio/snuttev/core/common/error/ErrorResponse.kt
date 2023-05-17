@@ -6,5 +6,5 @@ data class ErrorResponse(
 
 data class ErrorInfo(
     val code: Int,
-    val message: String,
+    val message: String
 )

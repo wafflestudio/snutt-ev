@@ -1,12 +1,34 @@
 package com.wafflestudio.snuttev.config
 
-import org.springframework.batch.core.configuration.annotation.DefaultBatchConfigurer
+import com.zaxxer.hikari.HikariDataSource
+import org.springframework.boot.autoconfigure.batch.BatchDataSource
+import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties
+import org.springframework.boot.context.properties.ConfigurationProperties
+import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Primary
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType
 import javax.sql.DataSource
 
 @Configuration
-class BatchConfig : DefaultBatchConfigurer() {
-    // 배치잡의 상태를 DB에 쓰지 않고 메모리에서 관리
-    override fun setDataSource(dataSource: DataSource) {
+class BatchConfig {
+    @Bean
+    @BatchDataSource
+    fun batchDataSource(): DataSource = EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.H2)
+        .addScript("/org/springframework/batch/core/schema-h2.sql")
+        .generateUniqueName(true).build()
+
+    /**
+     * Mimic [org.springframework.boot.autoconfigure.jdbc.DataSourceConfiguration.Hikari]
+     */
+    @Bean
+    @Primary
+    @ConfigurationProperties(prefix = "spring.datasource.hikari")
+    fun dataSource(properties: DataSourceProperties): HikariDataSource? {
+        return properties
+            .initializeDataSourceBuilder()
+            .type(HikariDataSource::class.java)
+            .build()
     }
 }

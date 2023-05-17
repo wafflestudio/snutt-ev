@@ -8,31 +8,31 @@ import com.wafflestudio.snuttev.core.domain.tag.model.Tag
 interface LectureEvaluationRepositoryCustom {
     fun findEvaluationWithSemesterById(
         id: Long,
-        userId: String,
+        userId: String
     ): EvaluationWithSemesterDto?
 
     fun findNotMyEvaluationsWithSemesterByLectureId(
         lectureId: Long,
         userId: String,
         cursor: EvaluationCursor?,
-        pageSize: Int,
+        pageSize: Int
     ): List<EvaluationWithSemesterDto>
 
     fun findMyEvaluationsWithSemesterByLectureId(
         lectureId: Long,
-        userId: String,
+        userId: String
     ): List<EvaluationWithSemesterDto>
 
     fun findMyEvaluationsWithLecture(
         userId: String,
         cursor: Long?,
-        pageSize: Int,
+        pageSize: Int
     ): List<EvaluationWithLectureDto>
 
     fun findEvaluationWithLectureByTag(
         userId: String,
         tag: Tag,
         cursor: Long?,
-        pageSize: Int,
+        pageSize: Int
     ): List<EvaluationWithLectureDto>
 }

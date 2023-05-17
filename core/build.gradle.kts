@@ -3,27 +3,23 @@ plugins {
 }
 
 allOpen {
-    annotation("javax.persistence.Entity")
+    annotation("jakarta.persistence.Entity")
 }
 
 noArg {
-    annotation("javax.persistence.Entity")
+    annotation("jakarta.persistence.Entity")
 }
 
 dependencies {
-    implementation("com.querydsl:querydsl-jpa")
+    implementation("com.querydsl:querydsl-jpa::jakarta")
 
-    implementation("org.flywaydb:flyway-core:8.5.12")
-    implementation("org.flywaydb:flyway-mysql:8.5.12")
-    implementation("software.amazon.awssdk:secretsmanager:2.17.276")
-    implementation("software.amazon.awssdk:sts:2.17.276")
+    implementation("org.flywaydb:flyway-core:9.18.0")
+    implementation("org.flywaydb:flyway-mysql:9.18.0")
+    implementation("software.amazon.awssdk:secretsmanager:2.20.66")
+    implementation("software.amazon.awssdk:sts:2.20.66")
 
     implementation("org.springframework.boot:spring-boot-starter-data-redis")
 
-    runtimeOnly("mysql:mysql-connector-java")
-    kapt("com.querydsl:querydsl-apt::jpa")
-}
-
-sourceSets["main"].withConvention(org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet::class) {
-    kotlin.srcDir("$buildDir/generated/source/kapt/main")
+    runtimeOnly("com.mysql:mysql-connector-j")
+    kapt("com.querydsl:querydsl-apt::jakarta")
 }

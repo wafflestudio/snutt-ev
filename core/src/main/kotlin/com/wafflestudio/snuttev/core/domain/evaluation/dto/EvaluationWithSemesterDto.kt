@@ -18,5 +18,5 @@ data class EvaluationWithSemesterDto @QueryProjection constructor(
     val fromSnuev: Boolean,
     val year: Int,
     val semester: Int,
-    val lectureId: Long,
+    val lectureId: Long
 )

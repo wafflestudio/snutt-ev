@@ -19,7 +19,7 @@ import com.wafflestudio.snuttev.core.domain.tag.model.Tag
 class LectureEvaluationRepositoryImpl(private val queryFactory: JPAQueryFactory) : LectureEvaluationRepositoryCustom {
     override fun findEvaluationWithSemesterById(
         id: Long,
-        userId: String,
+        userId: String
     ): EvaluationWithSemesterDto? = queryFactory
         .selectEvaluationWithSemesterDto(userId)
         .where(lectureEvaluation.id.eq(id))
@@ -30,7 +30,7 @@ class LectureEvaluationRepositoryImpl(private val queryFactory: JPAQueryFactory)
         lectureId: Long,
         userId: String,
         cursor: EvaluationCursor?,
-        pageSize: Int,
+        pageSize: Int
     ): List<EvaluationWithSemesterDto> = queryFactory
         .selectEvaluationWithSemesterDto(userId)
         .where(semesterLecture.lecture.id.eq(lectureId))
@@ -43,7 +43,7 @@ class LectureEvaluationRepositoryImpl(private val queryFactory: JPAQueryFactory)
 
     override fun findMyEvaluationsWithSemesterByLectureId(
         lectureId: Long,
-        userId: String,
+        userId: String
     ): List<EvaluationWithSemesterDto> = queryFactory
         .selectEvaluationWithSemesterDto(userId)
         .where(semesterLecture.lecture.id.eq(lectureId))
@@ -55,7 +55,7 @@ class LectureEvaluationRepositoryImpl(private val queryFactory: JPAQueryFactory)
     override fun findMyEvaluationsWithLecture(
         userId: String,
         cursor: Long?,
-        pageSize: Int,
+        pageSize: Int
     ): List<EvaluationWithLectureDto> = queryFactory
         .selectEvaluationWithLectureDto(userId)
         .where(lectureEvaluation.userId.eq(userId))
@@ -69,7 +69,7 @@ class LectureEvaluationRepositoryImpl(private val queryFactory: JPAQueryFactory)
         userId: String,
         tag: Tag,
         cursor: Long?,
-        pageSize: Int,
+        pageSize: Int
     ): List<EvaluationWithLectureDto> = queryFactory
         .selectEvaluationWithLectureDto(userId)
         .where(getMainTagPredicate(tag))
@@ -87,7 +87,9 @@ class LectureEvaluationRepositoryImpl(private val queryFactory: JPAQueryFactory)
         val wherePredicate = BooleanBuilder(
             if (tag.name == "교양") {
                 semesterLecture.classification.eq(LectureClassification.LIBERAL_EDUCATION)
-            } else null
+            } else {
+                null
+            }
         )
 
         val havingPredicate = BooleanBuilder(
@@ -133,7 +135,7 @@ class LectureEvaluationRepositoryImpl(private val queryFactory: JPAQueryFactory)
             lectureEvaluation.fromSnuev,
             semesterLecture.year,
             semesterLecture.semester,
-            semesterLecture.lecture.id,
+            semesterLecture.lecture.id
         )
     )
         .from(lectureEvaluation)
@@ -159,7 +161,7 @@ class LectureEvaluationRepositoryImpl(private val queryFactory: JPAQueryFactory)
             semesterLecture.semester,
             semesterLecture.lecture.id,
             lecture.title,
-            lecture.instructor,
+            lecture.instructor
         )
     )
         .from(lectureEvaluation)

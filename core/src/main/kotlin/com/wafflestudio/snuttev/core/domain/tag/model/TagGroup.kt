@@ -1,12 +1,12 @@
 package com.wafflestudio.snuttev.core.domain.tag.model
 
 import com.wafflestudio.snuttev.core.common.model.BaseEntity
-import javax.persistence.Column
-import javax.persistence.Entity
-import javax.persistence.EnumType
-import javax.persistence.Enumerated
-import javax.persistence.OneToMany
-import javax.persistence.OrderBy
+import jakarta.persistence.Column
+import jakarta.persistence.Entity
+import jakarta.persistence.EnumType
+import jakarta.persistence.Enumerated
+import jakarta.persistence.OneToMany
+import jakarta.persistence.OrderBy
 
 @Entity
 class TagGroup(
@@ -30,5 +30,5 @@ class TagGroup(
 enum class TagValueType {
     INT,
     STRING,
-    LOGIC,
+    LOGIC
 }

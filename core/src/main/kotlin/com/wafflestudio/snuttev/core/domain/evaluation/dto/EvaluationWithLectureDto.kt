@@ -20,7 +20,7 @@ data class EvaluationWithLectureDto @QueryProjection constructor(
     val semester: Int,
     val lectureId: Long,
     val lectureTitle: String,
-    val lectureInstructor: String,
+    val lectureInstructor: String
 ) {
     fun toResponse(userId: String) = EvaluationWithLectureResponse(
         id = this.id,
@@ -41,10 +41,10 @@ data class EvaluationWithLectureDto @QueryProjection constructor(
         lecture = SimpleLectureDto(
             id = this.lectureId,
             title = this.lectureTitle,
-            instructor = this.lectureInstructor,
+            instructor = this.lectureInstructor
         ),
         isModifiable = this.userId == userId,
-        isReportable = this.userId != userId,
+        isReportable = this.userId != userId
     )
 }
 
@@ -53,5 +53,5 @@ data class SimpleLectureDto(
 
     val title: String,
 
-    val instructor: String,
+    val instructor: String
 )

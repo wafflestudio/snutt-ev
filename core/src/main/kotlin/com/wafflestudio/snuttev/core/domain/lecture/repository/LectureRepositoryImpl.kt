@@ -44,8 +44,8 @@ class LectureRepositoryImpl(private val queryFactory: JPAQueryFactory) : Lecture
                 lecture.classification,
                 Projections.constructor(
                     LectureEvaluationSimpleSummary::class.java,
-                    lectureEvaluation.rating.avg(),
-                ),
+                    lectureEvaluation.rating.avg()
+                )
             )
         ).from(lecture)
             .leftJoin(lecture.semesterLectures, semesterLecture)
@@ -91,8 +91,8 @@ class LectureRepositoryImpl(private val queryFactory: JPAQueryFactory) : Lecture
                     lecture.classification,
                     Projections.constructor(
                         LectureEvaluationSimpleSummary::class.java,
-                        lectureEvaluation.rating.avg(),
-                    ),
+                        lectureEvaluation.rating.avg()
+                    )
                 )
             ).from(semesterLecture)
                 .innerJoin(semesterLecture.lecture, lecture)

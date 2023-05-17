@@ -28,5 +28,5 @@ class SnuttSemesterLecture(
     @Field("course_number")
     val courseNumber: String,
     @Field("lecture_number")
-    val lectureNumber: String,
+    val lectureNumber: String
 )

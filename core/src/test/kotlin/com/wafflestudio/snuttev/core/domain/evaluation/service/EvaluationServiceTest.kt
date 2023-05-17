@@ -33,7 +33,7 @@ class EvaluationServiceTest @Autowired constructor(
     private val lectureEvaluationRepository: LectureEvaluationRepository,
     private val lectureRepository: LectureRepository,
     private val semesterLectureRepository: SemesterLectureRepository,
-    private val evaluationLikeRepository: EvaluationLikeRepository,
+    private val evaluationLikeRepository: EvaluationLikeRepository
 ) {
     @BeforeEach
     fun setup() {
@@ -46,7 +46,7 @@ class EvaluationServiceTest @Autowired constructor(
                 credit = 4,
                 academicYear = "3학년",
                 category = "",
-                classification = LectureClassification.ELECTIVE_SUBJECT,
+                classification = LectureClassification.ELECTIVE_SUBJECT
             )
         )
         for (year in 2001..2030) { // save 60 semesterLectures
@@ -59,7 +59,7 @@ class EvaluationServiceTest @Autowired constructor(
                         credit = 4,
                         academicYear = "3학년",
                         category = "",
-                        classification = LectureClassification.ELECTIVE_SUBJECT,
+                        classification = LectureClassification.ELECTIVE_SUBJECT
                     )
                 )
             }
@@ -73,7 +73,7 @@ class EvaluationServiceTest @Autowired constructor(
         var teachingSkill: Double = 0.0,
         var gains: Double = 0.0,
         var lifeBalance: Double = 0.0,
-        var rating: Double = 0.0,
+        var rating: Double = 0.0
     )
 
     @Test
@@ -85,14 +85,14 @@ class EvaluationServiceTest @Autowired constructor(
             teachingSkill = 4.0,
             gains = 3.0,
             lifeBalance = 2.0,
-            rating = 4.0,
+            rating = 4.0
         )
         val semesterLectureId = semesterLectureRepository.findAll().first().id!!
 
         val response = evaluationService.createEvaluation(
             userId = userId,
             semesterLectureId = semesterLectureId,
-            createEvaluationRequest = createEvaluationRequest,
+            createEvaluationRequest = createEvaluationRequest
         )
 
         assertThat(response.userId).isEqualTo("1")
@@ -120,21 +120,21 @@ class EvaluationServiceTest @Autowired constructor(
             teachingSkill = 4.0,
             gains = 3.0,
             lifeBalance = 2.0,
-            rating = 4.0,
+            rating = 4.0
         )
         val semesterLectureId = semesterLectureRepository.findAll().first().id!!
 
         evaluationService.createEvaluation(
             userId = userId,
             semesterLectureId = semesterLectureId,
-            createEvaluationRequest = createEvaluationRequest,
+            createEvaluationRequest = createEvaluationRequest
         )
 
         assertThatThrownBy {
             evaluationService.createEvaluation(
                 userId = userId,
                 semesterLectureId = semesterLectureId,
-                createEvaluationRequest = createEvaluationRequest,
+                createEvaluationRequest = createEvaluationRequest
             )
         }.isInstanceOf(EvaluationAlreadyExistsException::class.java)
     }
@@ -183,14 +183,14 @@ class EvaluationServiceTest @Autowired constructor(
             teachingSkill = 4.0,
             gains = 3.0,
             lifeBalance = 2.0,
-            rating = 4.0,
+            rating = 4.0
         )
 
         assertThatThrownBy {
             evaluationService.createEvaluation(
                 userId = myUserId,
                 semesterLectureId = semesterLectureId,
-                createEvaluationRequest = createEvaluationRequest,
+                createEvaluationRequest = createEvaluationRequest
             )
         }.isInstanceOf(EvaluationAlreadyExistsException::class.java)
 
@@ -201,7 +201,7 @@ class EvaluationServiceTest @Autowired constructor(
             evaluationService.createEvaluation(
                 userId = myUserId,
                 semesterLectureId = semesterLectureId,
-                createEvaluationRequest = createEvaluationRequest,
+                createEvaluationRequest = createEvaluationRequest
             )
         }
     }
@@ -371,24 +371,34 @@ class EvaluationServiceTest @Autowired constructor(
     fun `test - getEvaluationsOfLecture - ordering`() {
         val lecture = lectureRepository.findAll().first()
         val semesterLecture2010Spring = semesterLectureRepository.findByYearAndSemesterAndLecture(
-            2010, Semester.SPRING.value, lecture,
+            2010,
+            Semester.SPRING.value,
+            lecture
         )!!
         val semesterLecture2010Autumn = semesterLectureRepository.findByYearAndSemesterAndLecture(
-            2010, Semester.AUTUMN.value, lecture,
+            2010,
+            Semester.AUTUMN.value,
+            lecture
         )!!
         val semesterLecture2020Spring = semesterLectureRepository.findByYearAndSemesterAndLecture(
-            2020, Semester.SPRING.value, lecture,
+            2020,
+            Semester.SPRING.value,
+            lecture
         )!!
         val semesterLecture2020Autumn = semesterLectureRepository.findByYearAndSemesterAndLecture(
-            2020, Semester.AUTUMN.value, lecture,
+            2020,
+            Semester.AUTUMN.value,
+            lecture
         )!!
 
         val myUserId = "1"
 
         (1..60).map { it.toString() }.map { userId ->
             val semesterLecture = listOf(
-                semesterLecture2010Spring, semesterLecture2010Autumn,
-                semesterLecture2020Spring, semesterLecture2020Autumn,
+                semesterLecture2010Spring,
+                semesterLecture2010Autumn,
+                semesterLecture2020Spring,
+                semesterLecture2020Autumn
             ).random()
             saveLectureEvaluation(userId, semesterLecture.id!!)
         }
@@ -412,16 +422,24 @@ class EvaluationServiceTest @Autowired constructor(
     fun `test - getMyEvaluationsOfLecture`() {
         val lecture = lectureRepository.findAll().first()
         val semesterLecture2010Spring = semesterLectureRepository.findByYearAndSemesterAndLecture(
-            2010, Semester.SPRING.value, lecture,
+            2010,
+            Semester.SPRING.value,
+            lecture
         )!!
         val semesterLecture2010Autumn = semesterLectureRepository.findByYearAndSemesterAndLecture(
-            2010, Semester.AUTUMN.value, lecture,
+            2010,
+            Semester.AUTUMN.value,
+            lecture
         )!!
         val semesterLecture2020Spring = semesterLectureRepository.findByYearAndSemesterAndLecture(
-            2020, Semester.SPRING.value, lecture,
+            2020,
+            Semester.SPRING.value,
+            lecture
         )!!
         val semesterLecture2020Autumn = semesterLectureRepository.findByYearAndSemesterAndLecture(
-            2020, Semester.AUTUMN.value, lecture,
+            2020,
+            Semester.AUTUMN.value,
+            lecture
         )!!
         val myUserId = "1"
 
@@ -665,7 +683,7 @@ class EvaluationServiceTest @Autowired constructor(
                     teachingSkill = makeRandomScore(),
                     gains = makeRandomScore(),
                     lifeBalance = makeRandomScore(),
-                    rating = makeRandomScore(),
+                    rating = makeRandomScore()
                 )
             )
         }
@@ -673,14 +691,14 @@ class EvaluationServiceTest @Autowired constructor(
 
     private fun saveLectureEvaluation(
         userId: String,
-        semesterLectureId: Long,
+        semesterLectureId: Long
     ): RatingValues {
         val ratingValues = RatingValues(
             gradeSatisfaction = makeRandomScore(),
             teachingSkill = makeRandomScore(),
             gains = makeRandomScore(),
             lifeBalance = makeRandomScore(),
-            rating = makeRandomScore(),
+            rating = makeRandomScore()
         )
 
         lectureEvaluationRepository.save(
@@ -692,7 +710,7 @@ class EvaluationServiceTest @Autowired constructor(
                 teachingSkill = ratingValues.teachingSkill,
                 gains = ratingValues.gains,
                 lifeBalance = ratingValues.lifeBalance,
-                rating = ratingValues.rating,
+                rating = ratingValues.rating
             )
         )
 
