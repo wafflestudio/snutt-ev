@@ -49,9 +49,6 @@ spring:
     redis:
       default-ttl: 5m
 
-truffle:
-  enabled: true
-
 ---
 
 spring.config.activate.on-profile: prod
@@ -68,6 +65,3 @@ spring:
   data:
     redis:
       default-ttl: 1h
-
-truffle:
-  enabled: true
