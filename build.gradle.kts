@@ -1,6 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jlleitschuh.gradle.ktlint.KtlintExtension
 import org.springframework.boot.gradle.tasks.bundling.BootJar
+import java.io.ByteArrayOutputStream
 
 plugins {
     id("org.springframework.boot") version "3.0.6"
@@ -12,9 +13,15 @@ plugins {
     id("org.jlleitschuh.gradle.ktlint") version "11.3.2"
 }
 
+group = "com.wafflestudio"
+version = "1.0.0"
+java.sourceCompatibility = JavaVersion.VERSION_17
+
 allprojects {
     repositories {
         mavenCentral()
+        mavenCodeArtifact()
+        mavenLocal()
     }
 }
 
@@ -30,10 +37,6 @@ subprojects {
         apply(plugin = "org.jlleitschuh.gradle.ktlint")
     }
 
-    group = "com.wafflestudio.snuttev"
-    version = "1.0.0"
-    java.sourceCompatibility = JavaVersion.VERSION_17
-
     dependencies {
         implementation("org.springframework.boot:spring-boot-starter-web")
         implementation("org.springframework.boot:spring-boot-starter-validation")
@@ -42,6 +45,9 @@ subprojects {
         implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 
         implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+
+        implementation("com.wafflestudio.truffle.sdk:truffle-spring-boot-starter:1.1.1")
+        implementation("com.wafflestudio.truffle.sdk:truffle-logback:1.1.1")
 
         testImplementation("org.springframework.boot:spring-boot-starter-test")
         testImplementation("com.h2database:h2")
@@ -93,3 +99,26 @@ val bootJar: BootJar by tasks
 
 jar.enabled = true
 bootJar.enabled = false
+
+fun RepositoryHandler.mavenCodeArtifact() {
+    maven {
+        val authToken = properties["codeArtifactAuthToken"] as String? ?: ByteArrayOutputStream().use {
+            runCatching {
+                exec {
+                    commandLine = (
+                        "aws codeartifact get-authorization-token " +
+                            "--domain wafflestudio --domain-owner 405906814034 " +
+                            "--query authorizationToken --region ap-northeast-1 --output text"
+                        ).split(" ")
+                    standardOutput = it
+                }
+            }
+            it.toString()
+        }
+        url = uri("https://wafflestudio-405906814034.d.codeartifact.ap-northeast-1.amazonaws.com/maven/truffle-kotlin/")
+        credentials {
+            username = "aws"
+            password = authToken
+        }
+    }
+}
