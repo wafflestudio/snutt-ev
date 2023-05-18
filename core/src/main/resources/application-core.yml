@@ -21,6 +21,8 @@ spring:
       host: localhost
       timeout: 3s
       default-ttl: 5m
+      repositories:
+        enabled: false
 
 ---
 

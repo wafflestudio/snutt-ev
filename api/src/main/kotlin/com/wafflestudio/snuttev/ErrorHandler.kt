@@ -6,7 +6,6 @@ import com.wafflestudio.snuttev.core.common.error.SnuttException
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import jakarta.validation.ConstraintViolationException
-import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.http.converter.HttpMessageNotReadableException
@@ -21,18 +20,6 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 
 @RestControllerAdvice
 class ErrorHandler {
-    private val log = LoggerFactory.getLogger(ErrorHandler::class.java)
-
-    @ExceptionHandler(Exception::class)
-    fun handleException(
-        e: Exception,
-        request: HttpServletRequest,
-        response: HttpServletResponse,
-    ): ResponseEntity<Any> {
-        log.error(e.message + e.stackTraceToString(), e)
-        return ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR)
-    }
-
     @ExceptionHandler(
         ConstraintViolationException::class,
         HttpMessageNotReadableException::class,
