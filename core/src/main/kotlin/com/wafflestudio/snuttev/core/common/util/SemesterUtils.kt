@@ -1,4 +1,4 @@
-package com.wafflestudio.snuttev.sync
+package com.wafflestudio.snuttev.core.common.util
 
 import com.wafflestudio.snuttev.core.common.type.Semester
 import org.springframework.stereotype.Component
