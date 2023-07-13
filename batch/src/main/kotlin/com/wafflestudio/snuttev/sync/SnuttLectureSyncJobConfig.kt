@@ -1,6 +1,7 @@
 package com.wafflestudio.snuttev.sync
 
 import com.wafflestudio.snuttev.core.common.type.LectureClassification
+import com.wafflestudio.snuttev.core.common.util.SemesterUtils
 import com.wafflestudio.snuttev.core.domain.lecture.model.Lecture
 import com.wafflestudio.snuttev.core.domain.lecture.model.SemesterLecture
 import com.wafflestudio.snuttev.core.domain.lecture.repository.LectureRepository

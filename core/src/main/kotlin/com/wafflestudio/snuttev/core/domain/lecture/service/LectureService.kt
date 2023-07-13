@@ -2,6 +2,7 @@ package com.wafflestudio.snuttev.core.domain.lecture.service
 
 import com.wafflestudio.snuttev.core.common.dto.SearchQueryDto
 import com.wafflestudio.snuttev.core.common.error.LectureNotFoundException
+import com.wafflestudio.snuttev.core.common.util.SemesterUtils
 import com.wafflestudio.snuttev.core.domain.evaluation.dto.SemesterLectureDto
 import com.wafflestudio.snuttev.core.domain.evaluation.repository.LectureEvaluationRepository
 import com.wafflestudio.snuttev.core.domain.lecture.dto.LectureAndSemesterLecturesResponse
@@ -25,6 +26,7 @@ class LectureService(
     private val semesterLectureRepository: SemesterLectureRepository,
     private val tagRepository: TagRepository,
     private val lectureEvaluationRepository: LectureEvaluationRepository,
+    private val semesterUtils: SemesterUtils,
 ) {
     fun search(param: SearchLectureRequest): Page<LectureDto> {
         val request = mappingTagsToLectureProperty(param)
@@ -77,9 +79,11 @@ class LectureService(
     ): LectureAndSemesterLecturesResponse {
         val semesterLecturesWithLecture =
             semesterLectureRepository.findAllByLectureIdOrderByYearDescSemesterDesc(lectureId)
-        if (semesterLecturesWithLecture.isEmpty()) {
-            throw LectureNotFoundException
-        }
+                .ifEmpty { throw LectureNotFoundException }
+                .let { semesterLectures ->
+                    val (year, nextSemester) = semesterUtils.getYearAndSemesterOfNextSemester()
+                    semesterLectures.dropWhile { it.year == year && it.semester == nextSemester.value }
+                }
 
         val firstSemesterLectureWithLecture = semesterLecturesWithLecture.first()
 
