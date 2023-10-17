@@ -4,9 +4,9 @@ import org.springframework.boot.gradle.tasks.bundling.BootJar
 import java.io.ByteArrayOutputStream
 
 plugins {
-    id("org.springframework.boot") version "3.0.6"
-    id("io.spring.dependency-management") version "1.1.0"
-    kotlin("jvm") version "1.8.21"
+    id("org.springframework.boot") version "3.1.4" apply false
+    id("io.spring.dependency-management") version "1.1.3"
+    kotlin("jvm") version "1.9.10"
     kotlin("plugin.spring") version "1.8.21"
     kotlin("plugin.allopen") version "1.8.21"
     kotlin("plugin.noarg") version "1.8.21"
@@ -75,15 +75,15 @@ subprojects {
 }
 
 project(":api") {
-    tasks.bootJar {
-        archiveFileName.set("snuttev-api.jar")
-    }
+    val bootJar: BootJar by tasks
+
+    bootJar.archiveFileName.set("snuttev-api.jar")
 }
 
 project(":batch") {
-    tasks.bootJar {
-        archiveFileName.set("snuttev-batch.jar")
-    }
+    val bootJar: BootJar by tasks
+
+    bootJar.archiveFileName.set("snuttev-batch.jar")
 }
 
 project(":core") {
@@ -93,12 +93,6 @@ project(":core") {
     jar.enabled = true
     bootJar.enabled = false
 }
-
-val jar: Jar by tasks
-val bootJar: BootJar by tasks
-
-jar.enabled = true
-bootJar.enabled = false
 
 fun RepositoryHandler.mavenCodeArtifact() {
     maven {
