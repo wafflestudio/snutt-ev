@@ -23,6 +23,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
 import org.springframework.data.domain.Sort
 import org.springframework.data.mongodb.core.MongoTemplate
+import org.springframework.data.mongodb.core.findOne
 import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.data.mongodb.core.query.Query
 import org.springframework.data.mongodb.core.query.isEqualTo
@@ -50,20 +51,16 @@ class SnuttLectureSyncJobConfig(
 
     @Bean
     fun syncJobNextSemester(jobRepository: JobRepository): Job {
-        val (currentYear, currentSemester) = semesterUtils.getCurrentYearAndSemester()
-        val (yearOfNextSemester, nextSemester) = semesterUtils.getYearAndSemesterOfNextSemester()
-        val (targetYear, targetSemester) = when (
-            snuttSemesterLectureRepository.existsByYearAndSemester(
-                yearOfNextSemester,
-                nextSemester.value,
-            )
-        ) {
-            true -> yearOfNextSemester to nextSemester
-            false -> currentYear to currentSemester
+        val coursebook = mongoTemplate.findOne<Map<String, String>>(
+            Query().with(Sort.by(Sort.Direction.DESC, "year").and(Sort.by(Sort.Direction.DESC, "semester"))),
+            "coursebooks",
+        )
+        val (targetYear, targetSemester) = coursebook!!.let {
+            it["year"]!!.toInt() to it["semester"]!!.toInt()
         }
         lecturesMap = lectureRepository.findAll().associateBy { "${it.courseNumber},${it.instructor}" }.toMutableMap()
         semesterLecturesMap =
-            semesterLectureRepository.findAllByYearAndSemesterWithLecture(targetYear, targetSemester.value)
+            semesterLectureRepository.findAllByYearAndSemesterWithLecture(targetYear, targetSemester)
                 .associateBy { "${it.lecture.courseNumber},${it.lecture.instructor},${it.year},${it.semester}" }
                 .toMutableMap()
 
@@ -74,7 +71,7 @@ class SnuttLectureSyncJobConfig(
                     Query.query(
                         Criteria
                             .where("year").isEqualTo(targetYear)
-                            .and("semester").isEqualTo(targetSemester.value),
+                            .and("semester").isEqualTo(targetSemester),
                     ),
                 ),
             )
