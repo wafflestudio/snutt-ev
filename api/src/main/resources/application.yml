@@ -18,6 +18,7 @@ server:
       buffered: false
       suffix:
       file-date-format:
+  max-http-request-header-size: 100KB
 
 ---
 
