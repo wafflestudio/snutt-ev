@@ -51,12 +51,12 @@ class SnuttLectureSyncJobConfig(
 
     @Bean
     fun syncJobNextSemester(jobRepository: JobRepository): Job {
-        val coursebook = mongoTemplate.findOne<Map<String, String>>(
+        val coursebook = mongoTemplate.findOne<Map<String, Any>>(
             Query().with(Sort.by(Sort.Direction.DESC, "year").and(Sort.by(Sort.Direction.DESC, "semester"))),
             "coursebooks",
         )
         val (targetYear, targetSemester) = coursebook!!.let {
-            it["year"]!!.toInt() to it["semester"]!!.toInt()
+            it["year"]!! as Int to it["semester"]!! as Int
         }
         lecturesMap = lectureRepository.findAll().associateBy { "${it.courseNumber},${it.instructor}" }.toMutableMap()
         semesterLecturesMap =
