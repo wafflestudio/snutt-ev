@@ -7,6 +7,7 @@ import jakarta.persistence.Column
 import jakarta.persistence.Convert
 import jakarta.persistence.Entity
 import jakarta.persistence.FetchType
+import jakarta.persistence.Index
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.OneToMany
@@ -14,7 +15,10 @@ import jakarta.persistence.Table
 import jakarta.persistence.UniqueConstraint
 
 @Entity
-@Table(uniqueConstraints = [UniqueConstraint(columnNames = ["lecture_id", "year", "semester"])])
+@Table(
+    uniqueConstraints = [UniqueConstraint(columnNames = ["lecture_id", "year", "semester"])],
+    indexes = [Index(name = "semester_lecture_snutt_id_index", columnList = "snutt_id")],
+)
 class SemesterLecture(
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "lecture_id", nullable = false)
@@ -36,6 +40,9 @@ class SemesterLecture(
 
     @Convert(converter = LectureClassificationConverter::class)
     var classification: LectureClassification,
+
+    @Column(name = "snutt_id", columnDefinition = "char(24)")
+    var snuttId: String? = null,
 
     @OneToMany(mappedBy = "semesterLecture")
     val evaluations: List<LectureEvaluation> = listOf(),

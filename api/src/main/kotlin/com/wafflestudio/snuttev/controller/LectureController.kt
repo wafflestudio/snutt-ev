@@ -7,6 +7,7 @@ import com.wafflestudio.snuttev.core.common.dto.common.PaginationResponse
 import com.wafflestudio.snuttev.core.domain.lecture.dto.LectureAndSemesterLecturesResponse
 import com.wafflestudio.snuttev.core.domain.lecture.dto.LectureDto
 import com.wafflestudio.snuttev.core.domain.lecture.dto.LectureIdResponse
+import com.wafflestudio.snuttev.core.domain.lecture.dto.EvLectureSummaryForSnutt
 import com.wafflestudio.snuttev.core.domain.lecture.dto.LectureTakenByUserResponse
 import com.wafflestudio.snuttev.core.domain.lecture.dto.SearchLectureRequest
 import com.wafflestudio.snuttev.core.domain.lecture.dto.SnuttLectureInfo
@@ -44,6 +45,14 @@ class LectureController(
         @RequestParam("instructor") instructor: String,
     ): LectureIdResponse {
         return lectureService.getLectureIdFromCourseNumber(courseNumber, instructor)
+    }
+
+    @GetMapping("/v1/lectures/snutt-summary")
+    fun getEvLectureSummaryForSnutt(
+        @RequestParam("semesterLectureSnuttIds") semesterLectureSnuttIds: List<String>,
+    ): ListResponse<EvLectureSummaryForSnutt> {
+        val lectureRatings = lectureService.getEvLectureSummaryForSnutt(semesterLectureSnuttIds)
+        return ListResponse(lectureRatings)
     }
 
     @GetMapping("/v1/users/me/lectures/latest")

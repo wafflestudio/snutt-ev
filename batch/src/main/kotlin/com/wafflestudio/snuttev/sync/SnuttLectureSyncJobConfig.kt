@@ -136,6 +136,7 @@ class SnuttLectureSyncJobConfig(
                 this.extraInfo = item.remark
                 this.lecture = lecture
                 this.credit = item.credit
+                this.snuttId = item.id
             } ?: SemesterLecture(
                 lecture,
                 item.year,
@@ -145,6 +146,7 @@ class SnuttLectureSyncJobConfig(
                 item.academicYear,
                 item.category,
                 LectureClassification.customValueOf(item.classification)!!,
+                item.id,
             ).also { semesterLecturesMap["${item.courseNumber},${item.instructor},${item.year},${item.semester}"] = it }
         }
     }
