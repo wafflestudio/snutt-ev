@@ -4,7 +4,7 @@ import org.springframework.boot.gradle.tasks.bundling.BootJar
 import java.io.ByteArrayOutputStream
 
 plugins {
-    id("org.springframework.boot") version "3.1.4" apply false
+    id("org.springframework.boot") version "3.2.4" apply false
     id("io.spring.dependency-management") version "1.1.3"
     kotlin("jvm") version "1.9.10"
     kotlin("plugin.spring") version "1.8.21"
