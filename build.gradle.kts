@@ -6,10 +6,10 @@ import java.io.ByteArrayOutputStream
 plugins {
     id("org.springframework.boot") version "3.2.4" apply false
     id("io.spring.dependency-management") version "1.1.3"
-    kotlin("jvm") version "1.9.10"
-    kotlin("plugin.spring") version "1.8.21"
-    kotlin("plugin.allopen") version "1.8.21"
-    kotlin("plugin.noarg") version "1.8.21"
+    kotlin("jvm") version "1.9.22"
+    kotlin("plugin.spring") version "1.9.22"
+    kotlin("plugin.allopen") version "1.9.22"
+    kotlin("plugin.noarg") version "1.9.22"
     id("org.jlleitschuh.gradle.ktlint") version "11.3.2"
 }
 
