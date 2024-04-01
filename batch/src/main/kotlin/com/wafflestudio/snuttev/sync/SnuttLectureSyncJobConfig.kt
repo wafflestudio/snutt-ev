@@ -1,13 +1,11 @@
 package com.wafflestudio.snuttev.sync
 
 import com.wafflestudio.snuttev.core.common.type.LectureClassification
-import com.wafflestudio.snuttev.core.common.util.SemesterUtils
 import com.wafflestudio.snuttev.core.domain.lecture.model.Lecture
 import com.wafflestudio.snuttev.core.domain.lecture.model.SemesterLecture
 import com.wafflestudio.snuttev.core.domain.lecture.repository.LectureRepository
 import com.wafflestudio.snuttev.core.domain.lecture.repository.SemesterLectureRepository
 import com.wafflestudio.snuttev.sync.model.SnuttSemesterLecture
-import com.wafflestudio.snuttev.sync.repository.SnuttSemesterLectureRepository
 import jakarta.persistence.EntityManagerFactory
 import org.springframework.batch.core.Job
 import org.springframework.batch.core.Step
@@ -136,6 +134,7 @@ class SnuttLectureSyncJobConfig(
                 this.extraInfo = item.remark
                 this.lecture = lecture
                 this.credit = item.credit
+                this.snuttId = item.id
             } ?: SemesterLecture(
                 lecture,
                 item.year,
@@ -145,6 +144,7 @@ class SnuttLectureSyncJobConfig(
                 item.academicYear,
                 item.category,
                 LectureClassification.customValueOf(item.classification)!!,
+                item.id,
             ).also { semesterLecturesMap["${item.courseNumber},${item.instructor},${item.year},${item.semester}"] = it }
         }
     }

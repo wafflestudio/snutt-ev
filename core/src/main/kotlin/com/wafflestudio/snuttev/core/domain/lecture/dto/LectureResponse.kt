@@ -50,3 +50,8 @@ data class LectureTakenByUserResponse(
     val takenYear: Int,
     val takenSemester: Int,
 )
+
+data class LectureRatingResponse(
+    val snuttId: String,
+    val avgRating: Double?
+)

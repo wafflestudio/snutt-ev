@@ -13,6 +13,7 @@ import com.wafflestudio.snuttev.core.common.type.LectureClassification
 import com.wafflestudio.snuttev.core.domain.evaluation.model.QLectureEvaluation.lectureEvaluation
 import com.wafflestudio.snuttev.core.domain.lecture.dto.LectureDto
 import com.wafflestudio.snuttev.core.domain.lecture.dto.LectureEvaluationSimpleSummary
+import com.wafflestudio.snuttev.core.domain.lecture.dto.LectureRatingResponse
 import com.wafflestudio.snuttev.core.domain.lecture.model.QLecture.lecture
 import com.wafflestudio.snuttev.core.domain.lecture.model.QSemesterLecture.semesterLecture
 import org.springframework.data.domain.Page
@@ -110,6 +111,21 @@ class LectureRepositoryImpl(private val queryFactory: JPAQueryFactory) : Lecture
 
         return PageImpl(queryResult, pageable, total)
     }
+
+    override fun findLectureRatingsBySnuttIds(snuttIds: List<String>): List<LectureRatingResponse> =
+        queryFactory.select(
+            Projections.constructor(
+                LectureRatingResponse::class.java,
+                lecture.id,
+                lectureEvaluation.rating.avg(),
+            ),
+        )
+            .from(lecture)
+            .leftJoin(lecture.semesterLectures, semesterLecture)
+            .leftJoin(semesterLecture.evaluations, lectureEvaluation)
+            .groupBy(lecture.id)
+            .where(semesterLecture.snuttId.`in`(snuttIds))
+            .fetch()
 
     private fun StringPath.isIn(tags: List<String>?): BooleanExpression? {
         return if (!tags.isNullOrEmpty()) this.`in`(tags) else null

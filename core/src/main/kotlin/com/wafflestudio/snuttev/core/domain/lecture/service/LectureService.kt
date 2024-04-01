@@ -8,6 +8,7 @@ import com.wafflestudio.snuttev.core.domain.evaluation.repository.LectureEvaluat
 import com.wafflestudio.snuttev.core.domain.lecture.dto.LectureAndSemesterLecturesResponse
 import com.wafflestudio.snuttev.core.domain.lecture.dto.LectureDto
 import com.wafflestudio.snuttev.core.domain.lecture.dto.LectureIdResponse
+import com.wafflestudio.snuttev.core.domain.lecture.dto.LectureRatingResponse
 import com.wafflestudio.snuttev.core.domain.lecture.dto.LectureTakenByUserResponse
 import com.wafflestudio.snuttev.core.domain.lecture.dto.SearchLectureRequest
 import com.wafflestudio.snuttev.core.domain.lecture.dto.SnuttLectureInfo
@@ -116,6 +117,14 @@ class LectureService(
         val lecture = lectureRepository.findByCourseNumberAndInstructor(courseNumber, instructor)
             ?: throw LectureNotFoundException
         return LectureIdResponse(lecture.id!!)
+    }
+
+    fun getLectureIdFromSnuttId(semesterLectureSnuttId: String): Long {
+        return lectureRepository.findBySnuttId(semesterLectureSnuttId)?.id ?: throw LectureNotFoundException
+    }
+
+    fun getLectureRatings(semesterLectureSnuttIds: List<String>): List<LectureRatingResponse> {
+        return lectureRepository.findLectureRatingsBySnuttIds(semesterLectureSnuttIds)
     }
 
     private fun mappingTagsToLectureProperty(request: SearchLectureRequest): SearchQueryDto {

@@ -22,4 +22,7 @@ interface LectureRepository : JpaRepository<Lecture, Long?>, LectureRepositoryCu
     """,
     )
     fun findLectureWithAvgEvById(id: Long): LectureEvaluationSummaryDao
+
+    @Query("SELECT l FROM Lecture AS l JOIN SemesterLecture sl WHERE sl.snuttId = :snuttId")
+    fun findBySnuttId(snuttId: String): Lecture?
 }

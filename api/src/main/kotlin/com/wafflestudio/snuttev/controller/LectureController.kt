@@ -7,6 +7,7 @@ import com.wafflestudio.snuttev.core.common.dto.common.PaginationResponse
 import com.wafflestudio.snuttev.core.domain.lecture.dto.LectureAndSemesterLecturesResponse
 import com.wafflestudio.snuttev.core.domain.lecture.dto.LectureDto
 import com.wafflestudio.snuttev.core.domain.lecture.dto.LectureIdResponse
+import com.wafflestudio.snuttev.core.domain.lecture.dto.LectureRatingResponse
 import com.wafflestudio.snuttev.core.domain.lecture.dto.LectureTakenByUserResponse
 import com.wafflestudio.snuttev.core.domain.lecture.dto.SearchLectureRequest
 import com.wafflestudio.snuttev.core.domain.lecture.dto.SnuttLectureInfo
@@ -44,6 +45,22 @@ class LectureController(
         @RequestParam("instructor") instructor: String,
     ): LectureIdResponse {
         return lectureService.getLectureIdFromCourseNumber(courseNumber, instructor)
+    }
+
+    @GetMapping("/v1/lecturesBySnutt/{semesterLectureSnuttId}/id")
+    fun getLectureId(
+        @PathVariable(value = "semesterLectureSnuttId") semesterLectureCoreId: String,
+    ): LectureIdResponse {
+        val lectureId = lectureService.getLectureIdFromSnuttId(semesterLectureCoreId)
+        return LectureIdResponse(lectureId)
+    }
+
+    @GetMapping("/v1/lecturesBySnutt/ratings")
+    fun getLectureRatings(
+        @RequestParam("semesterLectureSnuttIds") semesterLectureCoreIds: List<String>,
+    ): ListResponse<LectureRatingResponse> {
+        val lectureRatings = lectureService.getLectureRatings(semesterLectureCoreIds)
+        return ListResponse(lectureRatings)
     }
 
     @GetMapping("/v1/users/me/lectures/latest")
