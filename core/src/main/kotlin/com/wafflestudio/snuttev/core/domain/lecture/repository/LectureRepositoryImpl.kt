@@ -51,7 +51,7 @@ class LectureRepositoryImpl(private val queryFactory: JPAQueryFactory) : Lecture
             .leftJoin(lecture.semesterLectures, semesterLecture)
             .leftJoin(semesterLecture.evaluations, lectureEvaluation)
             .groupBy(lecture)
-            .where(*predicates)
+            .where(*predicates, lectureEvaluation.isHidden.eq(false))
             .offset(pageable.offset).limit(pageable.pageSize.toLong()).fetch()
 
         val total = queryFactory.select(
@@ -77,9 +77,9 @@ class LectureRepositoryImpl(private val queryFactory: JPAQueryFactory) : Lecture
         )
 
         val lectureSubQuery = queryFactory.selectFrom(lecture)
-                .innerJoin(lecture.semesterLectures, semesterLecture)
-                .where(*predicates)
-                .offset(pageable.offset).limit(pageable.pageSize.toLong()).fetch()
+            .innerJoin(lecture.semesterLectures, semesterLecture)
+            .where(*predicates)
+            .offset(pageable.offset).limit(pageable.pageSize.toLong()).fetch()
 
         val queryResult = queryFactory.select(
             Projections.constructor(
@@ -101,7 +101,7 @@ class LectureRepositoryImpl(private val queryFactory: JPAQueryFactory) : Lecture
         ).from(lecture)
             .innerJoin(lecture.semesterLectures, semesterLecture)
             .leftJoin(semesterLecture.evaluations, lectureEvaluation)
-            .where(lecture.id.`in`(lectureSubQuery.map { it.id }))
+            .where(lecture.id.`in`(lectureSubQuery.map { it.id }), lectureEvaluation.isHidden.eq(false))
             .groupBy(lecture)
             .fetch()
 
