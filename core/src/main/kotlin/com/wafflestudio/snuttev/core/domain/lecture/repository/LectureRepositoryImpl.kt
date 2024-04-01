@@ -76,30 +76,34 @@ class LectureRepositoryImpl(private val queryFactory: JPAQueryFactory) : Lecture
             extractCriteriaFromQuery(request.query),
         )
 
-        val queryResult =
-            queryFactory.select(
-                Projections.constructor(
-                    LectureDto::class.java,
-                    lecture.id,
-                    lecture.title,
-                    lecture.instructor,
-                    lecture.department,
-                    lecture.courseNumber,
-                    lecture.credit,
-                    lecture.academicYear,
-                    lecture.category,
-                    lecture.classification,
-                    Projections.constructor(
-                        LectureEvaluationSimpleSummary::class.java,
-                        lectureEvaluation.rating.avg(),
-                    ),
-                ),
-            ).from(semesterLecture)
-                .innerJoin(semesterLecture.lecture, lecture)
-                .leftJoin(semesterLecture.evaluations, lectureEvaluation)
-                .groupBy(lecture)
+        val lectureSubQuery = queryFactory.selectFrom(lecture)
+                .innerJoin(lecture.semesterLectures, semesterLecture)
                 .where(*predicates)
                 .offset(pageable.offset).limit(pageable.pageSize.toLong()).fetch()
+
+        val queryResult = queryFactory.select(
+            Projections.constructor(
+                LectureDto::class.java,
+                lecture.id,
+                lecture.title,
+                lecture.instructor,
+                lecture.department,
+                lecture.courseNumber,
+                lecture.credit,
+                lecture.academicYear,
+                lecture.category,
+                lecture.classification,
+                Projections.constructor(
+                    LectureEvaluationSimpleSummary::class.java,
+                    lectureEvaluation.rating.avg(),
+                ),
+            ),
+        ).from(lecture)
+            .innerJoin(lecture.semesterLectures, semesterLecture)
+            .leftJoin(semesterLecture.evaluations, lectureEvaluation)
+            .where(lecture.id.`in`(lectureSubQuery.map { it.id }))
+            .groupBy(lecture)
+            .fetch()
 
         val total = queryFactory.select(
             semesterLecture.count(),
