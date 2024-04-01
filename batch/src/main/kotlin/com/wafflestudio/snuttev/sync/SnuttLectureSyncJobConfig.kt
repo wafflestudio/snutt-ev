@@ -1,13 +1,11 @@
 package com.wafflestudio.snuttev.sync
 
 import com.wafflestudio.snuttev.core.common.type.LectureClassification
-import com.wafflestudio.snuttev.core.common.util.SemesterUtils
 import com.wafflestudio.snuttev.core.domain.lecture.model.Lecture
 import com.wafflestudio.snuttev.core.domain.lecture.model.SemesterLecture
 import com.wafflestudio.snuttev.core.domain.lecture.repository.LectureRepository
 import com.wafflestudio.snuttev.core.domain.lecture.repository.SemesterLectureRepository
 import com.wafflestudio.snuttev.sync.model.SnuttSemesterLecture
-import com.wafflestudio.snuttev.sync.repository.SnuttSemesterLectureRepository
 import jakarta.persistence.EntityManagerFactory
 import org.springframework.batch.core.Job
 import org.springframework.batch.core.Step

@@ -5,10 +5,10 @@ import com.wafflestudio.snuttev.core.common.error.LectureNotFoundException
 import com.wafflestudio.snuttev.core.common.util.SemesterUtils
 import com.wafflestudio.snuttev.core.domain.evaluation.dto.SemesterLectureDto
 import com.wafflestudio.snuttev.core.domain.evaluation.repository.LectureEvaluationRepository
+import com.wafflestudio.snuttev.core.domain.lecture.dto.EvLectureSummaryForSnutt
 import com.wafflestudio.snuttev.core.domain.lecture.dto.LectureAndSemesterLecturesResponse
 import com.wafflestudio.snuttev.core.domain.lecture.dto.LectureDto
 import com.wafflestudio.snuttev.core.domain.lecture.dto.LectureIdResponse
-import com.wafflestudio.snuttev.core.domain.lecture.dto.EvLectureSummaryForSnutt
 import com.wafflestudio.snuttev.core.domain.lecture.dto.LectureTakenByUserResponse
 import com.wafflestudio.snuttev.core.domain.lecture.dto.SearchLectureRequest
 import com.wafflestudio.snuttev.core.domain.lecture.dto.SnuttLectureInfo

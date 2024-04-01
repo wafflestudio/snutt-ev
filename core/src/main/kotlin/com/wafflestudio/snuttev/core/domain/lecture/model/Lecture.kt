@@ -64,5 +64,5 @@ data class LectureEvaluationSummaryDao(
 
 data class LectureRatingDao(
     val id: Long,
-    val avgRating: Double?
+    val avgRating: Double?,
 )
