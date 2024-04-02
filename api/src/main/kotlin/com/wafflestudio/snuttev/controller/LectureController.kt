@@ -51,8 +51,8 @@ class LectureController(
     fun getEvLectureSummaryForSnutt(
         @RequestParam("semesterLectureSnuttIds") semesterLectureSnuttIds: List<String>,
     ): ListResponse<EvLectureSummaryForSnutt> {
-        val lectureRatings = lectureService.getEvLectureSummaryForSnutt(semesterLectureSnuttIds)
-        return ListResponse(lectureRatings)
+        val evLectureSummary = lectureService.getEvLectureSummaryForSnutt(semesterLectureSnuttIds)
+        return ListResponse(evLectureSummary)
     }
 
     @GetMapping("/v1/users/me/lectures/latest")
