@@ -1,13 +1,11 @@
 package com.wafflestudio.snuttev.sync
 
 import com.wafflestudio.snuttev.core.common.type.LectureClassification
-import com.wafflestudio.snuttev.core.common.util.SemesterUtils
 import com.wafflestudio.snuttev.core.domain.lecture.model.Lecture
 import com.wafflestudio.snuttev.core.domain.lecture.model.SemesterLecture
 import com.wafflestudio.snuttev.core.domain.lecture.repository.LectureRepository
 import com.wafflestudio.snuttev.core.domain.lecture.repository.SemesterLectureRepository
 import com.wafflestudio.snuttev.sync.model.SnuttSemesterLecture
-import com.wafflestudio.snuttev.sync.repository.SnuttSemesterLectureRepository
 import jakarta.persistence.EntityManagerFactory
 import org.springframework.batch.core.Job
 import org.springframework.batch.core.Step
@@ -16,8 +14,8 @@ import org.springframework.batch.core.repository.JobRepository
 import org.springframework.batch.core.step.builder.StepBuilder
 import org.springframework.batch.item.ItemProcessor
 import org.springframework.batch.item.ItemWriter
-import org.springframework.batch.item.data.MongoItemReader
-import org.springframework.batch.item.data.builder.MongoItemReaderBuilder
+import org.springframework.batch.item.data.MongoCursorItemReader
+import org.springframework.batch.item.data.builder.MongoCursorItemReaderBuilder
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
@@ -36,8 +34,6 @@ class SnuttLectureSyncJobConfig(
     private val mongoTemplate: MongoTemplate,
     private val semesterLectureRepository: SemesterLectureRepository,
     private val lectureRepository: LectureRepository,
-    private val semesterUtils: SemesterUtils,
-    private val snuttSemesterLectureRepository: SnuttSemesterLectureRepository,
 ) {
     companion object {
         private const val JOB_NAME = "SYNC_JOB"
@@ -104,12 +100,12 @@ class SnuttLectureSyncJobConfig(
             .build()
     }
 
-    private fun reader(query: Query): MongoItemReader<SnuttSemesterLecture> {
-        return MongoItemReaderBuilder<SnuttSemesterLecture>()
+    private fun reader(query: Query): MongoCursorItemReader<SnuttSemesterLecture> {
+        return MongoCursorItemReaderBuilder<SnuttSemesterLecture>()
             .template(mongoTemplate)
             .collection("lectures").query(query)
-            .sorts(mapOf("courseNumber" to Sort.DEFAULT_DIRECTION))
-            .targetType(SnuttSemesterLecture::class.java).pageSize(CHUNK_SIZE)
+            .sorts(mapOf("_id" to Sort.DEFAULT_DIRECTION))
+            .targetType(SnuttSemesterLecture::class.java)
             .name(this::reader.name)
             .build()
     }
@@ -138,6 +134,7 @@ class SnuttLectureSyncJobConfig(
                 this.extraInfo = item.remark
                 this.lecture = lecture
                 this.credit = item.credit
+                this.snuttId = item.id
             } ?: SemesterLecture(
                 lecture,
                 item.year,
@@ -147,6 +144,7 @@ class SnuttLectureSyncJobConfig(
                 item.academicYear,
                 item.category,
                 LectureClassification.customValueOf(item.classification)!!,
+                item.id,
             ).also { semesterLecturesMap["${item.courseNumber},${item.instructor},${item.year},${item.semester}"] = it }
         }
     }

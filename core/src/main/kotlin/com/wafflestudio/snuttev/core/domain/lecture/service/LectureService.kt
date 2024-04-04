@@ -5,6 +5,7 @@ import com.wafflestudio.snuttev.core.common.error.LectureNotFoundException
 import com.wafflestudio.snuttev.core.common.util.SemesterUtils
 import com.wafflestudio.snuttev.core.domain.evaluation.dto.SemesterLectureDto
 import com.wafflestudio.snuttev.core.domain.evaluation.repository.LectureEvaluationRepository
+import com.wafflestudio.snuttev.core.domain.lecture.dto.EvLectureSummaryForSnutt
 import com.wafflestudio.snuttev.core.domain.lecture.dto.LectureAndSemesterLecturesResponse
 import com.wafflestudio.snuttev.core.domain.lecture.dto.LectureDto
 import com.wafflestudio.snuttev.core.domain.lecture.dto.LectureIdResponse
@@ -116,6 +117,19 @@ class LectureService(
         val lecture = lectureRepository.findByCourseNumberAndInstructor(courseNumber, instructor)
             ?: throw LectureNotFoundException
         return LectureIdResponse(lecture.id!!)
+    }
+
+    fun getEvLectureSummaryForSnutt(semesterLectureSnuttIds: List<String>): List<EvLectureSummaryForSnutt> {
+        val lectures = semesterLectureRepository.findAllBySnuttIds(semesterLectureSnuttIds)
+        val ratingMap = lectureRepository.findAllRatingsByLectureIds(lectures.map { it.lecture.id!! })
+            .associate { it.id to it.avgRating }
+        return lectures.map {
+            EvLectureSummaryForSnutt(
+                snuttId = it.snuttId!!,
+                evLectureId = it.lecture.id!!,
+                avgRating = ratingMap[it.lecture.id!!],
+            )
+        }
     }
 
     private fun mappingTagsToLectureProperty(request: SearchLectureRequest): SearchQueryDto {
