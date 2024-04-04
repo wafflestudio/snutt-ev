@@ -42,14 +42,14 @@ class LectureController(
     @GetMapping("/v1/lectures/id")
     fun getLectureId(
         @RequestParam("course_number") courseNumber: String,
-        @RequestParam("instructor") instructor: String,
+        @RequestParam instructor: String,
     ): LectureIdResponse {
         return lectureService.getLectureIdFromCourseNumber(courseNumber, instructor)
     }
 
     @GetMapping("/v1/lectures/snutt-summary")
     fun getEvLectureSummaryForSnutt(
-        @RequestParam("semesterLectureSnuttIds") semesterLectureSnuttIds: List<String>,
+        @RequestParam semesterLectureSnuttIds: List<String>,
     ): ListResponse<EvLectureSummaryForSnutt> {
         val evLectureSummary = lectureService.getEvLectureSummaryForSnutt(semesterLectureSnuttIds)
         return ListResponse(evLectureSummary)
@@ -60,7 +60,7 @@ class LectureController(
         @Parameter(hidden = true)
         @RequestParam("snutt_lecture_info")
         snuttLectureInfoString: String? = "",
-        @RequestParam("filter")
+        @RequestParam
         filter: String?,
         @RequestAttribute(value = "UserId")
         userId: String,
