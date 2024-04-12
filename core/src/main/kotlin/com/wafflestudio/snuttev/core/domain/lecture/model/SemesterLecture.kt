@@ -41,9 +41,6 @@ class SemesterLecture(
     @Convert(converter = LectureClassificationConverter::class)
     var classification: LectureClassification,
 
-    @Column(name = "snutt_id", columnDefinition = "char(24)")
-    var snuttId: String? = null,
-
     @OneToMany(mappedBy = "semesterLecture")
     val evaluations: List<LectureEvaluation> = listOf(),
 ) : BaseEntity()
