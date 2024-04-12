@@ -9,8 +9,8 @@ import org.springframework.context.annotation.Configuration
 class FilterConfig {
 
     @Bean
-    fun filterRegistrationBean(): FilterRegistrationBean<Filter> {
-        val filterRegistrationBean = FilterRegistrationBean<Filter>(SnuttUserFilter())
+    fun filterRegistrationBean(): FilterRegistrationBean<SnuttUserFilter> {
+        val filterRegistrationBean = FilterRegistrationBean(SnuttUserFilter())
         filterRegistrationBean.addUrlPatterns("/v1/*")
         return filterRegistrationBean
     }
