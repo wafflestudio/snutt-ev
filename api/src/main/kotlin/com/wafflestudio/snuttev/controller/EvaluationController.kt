@@ -58,7 +58,7 @@ class EvaluationController(
     @GetMapping("/v1/lectures/{id}/evaluations")
     fun getLectureEvaluations(
         @PathVariable(value = "id") lectureId: Long,
-        @RequestParam("cursor") cursor: String?,
+        @RequestParam cursor: String?,
         @RequestAttribute(value = "UserId") userId: String,
     ): CursorPaginationResponse<EvaluationWithSemesterResponse> {
         return evaluationService.getEvaluationsOfLecture(userId, lectureId, cursor)
@@ -74,7 +74,7 @@ class EvaluationController(
 
     @GetMapping("/v1/evaluations/users/me")
     fun getEvaluationsOfMe(
-        @RequestParam("cursor") cursor: String?,
+        @RequestParam cursor: String?,
         @RequestAttribute(value = "UserId") userId: String,
     ): CursorPaginationResponse<EvaluationWithLectureResponse> {
         return evaluationService.getMyEvaluations(userId, cursor)
@@ -83,7 +83,7 @@ class EvaluationController(
     @GetMapping("/v1/tags/main/{id}/evaluations")
     fun getMainTagEvaluations(
         @PathVariable(value = "id") tagId: Long,
-        @RequestParam("cursor") cursor: String?,
+        @RequestParam cursor: String?,
         @RequestAttribute(value = "UserId") userId: String,
     ): CursorPaginationResponse<EvaluationWithLectureResponse> {
         return evaluationService.getMainTagEvaluations(userId, tagId, cursor)

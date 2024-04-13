@@ -2,6 +2,7 @@ package com.wafflestudio.snuttev.core.domain.lecture.repository
 
 import com.wafflestudio.snuttev.core.domain.lecture.model.Lecture
 import com.wafflestudio.snuttev.core.domain.lecture.model.LectureEvaluationSummaryDao
+import com.wafflestudio.snuttev.core.domain.lecture.model.LectureRatingDao
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 
@@ -22,4 +23,13 @@ interface LectureRepository : JpaRepository<Lecture, Long?>, LectureRepositoryCu
     """,
     )
     fun findLectureWithAvgEvById(id: Long): LectureEvaluationSummaryDao
+
+    @Query(
+        """
+        select new com.wafflestudio.snuttev.core.domain.lecture.model.LectureRatingDao(
+        sl.lecture.id, avg(le.rating)
+        ) from LectureEvaluation le right join le.semesterLecture sl where sl.lecture.id in :ids and le.isHidden = false group by sl.lecture.id 
+        """,
+    )
+    fun findAllRatingsByLectureIds(ids: Iterable<Long>): List<LectureRatingDao>
 }

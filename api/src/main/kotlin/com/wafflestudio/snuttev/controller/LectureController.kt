@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.wafflestudio.snuttev.core.common.dto.common.ListResponse
 import com.wafflestudio.snuttev.core.common.dto.common.PaginationResponse
+import com.wafflestudio.snuttev.core.domain.lecture.dto.EvLectureSummaryForSnutt
 import com.wafflestudio.snuttev.core.domain.lecture.dto.LectureAndSemesterLecturesResponse
 import com.wafflestudio.snuttev.core.domain.lecture.dto.LectureDto
 import com.wafflestudio.snuttev.core.domain.lecture.dto.LectureIdResponse
@@ -41,9 +42,17 @@ class LectureController(
     @GetMapping("/v1/lectures/id")
     fun getLectureId(
         @RequestParam("course_number") courseNumber: String,
-        @RequestParam("instructor") instructor: String,
+        @RequestParam instructor: String,
     ): LectureIdResponse {
         return lectureService.getLectureIdFromCourseNumber(courseNumber, instructor)
+    }
+
+    @GetMapping("/v1/lectures/snutt-summary")
+    fun getEvLectureSummaryForSnutt(
+        @RequestParam semesterLectureSnuttIds: List<String>,
+    ): ListResponse<EvLectureSummaryForSnutt> {
+        val evLectureSummary = lectureService.getEvLectureSummaryForSnutt(semesterLectureSnuttIds)
+        return ListResponse(evLectureSummary)
     }
 
     @GetMapping("/v1/users/me/lectures/latest")
@@ -51,7 +60,7 @@ class LectureController(
         @Parameter(hidden = true)
         @RequestParam("snutt_lecture_info")
         snuttLectureInfoString: String? = "",
-        @RequestParam("filter")
+        @RequestParam
         filter: String?,
         @RequestAttribute(value = "UserId")
         userId: String,

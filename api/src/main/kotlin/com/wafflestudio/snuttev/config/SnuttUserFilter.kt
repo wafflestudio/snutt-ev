@@ -1,23 +1,28 @@
 package com.wafflestudio.snuttev.config
 
-import jakarta.servlet.Filter
 import jakarta.servlet.FilterChain
-import jakarta.servlet.ServletRequest
-import jakarta.servlet.ServletResponse
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import org.springframework.web.filter.OncePerRequestFilter
 
-class SnuttUserFilter : Filter {
-    override fun doFilter(request: ServletRequest?, response: ServletResponse?, chain: FilterChain?) {
-        val httpRequest = request as HttpServletRequest
-        val httpResponse = response as HttpServletResponse
-
-        val snuttUserId = httpRequest.getHeader("Snutt-User-Id")
+class SnuttUserFilter : OncePerRequestFilter() {
+    override fun doFilterInternal(
+        request: HttpServletRequest,
+        response: HttpServletResponse,
+        filterChain: FilterChain,
+    ) {
+        val snuttUserId = request.getHeader("Snutt-User-Id")
         if (snuttUserId?.isNotBlank() == true) {
             request.setAttribute("UserId", snuttUserId)
-            chain?.doFilter(request, response)
+            filterChain.doFilter(request, response)
         } else {
-            httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED)
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED)
         }
+    }
+
+    override fun shouldNotFilter(request: HttpServletRequest): Boolean {
+        val path = request.requestURI
+        val excludePath = listOf("/v1/lectures/snutt-summary")
+        return excludePath.contains(path)
     }
 }

@@ -5,6 +5,7 @@ import com.wafflestudio.snuttev.core.common.error.LectureNotFoundException
 import com.wafflestudio.snuttev.core.common.util.SemesterUtils
 import com.wafflestudio.snuttev.core.domain.evaluation.dto.SemesterLectureDto
 import com.wafflestudio.snuttev.core.domain.evaluation.repository.LectureEvaluationRepository
+import com.wafflestudio.snuttev.core.domain.lecture.dto.EvLectureSummaryForSnutt
 import com.wafflestudio.snuttev.core.domain.lecture.dto.LectureAndSemesterLecturesResponse
 import com.wafflestudio.snuttev.core.domain.lecture.dto.LectureDto
 import com.wafflestudio.snuttev.core.domain.lecture.dto.LectureIdResponse
@@ -14,6 +15,7 @@ import com.wafflestudio.snuttev.core.domain.lecture.dto.SnuttLectureInfo
 import com.wafflestudio.snuttev.core.domain.lecture.model.SemesterLectureWithLecture
 import com.wafflestudio.snuttev.core.domain.lecture.repository.LectureRepository
 import com.wafflestudio.snuttev.core.domain.lecture.repository.SemesterLectureRepository
+import com.wafflestudio.snuttev.core.domain.lecture.repository.SnuttLectureIdMapRepository
 import com.wafflestudio.snuttev.core.domain.tag.model.TagValueType
 import com.wafflestudio.snuttev.core.domain.tag.repository.TagRepository
 import org.springframework.data.domain.Page
@@ -27,6 +29,7 @@ class LectureService(
     private val tagRepository: TagRepository,
     private val lectureEvaluationRepository: LectureEvaluationRepository,
     private val semesterUtils: SemesterUtils,
+    private val snuttLectureIdMapRepository: SnuttLectureIdMapRepository,
 ) {
     fun search(param: SearchLectureRequest): Page<LectureDto> {
         val request = mappingTagsToLectureProperty(param)
@@ -116,6 +119,21 @@ class LectureService(
         val lecture = lectureRepository.findByCourseNumberAndInstructor(courseNumber, instructor)
             ?: throw LectureNotFoundException
         return LectureIdResponse(lecture.id!!)
+    }
+
+    fun getEvLectureSummaryForSnutt(semesterLectureSnuttIds: List<String>): List<EvLectureSummaryForSnutt> {
+        val snuttIdLectureIdMap = snuttLectureIdMapRepository.findAllWithSemesterLectureBySnuttIds(semesterLectureSnuttIds)
+            .associate { it.semesterLecture.lecture.id!! to it.snuttId }
+        val lectureIds = snuttIdLectureIdMap.keys
+        val ratingMap = lectureRepository.findAllRatingsByLectureIds(lectureIds)
+            .associate { it.id to it.avgRating }
+        return lectureIds.map {
+            EvLectureSummaryForSnutt(
+                snuttId = snuttIdLectureIdMap[it]!!,
+                evLectureId = it,
+                avgRating = ratingMap[it],
+            )
+        }
     }
 
     private fun mappingTagsToLectureProperty(request: SearchLectureRequest): SearchQueryDto {
