@@ -31,5 +31,5 @@ interface LectureRepository : JpaRepository<Lecture, Long?>, LectureRepositoryCu
         ) from LectureEvaluation le right join le.semesterLecture sl where sl.lecture.id in :ids and le.isHidden = false group by sl.lecture.id 
         """,
     )
-    fun findAllRatingsByLectureIds(ids: List<Long>): List<LectureRatingDao>
+    fun findAllRatingsByLectureIds(ids: Iterable<Long>): List<LectureRatingDao>
 }

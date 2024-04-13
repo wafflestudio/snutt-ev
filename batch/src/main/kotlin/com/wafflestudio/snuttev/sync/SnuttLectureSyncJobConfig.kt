@@ -3,8 +3,10 @@ package com.wafflestudio.snuttev.sync
 import com.wafflestudio.snuttev.core.common.type.LectureClassification
 import com.wafflestudio.snuttev.core.domain.lecture.model.Lecture
 import com.wafflestudio.snuttev.core.domain.lecture.model.SemesterLecture
+import com.wafflestudio.snuttev.core.domain.lecture.model.SnuttLectureIdMap
 import com.wafflestudio.snuttev.core.domain.lecture.repository.LectureRepository
 import com.wafflestudio.snuttev.core.domain.lecture.repository.SemesterLectureRepository
+import com.wafflestudio.snuttev.core.domain.lecture.repository.SnuttLectureIdMapRepository
 import com.wafflestudio.snuttev.sync.model.SnuttSemesterLecture
 import jakarta.persistence.EntityManagerFactory
 import org.springframework.batch.core.Job
@@ -34,6 +36,7 @@ class SnuttLectureSyncJobConfig(
     private val mongoTemplate: MongoTemplate,
     private val semesterLectureRepository: SemesterLectureRepository,
     private val lectureRepository: LectureRepository,
+    private val snuttLectureIdMapRepository: SnuttLectureIdMapRepository,
 ) {
     companion object {
         private const val JOB_NAME = "SYNC_JOB"
@@ -44,6 +47,7 @@ class SnuttLectureSyncJobConfig(
 
     private var lecturesMap: MutableMap<String, Lecture> = mutableMapOf()
     private var semesterLecturesMap: MutableMap<String, SemesterLecture> = mutableMapOf()
+    private var snuttLectureIdMap: MutableMap<String, SnuttLectureIdMap> = mutableMapOf()
 
     @Bean
     fun syncJobNextSemester(jobRepository: JobRepository): Job {
@@ -59,6 +63,9 @@ class SnuttLectureSyncJobConfig(
             semesterLectureRepository.findAllByYearAndSemesterWithLecture(targetYear, targetSemester)
                 .associateBy { "${it.lecture.courseNumber},${it.lecture.instructor},${it.year},${it.semester}" }
                 .toMutableMap()
+        snuttLectureIdMap = snuttLectureIdMapRepository.findAll()
+            .associateBy { it.snuttId }
+            .toMutableMap()
 
         return JobBuilder(NEXT_SEMESTER_JOB_NAME, jobRepository)
             .start(
@@ -81,6 +88,9 @@ class SnuttLectureSyncJobConfig(
             semesterLectureRepository.findAllWithLecture()
                 .associateBy { "${it.lecture.courseNumber},${it.lecture.instructor},${it.year},${it.semester}" }
                 .toMutableMap()
+        snuttLectureIdMap = snuttLectureIdMapRepository.findAll()
+            .associateBy { it.snuttId }
+            .toMutableMap()
         return JobBuilder(JOB_NAME, jobRepository)
             .start(customReaderStep(jobRepository, Query()))
             .build()
@@ -88,7 +98,7 @@ class SnuttLectureSyncJobConfig(
 
     private fun customReaderStep(jobRepository: JobRepository, query: Query): Step {
         return StepBuilder(CUSTOM_READER_JOB_STEP, jobRepository)
-            .chunk<SnuttSemesterLecture, SemesterLecture>(
+            .chunk<SnuttSemesterLecture, SyncProcessResult>(
                 CHUNK_SIZE,
                 JpaTransactionManager().apply {
                     this.entityManagerFactory = this@SnuttLectureSyncJobConfig.entityManagerFactory
@@ -110,8 +120,8 @@ class SnuttLectureSyncJobConfig(
             .build()
     }
 
-    private fun processor(): ItemProcessor<SnuttSemesterLecture, SemesterLecture> {
-        return ItemProcessor<SnuttSemesterLecture, SemesterLecture> { item: SnuttSemesterLecture ->
+    private fun processor(): ItemProcessor<SnuttSemesterLecture, SyncProcessResult> {
+        return ItemProcessor<SnuttSemesterLecture, SyncProcessResult> { item: SnuttSemesterLecture ->
             val lecture: Lecture = lecturesMap["${item.courseNumber},${item.instructor}"]?.apply {
                 this.academicYear = item.academicYear
                 this.credit = item.credit
@@ -127,14 +137,13 @@ class SnuttLectureSyncJobConfig(
                 item.category,
                 LectureClassification.customValueOf(item.classification)!!,
             ).also { lecturesMap["${item.courseNumber},${item.instructor}"] = it }
-            semesterLecturesMap["${item.courseNumber},${item.instructor},${item.year},${item.semester}"]?.apply {
+            val semesterLecture = semesterLecturesMap["${item.courseNumber},${item.instructor},${item.year},${item.semester}"]?.apply {
                 this.academicYear = item.academicYear
                 this.category = item.category
                 this.classification = LectureClassification.customValueOf(item.classification)!!
                 this.extraInfo = item.remark
                 this.lecture = lecture
                 this.credit = item.credit
-                this.snuttId = item.id
             } ?: SemesterLecture(
                 lecture,
                 item.year,
@@ -144,15 +153,26 @@ class SnuttLectureSyncJobConfig(
                 item.academicYear,
                 item.category,
                 LectureClassification.customValueOf(item.classification)!!,
-                item.id,
             ).also { semesterLecturesMap["${item.courseNumber},${item.instructor},${item.year},${item.semester}"] = it }
+            val snuttIdToLecture = snuttLectureIdMap[item.id] ?: SnuttLectureIdMap(
+                item.id,
+                semesterLecture,
+            ).also { snuttLectureIdMap[item.id] = it }
+            SyncProcessResult(lecture, semesterLecture, snuttIdToLecture)
         }
     }
 
-    private fun writer(): ItemWriter<SemesterLecture> {
+    private fun writer(): ItemWriter<SyncProcessResult> {
         return ItemWriter { items ->
             lectureRepository.saveAll(items.map { it.lecture }.toSet())
-            semesterLectureRepository.saveAll(items.toSet())
+            semesterLectureRepository.saveAll(items.map { it.semesterLecture }.toSet())
+            snuttLectureIdMapRepository.saveAll(items.map { it.snuttLectureIdMap })
         }
     }
 }
+
+data class SyncProcessResult(
+    val lecture: Lecture,
+    val semesterLecture: SemesterLecture,
+    val snuttLectureIdMap: SnuttLectureIdMap,
+)

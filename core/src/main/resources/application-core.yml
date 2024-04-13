@@ -23,7 +23,8 @@ spring:
       default-ttl: 5m
       repositories:
         enabled: false
-
+server:
+  port: 8081
 ---
 
 spring.config.activate.on-profile: test
@@ -44,7 +45,7 @@ spring:
     username:
     password:
   jpa:
-    show-sql: false
+    show-sql: true
   data:
     redis:
       default-ttl: 5m
