@@ -24,7 +24,7 @@ spring:
       repositories:
         enabled: false
 server:
-  port: 8081
+  port: 8080
 ---
 
 spring.config.activate.on-profile: test
@@ -45,7 +45,7 @@ spring:
     username:
     password:
   jpa:
-    show-sql: true
+    show-sql: false
   data:
     redis:
       default-ttl: 5m
