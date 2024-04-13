@@ -4,7 +4,7 @@ import com.wafflestudio.snuttev.core.domain.lecture.model.SnuttLectureIdMap
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 
-interface SnuttLectureMappingRepository : JpaRepository<SnuttLectureIdMap, Long> {
+interface SnuttLectureIdMapRepository : JpaRepository<SnuttLectureIdMap, Long> {
     @Query("SELECT ttm FROM SnuttLectureIdMap ttm JOIN FETCH ttm.semesterLecture WHERE ttm.snuttId IN :snuttIds")
     fun findAllWithSemesterLectureBySnuttIds(snuttIds: List<String>): List<SnuttLectureIdMap>
 }

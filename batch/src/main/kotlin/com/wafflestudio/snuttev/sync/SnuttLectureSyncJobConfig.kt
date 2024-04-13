@@ -6,7 +6,7 @@ import com.wafflestudio.snuttev.core.domain.lecture.model.SemesterLecture
 import com.wafflestudio.snuttev.core.domain.lecture.model.SnuttLectureIdMap
 import com.wafflestudio.snuttev.core.domain.lecture.repository.LectureRepository
 import com.wafflestudio.snuttev.core.domain.lecture.repository.SemesterLectureRepository
-import com.wafflestudio.snuttev.core.domain.lecture.repository.SnuttLectureMappingRepository
+import com.wafflestudio.snuttev.core.domain.lecture.repository.SnuttLectureIdMapRepository
 import com.wafflestudio.snuttev.sync.model.SnuttSemesterLecture
 import jakarta.persistence.EntityManagerFactory
 import org.springframework.batch.core.Job
@@ -36,7 +36,7 @@ class SnuttLectureSyncJobConfig(
     private val mongoTemplate: MongoTemplate,
     private val semesterLectureRepository: SemesterLectureRepository,
     private val lectureRepository: LectureRepository,
-    private val snuttLectureMappingRepository: SnuttLectureMappingRepository,
+    private val snuttLectureIdMapRepository: SnuttLectureIdMapRepository,
 ) {
     companion object {
         private const val JOB_NAME = "SYNC_JOB"
@@ -63,7 +63,7 @@ class SnuttLectureSyncJobConfig(
             semesterLectureRepository.findAllByYearAndSemesterWithLecture(targetYear, targetSemester)
                 .associateBy { "${it.lecture.courseNumber},${it.lecture.instructor},${it.year},${it.semester}" }
                 .toMutableMap()
-        snuttLectureIdMap = snuttLectureMappingRepository.findAll()
+        snuttLectureIdMap = snuttLectureIdMapRepository.findAll()
             .associateBy { it.snuttId }
             .toMutableMap()
 
@@ -88,7 +88,7 @@ class SnuttLectureSyncJobConfig(
             semesterLectureRepository.findAllWithLecture()
                 .associateBy { "${it.lecture.courseNumber},${it.lecture.instructor},${it.year},${it.semester}" }
                 .toMutableMap()
-        snuttLectureIdMap = snuttLectureMappingRepository.findAll()
+        snuttLectureIdMap = snuttLectureIdMapRepository.findAll()
             .associateBy { it.snuttId }
             .toMutableMap()
         return JobBuilder(JOB_NAME, jobRepository)
@@ -166,7 +166,7 @@ class SnuttLectureSyncJobConfig(
         return ItemWriter { items ->
             lectureRepository.saveAll(items.map { it.lecture }.toSet())
             semesterLectureRepository.saveAll(items.map { it.semesterLecture }.toSet())
-            snuttLectureMappingRepository.saveAll(items.map { it.snuttLectureIdMap })
+            snuttLectureIdMapRepository.saveAll(items.map { it.snuttLectureIdMap })
         }
     }
 }

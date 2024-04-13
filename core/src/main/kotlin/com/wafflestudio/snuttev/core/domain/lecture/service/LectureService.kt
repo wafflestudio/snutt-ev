@@ -15,7 +15,7 @@ import com.wafflestudio.snuttev.core.domain.lecture.dto.SnuttLectureInfo
 import com.wafflestudio.snuttev.core.domain.lecture.model.SemesterLectureWithLecture
 import com.wafflestudio.snuttev.core.domain.lecture.repository.LectureRepository
 import com.wafflestudio.snuttev.core.domain.lecture.repository.SemesterLectureRepository
-import com.wafflestudio.snuttev.core.domain.lecture.repository.SnuttLectureMappingRepository
+import com.wafflestudio.snuttev.core.domain.lecture.repository.SnuttLectureIdMapRepository
 import com.wafflestudio.snuttev.core.domain.tag.model.TagValueType
 import com.wafflestudio.snuttev.core.domain.tag.repository.TagRepository
 import org.springframework.data.domain.Page
@@ -29,7 +29,7 @@ class LectureService(
     private val tagRepository: TagRepository,
     private val lectureEvaluationRepository: LectureEvaluationRepository,
     private val semesterUtils: SemesterUtils,
-    private val snuttLectureMappingRepository: SnuttLectureMappingRepository,
+    private val snuttLectureIdMapRepository: SnuttLectureIdMapRepository,
 ) {
     fun search(param: SearchLectureRequest): Page<LectureDto> {
         val request = mappingTagsToLectureProperty(param)
@@ -122,7 +122,7 @@ class LectureService(
     }
 
     fun getEvLectureSummaryForSnutt(semesterLectureSnuttIds: List<String>): List<EvLectureSummaryForSnutt> {
-        val snuttIdLectureIdMap = snuttLectureMappingRepository.findAllWithSemesterLectureBySnuttIds(semesterLectureSnuttIds)
+        val snuttIdLectureIdMap = snuttLectureIdMapRepository.findAllWithSemesterLectureBySnuttIds(semesterLectureSnuttIds)
             .associate { it.semesterLecture.lecture.id!! to it.snuttId }
         val lectureIds = snuttIdLectureIdMap.keys
         val ratingMap = lectureRepository.findAllRatingsByLectureIds(lectureIds)
