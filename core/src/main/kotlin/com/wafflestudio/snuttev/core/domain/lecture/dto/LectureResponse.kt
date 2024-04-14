@@ -34,7 +34,10 @@ data class LectureAndSemesterLecturesResponse(
 )
 
 data class LectureIdResponse(
+    // FIXME: evLectureId로 대체되므로 삭제 (evLectureId 생성: 2024-04-14)
     val id: Long,
+    val snuttId: String? = null,
+    val evLectureId: Long = id,
 )
 
 data class LectureTakenByUserResponse(
