@@ -101,7 +101,7 @@ class LectureRepositoryImpl(private val queryFactory: JPAQueryFactory) : Lecture
         ).from(lecture)
             .innerJoin(lecture.semesterLectures, semesterLecture)
             .leftJoin(semesterLecture.evaluations, lectureEvaluation)
-            .where(lecture.id.`in`(lectureSubQuery.map { it.id }),  lectureEvaluation.isNull.or(lectureEvaluation.isHidden.eq(false)))
+            .where(lecture.id.`in`(lectureSubQuery.map { it.id }), lectureEvaluation.isNull.or(lectureEvaluation.isHidden.eq(false)))
             .groupBy(lecture)
             .fetch()
 
