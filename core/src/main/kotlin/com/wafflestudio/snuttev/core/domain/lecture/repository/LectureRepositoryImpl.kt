@@ -51,7 +51,7 @@ class LectureRepositoryImpl(private val queryFactory: JPAQueryFactory) : Lecture
             .leftJoin(lecture.semesterLectures, semesterLecture)
             .leftJoin(semesterLecture.evaluations, lectureEvaluation)
             .groupBy(lecture)
-            .where(*predicates, lectureEvaluation.isHidden.eq(false))
+            .where(*predicates, lectureEvaluation.isNull.or(lectureEvaluation.isHidden.eq(false)))
             .offset(pageable.offset).limit(pageable.pageSize.toLong()).fetch()
 
         val total = queryFactory.select(
@@ -101,7 +101,7 @@ class LectureRepositoryImpl(private val queryFactory: JPAQueryFactory) : Lecture
         ).from(lecture)
             .innerJoin(lecture.semesterLectures, semesterLecture)
             .leftJoin(semesterLecture.evaluations, lectureEvaluation)
-            .where(lecture.id.`in`(lectureSubQuery.map { it.id }), lectureEvaluation.isHidden.eq(false))
+            .where(lecture.id.`in`(lectureSubQuery.map { it.id }),  lectureEvaluation.isNull.or(lectureEvaluation.isHidden.eq(false)))
             .groupBy(lecture)
             .fetch()
 
