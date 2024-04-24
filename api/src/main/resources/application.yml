@@ -8,6 +8,7 @@ spring:
       fail-on-unknown-properties: false
       fail-on-null-for-primitives: true
     property-naming-strategy: SNAKE_CASE
+    default-property-inclusion: non_null
 
 server:
   tomcat:
