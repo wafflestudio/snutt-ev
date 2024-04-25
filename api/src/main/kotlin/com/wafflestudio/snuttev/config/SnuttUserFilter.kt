@@ -22,7 +22,7 @@ class SnuttUserFilter : OncePerRequestFilter() {
 
     override fun shouldNotFilter(request: HttpServletRequest): Boolean {
         val path = request.requestURI
-        val excludePath = listOf("/v1/lectures/snutt-summary")
+        val excludePath = listOf("/v1/lectures/snutt-summary", "/v1/lectures/ids")
         return excludePath.contains(path)
     }
 }

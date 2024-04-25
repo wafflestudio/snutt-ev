@@ -127,12 +127,12 @@ class LectureService(
     }
 
     fun getLectureIdsFromSnuttIds(snuttIds: List<String>): List<LectureIdResponse> {
-        val snuttLectureIdMaps = snuttLectureIdMapRepository.findAllBySnuttIdIn(snuttIds)
+        val snuttLectureIdMaps = snuttLectureIdMapRepository.findAllWithSemesterLectureBySnuttIdIn(snuttIds)
         return snuttLectureIdMaps.map { LectureIdResponse(it.semesterLecture.lecture.id!!, it.snuttId) }
     }
 
     fun getEvLectureSummaryForSnutt(semesterLectureSnuttIds: List<String>): List<EvLectureSummaryForSnutt> {
-        val snuttIdLectureIdMap = snuttLectureIdMapRepository.findAllWithSemesterLectureBySnuttIds(semesterLectureSnuttIds)
+        val snuttIdLectureIdMap = snuttLectureIdMapRepository.findAllWithSemesterLectureBySnuttIdIn(semesterLectureSnuttIds)
             .associate { it.semesterLecture.lecture.id!! to it.snuttId }
         val lectureIds = snuttIdLectureIdMap.keys
         val ratingMap = lectureRepository.findAllRatingsByLectureIds(lectureIds)

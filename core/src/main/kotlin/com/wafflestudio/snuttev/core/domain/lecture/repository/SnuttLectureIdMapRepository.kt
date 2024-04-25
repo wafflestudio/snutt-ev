@@ -6,8 +6,6 @@ import org.springframework.data.jpa.repository.Query
 
 interface SnuttLectureIdMapRepository : JpaRepository<SnuttLectureIdMap, Long> {
     @Query("SELECT ttm FROM SnuttLectureIdMap ttm JOIN FETCH ttm.semesterLecture WHERE ttm.snuttId IN :snuttIds")
-    fun findAllWithSemesterLectureBySnuttIds(snuttIds: List<String>): List<SnuttLectureIdMap>
-
-    fun findAllBySnuttIdIn(snuttIds: List<String>): List<SnuttLectureIdMap>
+    fun findAllWithSemesterLectureBySnuttIdIn(snuttIds: List<String>): List<SnuttLectureIdMap>
     fun findBySnuttId(snuttId: String): SnuttLectureIdMap?
 }
