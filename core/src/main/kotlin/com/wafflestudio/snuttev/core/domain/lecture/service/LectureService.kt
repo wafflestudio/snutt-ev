@@ -135,13 +135,13 @@ class LectureService(
         val snuttIdLectureIdMap = snuttLectureIdMapRepository.findAllWithSemesterLectureBySnuttIdIn(semesterLectureSnuttIds)
             .associate { it.semesterLecture.lecture.id!! to it.snuttId }
         val lectureIds = snuttIdLectureIdMap.keys
-        val ratingMap = lectureRepository.findAllRatingsByLectureIds(lectureIds)
-            .associate { it.id to it.avgRating }
+        val evMap = lectureRepository.findAllRatingsByLectureIds(lectureIds).associateBy { it.id }
         return lectureIds.map {
             EvLectureSummaryForSnutt(
                 snuttId = snuttIdLectureIdMap[it]!!,
                 evLectureId = it,
-                avgRating = ratingMap[it],
+                avgRating = evMap[it]?.avgRating,
+                evaluationCount = evMap[it]?.count ?: 0L,
             )
         }
     }
