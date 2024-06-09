@@ -132,16 +132,16 @@ class LectureService(
     }
 
     fun getEvLectureSummaryForSnutt(semesterLectureSnuttIds: List<String>): List<EvLectureSummaryForSnutt> {
-        val snuttIdLectureIdMap = snuttLectureIdMapRepository.findAllWithSemesterLectureBySnuttIdIn(semesterLectureSnuttIds)
-            .associate { it.snuttId to it.semesterLecture.lecture.id!! }
-        val lectureIds = snuttIdLectureIdMap.values
+        val snuttLectureIdMaps = snuttLectureIdMapRepository.findAllWithSemesterLectureBySnuttIdIn(semesterLectureSnuttIds)
+        val lectureIds = snuttLectureIdMaps.map { it.semesterLecture.lecture.id!! }
         val evMap = lectureRepository.findAllRatingsByLectureIds(lectureIds).associateBy { it.id }
-        return snuttIdLectureIdMap.map {
+        return snuttLectureIdMaps.map {
+            val evLectureId = it.semesterLecture.lecture.id!!
             EvLectureSummaryForSnutt(
-                snuttId = it.key,
-                evLectureId = it.value,
-                avgRating = evMap[it.value]?.avgRating,
-                evaluationCount = evMap[it.value]?.count ?: 0L,
+                snuttId = it.snuttId,
+                evLectureId = evLectureId,
+                avgRating = evMap[evLectureId]?.avgRating,
+                evaluationCount = evMap[evLectureId]?.count ?: 0L,
             )
         }
     }
