@@ -85,7 +85,7 @@ class LectureService(
                 .ifEmpty { throw LectureNotFoundException }
                 .let { semesterLectures ->
                     val (year, nextSemester) = semesterUtils.getYearAndSemesterOfNextSemester()
-                    semesterLectures.dropWhile { it.year == year && it.semester == nextSemester.value }
+                    semesterLectures.filterNot { it.year == year && it.semester == nextSemester.value }
                 }
 
         val firstSemesterLectureWithLecture = semesterLecturesWithLecture.first()
