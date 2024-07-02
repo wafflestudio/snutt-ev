@@ -1,5 +1,7 @@
 package com.wafflestudio.snuttev.core.domain.lecture.dto
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategies
+import com.fasterxml.jackson.databind.annotation.JsonNaming
 import com.wafflestudio.snuttev.core.common.type.LectureClassification
 import com.wafflestudio.snuttev.core.domain.evaluation.dto.SemesterLectureDto
 
@@ -33,6 +35,7 @@ data class LectureAndSemesterLecturesResponse(
     val semesterLectures: List<SemesterLectureDto>,
 )
 
+@JsonNaming(PropertyNamingStrategies.LowerCamelCaseStrategy::class)
 data class LectureIdResponse(
     // FIXME: evLectureId로 대체되므로 삭제 (evLectureId 생성: 2024-04-14)
     val id: Long,
@@ -54,8 +57,10 @@ data class LectureTakenByUserResponse(
     val takenSemester: Int,
 )
 
+@JsonNaming(PropertyNamingStrategies.LowerCamelCaseStrategy::class)
 data class EvLectureSummaryForSnutt(
     val snuttId: String,
     val evLectureId: Long,
     val avgRating: Double?,
+    val evaluationCount: Long,
 )

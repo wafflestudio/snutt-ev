@@ -27,7 +27,7 @@ interface LectureRepository : JpaRepository<Lecture, Long?>, LectureRepositoryCu
     @Query(
         """
         select new com.wafflestudio.snuttev.core.domain.lecture.model.LectureRatingDao(
-        sl.lecture.id, avg(le.rating)
+        sl.lecture.id, avg(le.rating), count(le.id)
         ) from LectureEvaluation le right join le.semesterLecture sl where sl.lecture.id in :ids and le.isHidden = false group by sl.lecture.id 
         """,
     )

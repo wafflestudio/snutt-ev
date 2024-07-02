@@ -85,7 +85,7 @@ class LectureService(
                 .ifEmpty { throw LectureNotFoundException }
                 .let { semesterLectures ->
                     val (year, nextSemester) = semesterUtils.getYearAndSemesterOfNextSemester()
-                    semesterLectures.dropWhile { it.year == year && it.semester == nextSemester.value }
+                    semesterLectures.filterNot { it.year == year && it.semester == nextSemester.value }
                 }
 
         val firstSemesterLectureWithLecture = semesterLecturesWithLecture.first()
@@ -127,21 +127,21 @@ class LectureService(
     }
 
     fun getLectureIdsFromSnuttIds(snuttIds: List<String>): List<LectureIdResponse> {
-        val snuttLectureIdMaps = snuttLectureIdMapRepository.findAllBySnuttIdIn(snuttIds)
+        val snuttLectureIdMaps = snuttLectureIdMapRepository.findAllWithSemesterLectureBySnuttIdIn(snuttIds)
         return snuttLectureIdMaps.map { LectureIdResponse(it.semesterLecture.lecture.id!!, it.snuttId) }
     }
 
     fun getEvLectureSummaryForSnutt(semesterLectureSnuttIds: List<String>): List<EvLectureSummaryForSnutt> {
-        val snuttIdLectureIdMap = snuttLectureIdMapRepository.findAllWithSemesterLectureBySnuttIds(semesterLectureSnuttIds)
-            .associate { it.semesterLecture.lecture.id!! to it.snuttId }
-        val lectureIds = snuttIdLectureIdMap.keys
-        val ratingMap = lectureRepository.findAllRatingsByLectureIds(lectureIds)
-            .associate { it.id to it.avgRating }
-        return lectureIds.map {
+        val snuttLectureIdMaps = snuttLectureIdMapRepository.findAllWithSemesterLectureBySnuttIdIn(semesterLectureSnuttIds)
+        val lectureIds = snuttLectureIdMaps.map { it.semesterLecture.lecture.id!! }
+        val evMap = lectureRepository.findAllRatingsByLectureIds(lectureIds).associateBy { it.id }
+        return snuttLectureIdMaps.map {
+            val evLectureId = it.semesterLecture.lecture.id!!
             EvLectureSummaryForSnutt(
-                snuttId = snuttIdLectureIdMap[it]!!,
-                evLectureId = it,
-                avgRating = ratingMap[it],
+                snuttId = it.snuttId,
+                evLectureId = evLectureId,
+                avgRating = evMap[evLectureId]?.avgRating,
+                evaluationCount = evMap[evLectureId]?.count ?: 0L,
             )
         }
     }
