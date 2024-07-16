@@ -4,7 +4,6 @@ import com.wafflestudio.snuttev.core.domain.lecture.model.LectureRatingDao
 import com.wafflestudio.snuttev.core.domain.lecture.model.SnuttLectureIdMap
 import com.wafflestudio.snuttev.core.domain.lecture.repository.LectureRepository
 import com.wafflestudio.snuttev.core.domain.lecture.repository.SnuttLectureIdMapRepository
-import com.wafflestudio.snuttev.sync.model.SnuttSemesterLecture
 import jakarta.persistence.EntityManagerFactory
 import org.springframework.batch.core.Job
 import org.springframework.batch.core.Step
@@ -80,7 +79,7 @@ class SnuttRatingSyncJobConfig(
 
     private fun writer(): ItemWriter<Pair<String, LectureRatingDao?>> {
         return ItemWriter { items ->
-            val bulkOps = mongoTemplate.bulkOps(BulkOperations.BulkMode.UNORDERED, SnuttSemesterLecture::class.java)
+            val bulkOps = mongoTemplate.bulkOps(BulkOperations.BulkMode.UNORDERED, "lectures")
             items.forEach {
                 bulkOps.updateOne(
                     Query(Criteria.where("_id").`is`(it.first)),
