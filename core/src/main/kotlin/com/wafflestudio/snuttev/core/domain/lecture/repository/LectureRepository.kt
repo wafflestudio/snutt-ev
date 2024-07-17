@@ -32,4 +32,13 @@ interface LectureRepository : JpaRepository<Lecture, Long?>, LectureRepositoryCu
         """,
     )
     fun findAllRatingsByLectureIds(ids: Iterable<Long>): List<LectureRatingDao>
+
+    @Query(
+        """
+        select new com.wafflestudio.snuttev.core.domain.lecture.model.LectureRatingDao(
+        sl.lecture.id, avg(le.rating), count(le.id)
+        ) from LectureEvaluation le right join le.semesterLecture sl where le.isHidden = false group by sl.lecture.id 
+        """,
+    )
+    fun findAllRatings(): List<LectureRatingDao>
 }
