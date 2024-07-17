@@ -3,7 +3,6 @@ package com.wafflestudio.snuttev.sync
 import com.wafflestudio.snuttev.core.domain.lecture.model.LectureRatingDao
 import com.wafflestudio.snuttev.core.domain.lecture.model.SnuttLectureIdMap
 import com.wafflestudio.snuttev.core.domain.lecture.repository.LectureRepository
-import com.wafflestudio.snuttev.core.domain.lecture.repository.SnuttLectureIdMapRepository
 import jakarta.persistence.EntityManagerFactory
 import org.springframework.batch.core.Job
 import org.springframework.batch.core.Step
@@ -12,11 +11,11 @@ import org.springframework.batch.core.repository.JobRepository
 import org.springframework.batch.core.step.builder.StepBuilder
 import org.springframework.batch.item.ItemProcessor
 import org.springframework.batch.item.ItemWriter
-import org.springframework.batch.item.data.RepositoryItemReader
+import org.springframework.batch.item.database.JpaPagingItemReader
+import org.springframework.batch.item.database.builder.JpaPagingItemReaderBuilder
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
-import org.springframework.data.domain.Sort
 import org.springframework.data.mongodb.core.BulkOperations
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.data.mongodb.core.query.Criteria
@@ -29,7 +28,6 @@ import org.springframework.orm.jpa.JpaTransactionManager
 class SnuttRatingSyncJobConfig(
     private val entityManagerFactory: EntityManagerFactory,
     private val mongoTemplate: MongoTemplate,
-    private val snuttLectureIdMapRepository: SnuttLectureIdMapRepository,
 ) {
     companion object {
         private const val JOB_NAME = "RATING_SYNC_JOB"
@@ -42,7 +40,6 @@ class SnuttRatingSyncJobConfig(
     @Bean
     fun ratingSyncJob(job: JobRepository, jobRepository: JobRepository, lectureRepository: LectureRepository): Job {
         lectureIdtoLectureRatingMap = lectureRepository.findAllRatings().associateBy { it.id }.toMutableMap()
-
         return JobBuilder(JOB_NAME, jobRepository)
             .start(customReaderStep(jobRepository))
             .build()
@@ -62,20 +59,18 @@ class SnuttRatingSyncJobConfig(
             .build()
     }
 
-    private fun reader(): RepositoryItemReader<SnuttLectureIdMap> {
-        return RepositoryItemReader<SnuttLectureIdMap>().apply {
-            this.setRepository(snuttLectureIdMapRepository)
-            this.setMethodName("findAll")
-            this.setPageSize(CHUNK_SIZE)
-            this.setSort(mapOf("id" to Sort.Direction.ASC))
-        }
-    }
+    private fun reader(): JpaPagingItemReader<SnuttLectureIdMap> =
+        JpaPagingItemReaderBuilder<SnuttLectureIdMap>()
+            .name("snuttLectureIdMapReader")
+            .entityManagerFactory(entityManagerFactory)
+            .queryString("SELECT s FROM SnuttLectureIdMap s")
+            .pageSize(CHUNK_SIZE)
+            .build()
 
-    private fun processor(): ItemProcessor<SnuttLectureIdMap, Pair<String, LectureRatingDao?>> {
-        return ItemProcessor { item ->
-            item.snuttId to lectureIdtoLectureRatingMap[item.semesterLecture.lecture.id!!]
+    private fun processor(): ItemProcessor<SnuttLectureIdMap, Pair<String, LectureRatingDao?>> =
+        ItemProcessor { item ->
+            item.snuttId to lectureIdtoLectureRatingMap[item.semesterLecture.lecture.id]
         }
-    }
 
     private fun writer(): ItemWriter<Pair<String, LectureRatingDao?>> {
         return ItemWriter { items ->
