@@ -37,6 +37,7 @@ class SnuttLectureSyncJobConfig(
     private val semesterLectureRepository: SemesterLectureRepository,
     private val lectureRepository: LectureRepository,
     private val snuttLectureIdMapRepository: SnuttLectureIdMapRepository,
+    private val ratingSyncJob: Job,
 ) {
     companion object {
         private const val JOB_NAME = "SYNC_JOB"
@@ -78,6 +79,7 @@ class SnuttLectureSyncJobConfig(
                     ),
                 ),
             )
+            .next(ratingSyncJobStep(jobRepository))
             .build()
     }
 
@@ -93,6 +95,7 @@ class SnuttLectureSyncJobConfig(
             .toMutableMap()
         return JobBuilder(JOB_NAME, jobRepository)
             .start(customReaderStep(jobRepository, Query()))
+            .next(ratingSyncJobStep(jobRepository))
             .build()
     }
 
@@ -169,6 +172,11 @@ class SnuttLectureSyncJobConfig(
             snuttLectureIdMapRepository.saveAll(items.map { it.snuttLectureIdMap })
         }
     }
+
+    private fun ratingSyncJobStep(jobRepository: JobRepository): Step =
+        StepBuilder(SnuttRatingSyncJobConfig.RATING_SYNC_JOB_NAME, jobRepository)
+            .job(ratingSyncJob)
+            .build()
 }
 
 data class SyncProcessResult(
