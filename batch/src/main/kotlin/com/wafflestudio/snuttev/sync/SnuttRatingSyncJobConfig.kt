@@ -35,7 +35,7 @@ class SnuttRatingSyncJobConfig(
     }
 
     @Bean
-    fun ratingSyncJob(job: JobRepository, jobRepository: JobRepository): Job {
+    fun ratingSyncJob(jobRepository: JobRepository): Job {
         return JobBuilder(RATING_SYNC_JOB_NAME, jobRepository)
             .start(customReaderStep(jobRepository))
             .build()
