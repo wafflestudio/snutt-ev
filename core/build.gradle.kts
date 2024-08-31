@@ -20,6 +20,8 @@ dependencies {
 
     implementation("org.springframework.boot:spring-boot-starter-data-redis")
 
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
+
     runtimeOnly("com.mysql:mysql-connector-j")
     kapt("com.querydsl:querydsl-apt::jakarta")
 }

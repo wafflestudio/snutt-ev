@@ -1,6 +1,9 @@
 package com.wafflestudio.snuttev.core.domain.mongo
 
 import com.wafflestudio.snuttev.core.domain.lecture.model.LectureRatingDao
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.data.mongodb.core.query.Query
@@ -12,13 +15,15 @@ class MongoService(
     private val mongoTemplate: MongoTemplate,
 ) {
     fun updateEvInfoToSnuttIds(snuttIds: List<String>, evInfo: LectureRatingDao?) =
-        runCatching {
-            mongoTemplate.updateMulti(
-                Query(Criteria.where("_id").`in`(snuttIds)),
-                Update().set("evInfo.evId", evInfo?.id)
-                    .set("evInfo.avgRating", evInfo?.avgRating)
-                    .set("evInfo.count", evInfo?.count),
-                "lectures",
-            )
+        CoroutineScope(Dispatchers.IO).launch {
+            runCatching {
+                mongoTemplate.updateMulti(
+                    Query(Criteria.where("_id").`in`(snuttIds)),
+                    Update().set("evInfo.evId", evInfo?.id)
+                        .set("evInfo.avgRating", evInfo?.avgRating)
+                        .set("evInfo.count", evInfo?.count),
+                    "lectures",
+                )
+            }
         }
 }
