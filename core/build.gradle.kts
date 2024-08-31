@@ -18,7 +18,6 @@ dependencies {
     implementation("software.amazon.awssdk:secretsmanager:2.20.66")
     implementation("software.amazon.awssdk:sts:2.20.66")
 
-    implementation("org.springframework.boot:spring-boot-starter-data-mongodb-reactive")
     implementation("org.springframework.boot:spring-boot-starter-data-redis")
 
     runtimeOnly("com.mysql:mysql-connector-j")
