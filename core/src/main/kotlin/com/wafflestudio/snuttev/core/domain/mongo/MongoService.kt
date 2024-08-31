@@ -12,11 +12,13 @@ class MongoService(
     private val mongoTemplate: MongoTemplate,
 ) {
     fun updateEvInfoToSnuttIds(snuttIds: List<String>, evInfo: LectureRatingDao?) =
-        mongoTemplate.updateMulti(
-            Query(Criteria.where("_id").`in`(snuttIds)),
-            Update().set("evInfo.evId", evInfo?.id)
-                .set("evInfo.avgRating", evInfo?.avgRating)
-                .set("evInfo.count", evInfo?.count),
-            "lectures",
-        )
+        runCatching {
+            mongoTemplate.updateMulti(
+                Query(Criteria.where("_id").`in`(snuttIds)),
+                Update().set("evInfo.evId", evInfo?.id)
+                    .set("evInfo.avgRating", evInfo?.avgRating)
+                    .set("evInfo.count", evInfo?.count),
+                "lectures",
+            )
+        }
 }
