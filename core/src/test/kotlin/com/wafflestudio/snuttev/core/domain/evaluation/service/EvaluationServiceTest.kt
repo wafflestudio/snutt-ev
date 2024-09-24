@@ -14,6 +14,7 @@ import com.wafflestudio.snuttev.core.domain.lecture.model.Lecture
 import com.wafflestudio.snuttev.core.domain.lecture.model.SemesterLecture
 import com.wafflestudio.snuttev.core.domain.lecture.repository.LectureRepository
 import com.wafflestudio.snuttev.core.domain.lecture.repository.SemesterLectureRepository
+import com.wafflestudio.snuttev.core.domain.mongo.MongoService
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatNoException
 import org.assertj.core.api.Assertions.assertThatThrownBy
@@ -21,6 +22,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.transaction.annotation.Transactional
 import kotlin.random.Random
@@ -34,6 +36,7 @@ class EvaluationServiceTest @Autowired constructor(
     private val lectureRepository: LectureRepository,
     private val semesterLectureRepository: SemesterLectureRepository,
     private val evaluationLikeRepository: EvaluationLikeRepository,
+    @MockBean private val mongoService: MongoService,
 ) {
     @BeforeEach
     fun setup() {

@@ -36,6 +36,8 @@ import com.wafflestudio.snuttev.core.domain.evaluation.repository.LectureEvaluat
 import com.wafflestudio.snuttev.core.domain.lecture.model.SemesterLecture
 import com.wafflestudio.snuttev.core.domain.lecture.repository.LectureRepository
 import com.wafflestudio.snuttev.core.domain.lecture.repository.SemesterLectureRepository
+import com.wafflestudio.snuttev.core.domain.lecture.repository.SnuttLectureIdMapRepository
+import com.wafflestudio.snuttev.core.domain.mongo.MongoService
 import com.wafflestudio.snuttev.core.domain.tag.repository.TagRepository
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.data.repository.findByIdOrNull
@@ -51,6 +53,8 @@ class EvaluationService internal constructor(
     private val evaluationReportRepository: EvaluationReportRepository,
     private val evaluationLikeRepository: EvaluationLikeRepository,
     private val cache: Cache,
+    private val snuttLectureIdMapRepository: SnuttLectureIdMapRepository,
+    private val mongoService: MongoService,
 ) {
     companion object {
         private const val DEFAULT_PAGE_SIZE = 20
@@ -76,6 +80,8 @@ class EvaluationService internal constructor(
         lectureEvaluationRepository.save(lectureEvaluation)
 
         cache.deleteAll(CacheKey.EVALUATIONS_BY_TAG_PAGE)
+
+        updateEvInfosBySemesterLecture(semesterLecture)
 
         return genLectureEvaluationDto(lectureEvaluation)
     }
@@ -276,6 +282,7 @@ class EvaluationService internal constructor(
         }
 
         cache.deleteAll(CacheKey.EVALUATIONS_BY_TAG_PAGE)
+        updateEvInfosBySemesterLecture(evaluation.semesterLecture)
 
         val isLiked = evaluationLikeRepository.existsByLectureEvaluationAndUserId(evaluation, userId)
         return EvaluationWithSemesterResponse.of(evaluation, userId, isLiked)
@@ -308,6 +315,7 @@ class EvaluationService internal constructor(
         lectureEvaluation.isHidden = true
 
         cache.deleteAll(CacheKey.EVALUATIONS_BY_TAG_PAGE)
+        updateEvInfosBySemesterLecture(lectureEvaluation.semesterLecture)
     }
 
     fun reportEvaluation(
@@ -391,4 +399,10 @@ class EvaluationService internal constructor(
             content = evaluationReport.content,
             isHidden = evaluationReport.isHidden,
         )
+
+    private fun updateEvInfosBySemesterLecture(semesterLecture: SemesterLecture) {
+        val evInfo = lectureRepository.findAllRatingsByLectureIds(listOf(semesterLecture.lecture.id!!)).firstOrNull()
+        val snuttIds = snuttLectureIdMapRepository.findAllBySemesterLecture(semesterLecture).map { it.snuttId }
+        mongoService.updateEvInfoToSnuttIds(snuttIds, evInfo)
+    }
 }
