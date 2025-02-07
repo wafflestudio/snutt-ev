@@ -18,9 +18,6 @@ import org.springframework.web.bind.MissingServletRequestParameterException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException
-import java.io.IOException
-
-
 
 @RestControllerAdvice
 class ErrorHandler {
@@ -42,7 +39,7 @@ class ErrorHandler {
     }
 
     @ExceptionHandler(ClientAbortException::class)
-    fun handleIOException(ex: IOException): ResponseEntity<Void> {
+    fun handleClientAbortException(ex: ClientAbortException): ResponseEntity<Void> {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
 
