@@ -47,8 +47,8 @@ subprojects {
         implementation("org.springframework.boot:spring-boot-starter-data-jpa")
         implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
 
-        implementation("com.wafflestudio.truffle.sdk:truffle-spring-boot-starter:1.1.2")
-        implementation("com.wafflestudio.truffle.sdk:truffle-logback:1.1.2")
+        implementation("com.wafflestudio.truffle.sdk:truffle-spring-boot-starter:1.1.4")
+        implementation("com.wafflestudio.truffle.sdk:truffle-logback:1.1.4")
 
         testImplementation("org.springframework.boot:spring-boot-starter-test")
         testImplementation("com.h2database:h2")
