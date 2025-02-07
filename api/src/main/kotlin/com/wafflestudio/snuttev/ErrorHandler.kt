@@ -6,6 +6,7 @@ import com.wafflestudio.snuttev.core.common.error.SnuttException
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import jakarta.validation.ConstraintViolationException
+import org.apache.catalina.connector.ClientAbortException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.http.converter.HttpMessageNotReadableException
@@ -35,6 +36,11 @@ class ErrorHandler {
         response: HttpServletResponse,
     ): ResponseEntity<Any> {
         return ResponseEntity(HttpStatus.BAD_REQUEST)
+    }
+
+    @ExceptionHandler(ClientAbortException::class)
+    fun handleClientAbortException(ex: ClientAbortException): ResponseEntity<Void> {
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
 
     @ExceptionHandler(
