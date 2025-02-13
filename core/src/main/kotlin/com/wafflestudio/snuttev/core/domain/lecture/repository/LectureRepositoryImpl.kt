@@ -183,6 +183,6 @@ class LectureRepositoryImpl(private val queryFactory: JPAQueryFactory) : Lecture
     }
 
     private fun String.hasKorean(): Boolean {
-        return this.map { it.isHangul() }.reduce { acc, c -> acc || c }
+        return this.any { it.isHangul() }
     }
 }
