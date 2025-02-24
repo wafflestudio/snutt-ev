@@ -157,6 +157,9 @@ class SnuttLectureSyncJobConfig(
                 item.category,
                 LectureClassification.customValueOf(item.classification)!!,
             ).also { semesterLecturesMap["${item.courseNumber},${item.instructor},${item.year},${item.semester}"] = it }
+            if (snuttLectureIdMap[item.id]?.semesterLecture?.id != semesterLecture.id) {
+                snuttLectureIdMap[item.id]?.semesterLecture = semesterLecture
+            }
             val snuttIdToLecture = snuttLectureIdMap[item.id] ?: SnuttLectureIdMap(
                 item.id,
                 semesterLecture,
