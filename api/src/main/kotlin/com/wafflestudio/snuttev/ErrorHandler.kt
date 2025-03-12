@@ -40,7 +40,7 @@ class ErrorHandler {
     }
 
     @ExceptionHandler(ClientAbortException::class, AsyncRequestNotUsableException::class)
-    fun handleClientAbortException(ex: ClientAbortException): ResponseEntity<Void> {
+    fun handleClientAbortException(e: Exception): ResponseEntity<Void> {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
 
