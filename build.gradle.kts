@@ -47,8 +47,7 @@ subprojects {
         implementation("org.springframework.boot:spring-boot-starter-data-jpa")
         implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
 
-        implementation("com.wafflestudio.truffle.sdk:truffle-spring-boot-starter:1.1.4")
-        implementation("com.wafflestudio.truffle.sdk:truffle-logback:1.1.4")
+        implementation("com.wafflestudio.spring:spring-boot-starter-waffle:1.0.0")
 
         testImplementation("org.springframework.boot:spring-boot-starter-test")
         testImplementation("com.h2database:h2")
@@ -97,20 +96,12 @@ project(":core") {
 
 fun RepositoryHandler.mavenCodeArtifact() {
     maven {
-        val authToken = properties["codeArtifactAuthToken"] as String? ?: ByteArrayOutputStream().use {
-            runCatching {
-                exec {
-                    commandLine = (
-                        "aws codeartifact get-authorization-token " +
-                            "--domain wafflestudio --domain-owner 405906814034 " +
-                            "--query authorizationToken --region ap-northeast-1 --output text"
-                        ).split(" ")
-                    standardOutput = it
-                }
-            }
-            it.toString()
-        }
-        url = uri("https://wafflestudio-405906814034.d.codeartifact.ap-northeast-1.amazonaws.com/maven/truffle-kotlin/")
+        val authToken = properties["codeArtifactAuthToken"] as String? ?: ProcessBuilder(
+            "aws", "codeartifact", "get-authorization-token",
+            "--domain", "wafflestudio", "--domain-owner", "405906814034",
+            "--query", "authorizationToken", "--region", "ap-northeast-1", "--output", "text"
+        ).start().inputStream.bufferedReader().readText().trim()
+        url = uri("https://wafflestudio-405906814034.d.codeartifact.ap-northeast-1.amazonaws.com/maven/spring-waffle/")
         credentials {
             username = "aws"
             password = authToken
