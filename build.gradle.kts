@@ -1,7 +1,6 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jlleitschuh.gradle.ktlint.KtlintExtension
 import org.springframework.boot.gradle.tasks.bundling.BootJar
-import java.io.ByteArrayOutputStream
 
 plugins {
     id("org.springframework.boot") version "3.2.4" apply false
@@ -99,7 +98,7 @@ fun RepositoryHandler.mavenCodeArtifact() {
         val authToken = properties["codeArtifactAuthToken"] as String? ?: ProcessBuilder(
             "aws", "codeartifact", "get-authorization-token",
             "--domain", "wafflestudio", "--domain-owner", "405906814034",
-            "--query", "authorizationToken", "--region", "ap-northeast-1", "--output", "text"
+            "--query", "authorizationToken", "--region", "ap-northeast-1", "--output", "text",
         ).start().inputStream.bufferedReader().readText().trim()
         url = uri("https://wafflestudio-405906814034.d.codeartifact.ap-northeast-1.amazonaws.com/maven/spring-waffle/")
         credentials {
