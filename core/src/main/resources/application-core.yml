@@ -1,16 +1,11 @@
 spring.profiles.default: local
+---
+
 spring:
-  datasource:
-    url: jdbc:mysql://localhost:3306/snutt?serverTimezone=UTC
-    username: snutt
-    password: wafflestudio
-  flyway:
-    locations: classpath:/db
-    baseline-on-migrate: true
+  config:
+    activate:
+      on-profile: local
   jpa:
-    hibernate:
-      ddl-auto: none
-    open-in-view: false
     show-sql: true
     properties:
       hibernate:
@@ -23,8 +18,12 @@ spring:
       default-ttl: 5m
       repositories:
         enabled: false
-server:
-  port: 8080
+
+logging:
+  config: classpath:logback/local.xml
+
+secret-names: dev/snutt-ev
+
 ---
 
 spring.config.activate.on-profile: test
@@ -32,6 +31,19 @@ spring.config.activate.on-profile: test
 spring:
   datasource:
     url: jdbc:h2:mem:testdb;MODE=MYSQL;DATABASE_TO_UPPER=false;DB_CLOSE_DELAY=-1;NON_KEYWORDS=year
+  flyway:
+    locations: classpath:/db
+    baseline-on-migrate: true
+  data:
+    redis:
+      host: localhost
+      timeout: 3s
+      default-ttl: 5m
+      repositories:
+        enabled: false
+  jpa:
+    hibernate:
+      ddl-auto: none
 
 ---
 

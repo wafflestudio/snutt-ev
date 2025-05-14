@@ -46,7 +46,7 @@ subprojects {
         implementation("org.springframework.boot:spring-boot-starter-data-jpa")
         implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
 
-        implementation("com.wafflestudio.spring:spring-boot-starter-waffle:1.0.1")
+        implementation("com.wafflestudio.spring:spring-boot-starter-waffle:1.0.4")
 
         testImplementation("org.springframework.boot:spring-boot-starter-test")
         testImplementation("com.h2database:h2")
