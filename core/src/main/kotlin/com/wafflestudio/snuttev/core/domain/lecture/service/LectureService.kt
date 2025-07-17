@@ -83,16 +83,15 @@ class LectureService(
         val semesterLecturesWithLecture =
             semesterLectureRepository.findAllByLectureIdOrderByYearDescSemesterDesc(lectureId)
                 .ifEmpty { throw LectureNotFoundException }
-                .let { semesterLectures ->
-                    val (year, nextSemester) = semesterUtils.getYearAndSemesterOfNextSemester()
-                    semesterLectures.filterNot { it.year == year && it.semester == nextSemester.value }
-                }
 
         val firstSemesterLectureWithLecture = semesterLecturesWithLecture.first()
+        val visibleSemesterLecturesWithLecture = semesterLecturesWithLecture.let { semesterLectures ->
+            val (year, nextSemester) = semesterUtils.getYearAndSemesterOfNextSemester()
+            semesterLectures.filterNot { it.year == year && it.semester == nextSemester.value }
+        }
 
-        val semesterLectureIds = semesterLecturesWithLecture.map { it.id!! }
         val evaluations = lectureEvaluationRepository.findBySemesterLectureIdInAndUserIdAndIsHiddenFalse(
-            semesterLectureIds,
+            visibleSemesterLecturesWithLecture.map { it.id!! },
             userId,
         )
 
@@ -106,7 +105,7 @@ class LectureService(
             academicYear = firstSemesterLectureWithLecture.academicYear,
             category = firstSemesterLectureWithLecture.category,
             classification = firstSemesterLectureWithLecture.classification,
-            semesterLectures = semesterLecturesWithLecture.map { semesterLecture ->
+            semesterLectures = visibleSemesterLecturesWithLecture.map { semesterLecture ->
                 genSemesterLectureDto(
                     semesterLecture,
                     evaluations.any { it.semesterLecture.id == semesterLecture.id },
