@@ -11,14 +11,17 @@ import org.springframework.stereotype.Service
 class MongoService(
     private val mongoTemplate: MongoTemplate,
 ) {
-    fun updateEvInfoToSnuttIds(snuttIds: List<String>, evInfo: LectureRatingDao?) =
-        runCatching {
-            mongoTemplate.updateMulti(
-                Query(Criteria.where("_id").`in`(snuttIds)),
-                Update().set("evInfo.evId", evInfo?.id)
-                    .set("evInfo.avgRating", evInfo?.avgRating)
-                    .set("evInfo.count", evInfo?.count),
-                "lectures",
-            )
-        }
+    fun updateEvInfoToSnuttIds(
+        snuttIds: List<String>,
+        evInfo: LectureRatingDao?,
+    ) = runCatching {
+        mongoTemplate.updateMulti(
+            Query(Criteria.where("_id").`in`(snuttIds)),
+            Update()
+                .set("evInfo.evId", evInfo?.id)
+                .set("evInfo.avgRating", evInfo?.avgRating)
+                .set("evInfo.count", evInfo?.count),
+            "lectures",
+        )
+    }
 }

@@ -72,7 +72,10 @@ data class EvaluationWithSemesterResponse(
     val isReportable: Boolean,
 ) {
     companion object {
-        fun of(dto: EvaluationWithSemesterDto, userId: String) = EvaluationWithSemesterResponse(
+        fun of(
+            dto: EvaluationWithSemesterDto,
+            userId: String,
+        ) = EvaluationWithSemesterResponse(
             id = dto.id,
             userId = dto.userId,
             content = dto.content,
@@ -93,7 +96,11 @@ data class EvaluationWithSemesterResponse(
             isReportable = dto.userId != userId,
         )
 
-        fun of(evaluation: LectureEvaluation, userId: String, isLiked: Boolean) = EvaluationWithSemesterResponse(
+        fun of(
+            evaluation: LectureEvaluation,
+            userId: String,
+            isLiked: Boolean,
+        ) = EvaluationWithSemesterResponse(
             id = evaluation.id!!,
             userId = evaluation.userId,
             content = evaluation.content,

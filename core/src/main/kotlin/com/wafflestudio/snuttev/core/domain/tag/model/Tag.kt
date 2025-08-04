@@ -15,18 +15,13 @@ class Tag(
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "tag_group_id", nullable = false)
     val tagGroup: TagGroup,
-
     @Column(nullable = false)
     val name: String,
-
     val description: String?,
-
     @Column(nullable = false)
     val ordering: Int,
-
     @Column(name = "int_value")
     val intValue: Int? = null,
-
     @Column(name = "string_value")
     val stringValue: String? = null,
 ) : BaseEntity()

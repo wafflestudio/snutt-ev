@@ -10,12 +10,13 @@ class SemesterUtils {
     fun getCurrentYearAndSemester(): Pair<Int, Semester> {
         val now = LocalDate.now()
         val year = now.year
-        val semester = when {
-            now.month < Month.MARCH -> Semester.WINTER
-            now.month < Month.JULY -> Semester.SPRING
-            now.month < Month.SEPTEMBER -> Semester.SUMMER
-            else -> Semester.AUTUMN
-        }
+        val semester =
+            when {
+                now.month < Month.MARCH -> Semester.WINTER
+                now.month < Month.JULY -> Semester.SPRING
+                now.month < Month.SEPTEMBER -> Semester.SUMMER
+                else -> Semester.AUTUMN
+            }
         return year to semester
     }
 

@@ -15,9 +15,12 @@ import javax.sql.DataSource
 class BatchConfig {
     @Bean
     @BatchDataSource
-    fun batchDataSource(): DataSource = EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.H2)
-        .addScript("/org/springframework/batch/core/schema-h2.sql")
-        .generateUniqueName(true).build()
+    fun batchDataSource(): DataSource =
+        EmbeddedDatabaseBuilder()
+            .setType(EmbeddedDatabaseType.H2)
+            .addScript("/org/springframework/batch/core/schema-h2.sql")
+            .generateUniqueName(true)
+            .build()
 
     /**
      * Mimic [org.springframework.boot.autoconfigure.jdbc.DataSourceConfiguration.Hikari]
@@ -25,10 +28,9 @@ class BatchConfig {
     @Bean
     @Primary
     @ConfigurationProperties(prefix = "spring.datasource.hikari")
-    fun dataSource(properties: DataSourceProperties): HikariDataSource? {
-        return properties
+    fun dataSource(properties: DataSourceProperties): HikariDataSource? =
+        properties
             .initializeDataSourceBuilder()
             .type(HikariDataSource::class.java)
             .build()
-    }
 }

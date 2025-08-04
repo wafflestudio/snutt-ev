@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 class HealthCheckController {
-
     @Operation(hidden = true)
     @GetMapping("/health-check")
     fun healthCheck() {

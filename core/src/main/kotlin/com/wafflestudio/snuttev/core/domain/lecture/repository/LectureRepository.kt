@@ -6,8 +6,13 @@ import com.wafflestudio.snuttev.core.domain.lecture.model.LectureRatingDao
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 
-interface LectureRepository : JpaRepository<Lecture, Long?>, LectureRepositoryCustom {
-    fun findByCourseNumberAndInstructor(courseNumber: String, instructor: String): Lecture?
+interface LectureRepository :
+    JpaRepository<Lecture, Long?>,
+    LectureRepositoryCustom {
+    fun findByCourseNumberAndInstructor(
+        courseNumber: String,
+        instructor: String,
+    ): Lecture?
 
     @Query("SELECT l FROM Lecture AS l WHERE CONCAT(l.courseNumber,l.instructor) IN :lectureKeys")
     fun findAllByLectureKeys(lectureKeys: Set<String>): List<Lecture>

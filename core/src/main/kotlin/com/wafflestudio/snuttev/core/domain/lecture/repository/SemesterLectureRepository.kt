@@ -7,9 +7,11 @@ import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 
 interface SemesterLectureRepository : JpaRepository<SemesterLecture, Long> {
-
     @Query("SELECT DISTINCT sl FROM SemesterLecture sl JOIN FETCH sl.lecture WHERE sl.year = :year AND sl.semester = :semester")
-    fun findAllByYearAndSemesterWithLecture(year: Int, semester: Int): List<SemesterLecture>
+    fun findAllByYearAndSemesterWithLecture(
+        year: Int,
+        semester: Int,
+    ): List<SemesterLecture>
 
     @Query("SELECT DISTINCT sl FROM SemesterLecture sl JOIN FETCH sl.lecture")
     fun findAllWithLecture(): List<SemesterLecture>
@@ -26,5 +28,9 @@ interface SemesterLectureRepository : JpaRepository<SemesterLecture, Long> {
     )
     fun findAllByLectureIdOrderByYearDescSemesterDesc(lectureId: Long): List<SemesterLectureWithLecture>
 
-    fun findByYearAndSemesterAndLecture(year: Int, semester: Int, lecture: Lecture): SemesterLecture?
+    fun findByYearAndSemesterAndLecture(
+        year: Int,
+        semester: Int,
+        lecture: Lecture,
+    ): SemesterLecture?
 }

@@ -15,7 +15,6 @@ class EvaluationLike(
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "lecture_evaluation_id", nullable = false)
     val lectureEvaluation: LectureEvaluation,
-
     @Column(name = "user_id", nullable = false)
     val userId: String,
 ) : BaseEntity()

@@ -36,57 +36,55 @@ class SnuevMigrationJobConfig(
         private const val CHUNK_SIZE = 100
     }
 
-    private val snuevDataSource: DataSource = DataSourceBuilder
-        .create()
-        .driverClassName("org.postgresql.Driver")
-        .url("jdbc:postgresql://localhost:5432/snuev")
-        .username("postgres")
-        .password("password").build()
+    private val snuevDataSource: DataSource =
+        DataSourceBuilder
+            .create()
+            .driverClassName("org.postgresql.Driver")
+            .url("jdbc:postgresql://localhost:5432/snuev")
+            .username("postgres")
+            .password("password")
+            .build()
 
     @Bean
-    fun customReaderJob(jobRepository: JobRepository): Job {
-        return JobBuilder(JOB_NAME, jobRepository)
+    fun customReaderJob(jobRepository: JobRepository): Job =
+        JobBuilder(JOB_NAME, jobRepository)
             .start(customReaderStep(jobRepository))
             .build()
-    }
 
-    fun customReaderStep(jobRepository: JobRepository): Step {
-        return StepBuilder(CUSTOM_READER_JOB_STEP, jobRepository)
+    fun customReaderStep(jobRepository: JobRepository): Step =
+        StepBuilder(CUSTOM_READER_JOB_STEP, jobRepository)
             .chunk<SnuevEvaluation, LectureEvaluation>(
                 CHUNK_SIZE,
                 JpaTransactionManager().apply {
                     this.entityManagerFactory = this@SnuevMigrationJobConfig.entityManagerFactory
                 },
-            )
-            .reader(reader())
+            ).reader(reader())
             .processor(processor())
             .writer(writer())
             .build()
-    }
 
-    private fun reader(): JdbcCursorItemReader<SnuevEvaluation> {
-        return JdbcCursorItemReaderBuilder<SnuevEvaluation>()
+    private fun reader(): JdbcCursorItemReader<SnuevEvaluation> =
+        JdbcCursorItemReaderBuilder<SnuevEvaluation>()
             .fetchSize(CHUNK_SIZE)
             .dataSource(snuevDataSource)
             .rowMapper(DataClassRowMapper(SnuevEvaluation::class.java))
             .name(this::reader.name)
             .sql(
                 """
-                    SELECT ev.comment, ev.score, ev.easiness, ev.grading, ev.created_at, pr.name AS instructor, se.year, se.season, c.code AS course_number
-                    FROM evaluations ev
-                    INNER JOIN lectures le ON ev.lecture_id = le.id
-                    INNER JOIN professors pr ON pr.id  = le.professor_id
-                    INNER JOIN semesters se ON ev.semester_id = se.id
-                    INNER JOIN courses c ON c.id = le.course_id;
+                SELECT ev.comment, ev.score, ev.easiness, ev.grading, ev.created_at, pr.name AS instructor, se.year, se.season, c.code AS course_number
+                FROM evaluations ev
+                INNER JOIN lectures le ON ev.lecture_id = le.id
+                INNER JOIN professors pr ON pr.id  = le.professor_id
+                INNER JOIN semesters se ON ev.semester_id = se.id
+                INNER JOIN courses c ON c.id = le.course_id;
                 """.trimIndent(),
-            )
-            .build()
-    }
+            ).build()
 
     private fun processor(): ItemProcessor<SnuevEvaluation, LectureEvaluation> {
         return ItemProcessor<SnuevEvaluation, LectureEvaluation> { item: SnuevEvaluation ->
-            val lecture = lectureRepository.findByCourseNumberAndInstructor(item.courseNumber, item.instructor)
-                ?: return@ItemProcessor null
+            val lecture =
+                lectureRepository.findByCourseNumberAndInstructor(item.courseNumber, item.instructor)
+                    ?: return@ItemProcessor null
             val semesterLecture =
                 semesterLectureRepository.findByYearAndSemesterAndLecture(item.year, item.season + 1, lecture)
                     ?: semesterLectureRepository.save(
@@ -120,10 +118,9 @@ class SnuevMigrationJobConfig(
         }
     }
 
-    private fun writer(): ItemWriter<LectureEvaluation> {
-        return ItemWriter { items ->
+    private fun writer(): ItemWriter<LectureEvaluation> =
+        ItemWriter { items ->
             semesterLectureRepository.saveAll(items.map { it.semesterLecture })
             lectureEvaluationRepository.saveAll(items)
         }
-    }
 }
