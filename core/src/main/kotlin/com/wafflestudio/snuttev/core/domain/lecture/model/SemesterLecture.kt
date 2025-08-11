@@ -23,24 +23,16 @@ class SemesterLecture(
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "lecture_id", nullable = false)
     var lecture: Lecture,
-
     val year: Int,
-
     val semester: Int,
-
     var credit: Int,
-
     @Column(name = "extra_info", columnDefinition = "longtext")
     var extraInfo: String = "",
-
     @Column(name = "academic_year")
     var academicYear: String,
-
     var category: String,
-
     @Convert(converter = LectureClassificationConverter::class)
     var classification: LectureClassification,
-
     @OneToMany(mappedBy = "semesterLecture")
     val evaluations: List<LectureEvaluation> = listOf(),
 ) : BaseEntity()

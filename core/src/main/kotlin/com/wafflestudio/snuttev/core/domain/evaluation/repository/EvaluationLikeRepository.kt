@@ -7,11 +7,17 @@ import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
 
 interface EvaluationLikeRepository : JpaRepository<EvaluationLike, Long> {
-    fun existsByLectureEvaluationAndUserId(lectureEvaluation: LectureEvaluation, userId: String): Boolean
+    fun existsByLectureEvaluationAndUserId(
+        lectureEvaluation: LectureEvaluation,
+        userId: String,
+    ): Boolean
 
     fun findAllByLectureEvaluationIdIn(lectureEvaluationIds: List<Long>): List<EvaluationLike>
 
-    fun deleteByLectureEvaluationAndUserId(lectureEvaluation: LectureEvaluation, userId: String): Long
+    fun deleteByLectureEvaluationAndUserId(
+        lectureEvaluation: LectureEvaluation,
+        userId: String,
+    ): Long
 
     @Modifying
     @Query("delete from EvaluationLike el where el.lectureEvaluation in :lectureEvaluation")

@@ -6,6 +6,13 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface SnuttSemesterLectureRepository : MongoRepository<SnuttSemesterLecture, String> {
-    fun existsByYearAndSemester(year: Int, semester: Int): Boolean
-    fun findMongoSemesterLecturesByYearAndSemester(year: Int, semester: Int): List<SnuttSemesterLecture>
+    fun existsByYearAndSemester(
+        year: Int,
+        semester: Int,
+    ): Boolean
+
+    fun findMongoSemesterLecturesByYearAndSemester(
+        year: Int,
+        semester: Int,
+    ): List<SnuttSemesterLecture>
 }

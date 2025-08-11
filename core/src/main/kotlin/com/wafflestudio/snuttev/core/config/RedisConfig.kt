@@ -20,11 +20,15 @@ class RedisConfig(
 ) {
     @Bean
     fun cacheManager(connectionFactory: RedisConnectionFactory): CacheManager {
-        val redisCacheConfiguration = RedisCacheConfiguration
-            .defaultCacheConfig().entryTtl(redisTtl)
-            .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(StringRedisSerializer()))
-            .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(GenericJackson2JsonRedisSerializer()))
-        return RedisCacheManager.RedisCacheManagerBuilder.fromConnectionFactory(connectionFactory)
-            .cacheDefaults(redisCacheConfiguration).build()
+        val redisCacheConfiguration =
+            RedisCacheConfiguration
+                .defaultCacheConfig()
+                .entryTtl(redisTtl)
+                .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(StringRedisSerializer()))
+                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(GenericJackson2JsonRedisSerializer()))
+        return RedisCacheManager.RedisCacheManagerBuilder
+            .fromConnectionFactory(connectionFactory)
+            .cacheDefaults(redisCacheConfiguration)
+            .build()
     }
 }

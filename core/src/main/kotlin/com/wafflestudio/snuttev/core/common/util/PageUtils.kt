@@ -12,21 +12,23 @@ class PageUtils {
     companion object {
         private const val SECRET_KEY = "cc42f94d-f47d-40cf-9968-87c5337f"
 
-        fun generateCursor(cursor: Any?): String? = cursor?.let {
-            val json = jacksonObjectMapper().writeValueAsString(it)
-            val encrypted = getCipher(Cipher.ENCRYPT_MODE).doFinal(json.toByteArray())
-            return Base64.getUrlEncoder().encodeToString(encrypted)
-        }
-
-        inline fun <reified T> getCursor(cursorString: String?): T? = cursorString?.let {
-            return try {
-                val base64Decoded = Base64.getUrlDecoder().decode(cursorString)
-                val decrypted = getCipher(Cipher.DECRYPT_MODE).doFinal(base64Decoded)
-                return jacksonObjectMapper().readValue<T>(decrypted)
-            } catch (e: Exception) {
-                null
+        fun generateCursor(cursor: Any?): String? =
+            cursor?.let {
+                val json = jacksonObjectMapper().writeValueAsString(it)
+                val encrypted = getCipher(Cipher.ENCRYPT_MODE).doFinal(json.toByteArray())
+                return Base64.getUrlEncoder().encodeToString(encrypted)
             }
-        }
+
+        inline fun <reified T> getCursor(cursorString: String?): T? =
+            cursorString?.let {
+                return try {
+                    val base64Decoded = Base64.getUrlDecoder().decode(cursorString)
+                    val decrypted = getCipher(Cipher.DECRYPT_MODE).doFinal(base64Decoded)
+                    return jacksonObjectMapper().readValue<T>(decrypted)
+                } catch (e: Exception) {
+                    null
+                }
+            }
 
         fun getCipher(mode: Int): Cipher {
             val cipher = Cipher.getInstance("AES/ECB/PKCS5PADDING")

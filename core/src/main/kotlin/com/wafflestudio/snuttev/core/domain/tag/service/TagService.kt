@@ -18,34 +18,33 @@ class TagService internal constructor(
     private val cache: Cache,
 ) {
     @Transactional(readOnly = true)
-    fun getMainTags(): TagGroupDto {
-        return cache.withCache(CacheKey.MAIN_TAGS.build()) {
+    fun getMainTags(): TagGroupDto =
+        cache.withCache(CacheKey.MAIN_TAGS.build()) {
             val tagGroup = tagGroupRepository.findByName(name = "main") ?: throw TagGroupNotFoundException
             genTagGroupDto(tagGroup)
         }!!
-    }
 
     @Transactional(readOnly = true)
     fun getSearchTags(): SearchTagResponse {
-        val tagGroupDtos = cache.withCache(CacheKey.SEARCH_TAGS.build()) {
-            val tagGroups = tagGroupRepository.findAllByNameNot(name = "main")
-            tagGroups.map { genTagGroupDto(it) }
-        } ?: emptyList()
+        val tagGroupDtos =
+            cache.withCache(CacheKey.SEARCH_TAGS.build()) {
+                val tagGroups = tagGroupRepository.findAllByNameNot(name = "main")
+                tagGroups.map { genTagGroupDto(it) }
+            } ?: emptyList()
 
         return SearchTagResponse(
             tagGroups = tagGroupDtos,
         )
     }
 
-    private fun genTagGroupDto(tagGroup: TagGroup): TagGroupDto {
-        return TagGroupDto(
+    private fun genTagGroupDto(tagGroup: TagGroup): TagGroupDto =
+        TagGroupDto(
             id = tagGroup.id!!,
             name = tagGroup.name,
             ordering = tagGroup.ordering,
             color = tagGroup.color,
             tags = tagGroup.tags.map { genTagDto(it) },
         )
-    }
 
     private fun genTagDto(tag: Tag): TagDto =
         TagDto(

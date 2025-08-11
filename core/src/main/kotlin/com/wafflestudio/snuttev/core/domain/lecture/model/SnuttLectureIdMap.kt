@@ -11,7 +11,6 @@ import jakarta.persistence.ManyToOne
 class SnuttLectureIdMap(
     @Column(name = "snutt_id", columnDefinition = "char(24)")
     var snuttId: String,
-
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "semester_lecture_id", nullable = false, unique = true)
     var semesterLecture: SemesterLecture,

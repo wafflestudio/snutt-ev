@@ -34,7 +34,11 @@ class EvaluationController(
     @Operation(
         responses = [
             ApiResponse(responseCode = "200"),
-            ApiResponse(responseCode = "409", description = "29001 EVALUATION_ALREADY_EXISTS", content = [Content(schema = Schema(implementation = ErrorResponse::class))]),
+            ApiResponse(
+                responseCode = "409",
+                description = "29001 EVALUATION_ALREADY_EXISTS",
+                content = [Content(schema = Schema(implementation = ErrorResponse::class))],
+            ),
         ],
     )
     @PostMapping("/v1/semester-lectures/{id}/evaluations")
@@ -43,16 +47,12 @@ class EvaluationController(
         @RequestBody @Valid
         createEvaluationRequest: CreateEvaluationRequest,
         @RequestAttribute(value = "UserId") userId: String,
-    ): LectureEvaluationDto {
-        return evaluationService.createEvaluation(userId, semesterLectureId, createEvaluationRequest)
-    }
+    ): LectureEvaluationDto = evaluationService.createEvaluation(userId, semesterLectureId, createEvaluationRequest)
 
     @GetMapping("/v1/lectures/{id}/evaluation-summary")
     fun getLectureEvaluationSummary(
         @PathVariable(value = "id") lectureId: Long,
-    ): LectureEvaluationSummaryResponse {
-        return evaluationService.getEvaluationSummaryOfLecture(lectureId)
-    }
+    ): LectureEvaluationSummaryResponse = evaluationService.getEvaluationSummaryOfLecture(lectureId)
 
     @Operation(description = "해당 강의의 강의평 전체 수를 total_count, 자신의 강의평을 제외한 강의평들을 content로 제공")
     @GetMapping("/v1/lectures/{id}/evaluations")
@@ -60,42 +60,32 @@ class EvaluationController(
         @PathVariable(value = "id") lectureId: Long,
         @RequestParam cursor: String?,
         @RequestAttribute(value = "UserId") userId: String,
-    ): CursorPaginationResponse<EvaluationWithSemesterResponse> {
-        return evaluationService.getEvaluationsOfLecture(userId, lectureId, cursor)
-    }
+    ): CursorPaginationResponse<EvaluationWithSemesterResponse> = evaluationService.getEvaluationsOfLecture(userId, lectureId, cursor)
 
     @GetMapping("/v1/lectures/{id}/evaluations/users/me")
     fun getLectureEvaluationsOfMe(
         @PathVariable(value = "id") lectureId: Long,
         @RequestAttribute(value = "UserId") userId: String,
-    ): EvaluationsResponse {
-        return evaluationService.getMyEvaluationsOfLecture(userId, lectureId)
-    }
+    ): EvaluationsResponse = evaluationService.getMyEvaluationsOfLecture(userId, lectureId)
 
     @GetMapping("/v1/evaluations/users/me")
     fun getEvaluationsOfMe(
         @RequestParam cursor: String?,
         @RequestAttribute(value = "UserId") userId: String,
-    ): CursorPaginationResponse<EvaluationWithLectureResponse> {
-        return evaluationService.getMyEvaluations(userId, cursor)
-    }
+    ): CursorPaginationResponse<EvaluationWithLectureResponse> = evaluationService.getMyEvaluations(userId, cursor)
 
     @GetMapping("/v1/tags/main/{id}/evaluations")
     fun getMainTagEvaluations(
         @PathVariable(value = "id") tagId: Long,
         @RequestParam cursor: String?,
         @RequestAttribute(value = "UserId") userId: String,
-    ): CursorPaginationResponse<EvaluationWithLectureResponse> {
-        return evaluationService.getMainTagEvaluations(userId, tagId, cursor)
-    }
+    ): CursorPaginationResponse<EvaluationWithLectureResponse> = evaluationService.getMainTagEvaluations(userId, tagId, cursor)
 
     @GetMapping("/v1/evaluations/{id}")
     fun getLectureEvaluation(
         @PathVariable(value = "id") evaluationId: Long,
         @RequestAttribute(value = "UserId") userId: String,
-    ): EvaluationWithSemesterResponse {
-        return evaluationService.getEvaluation(userId, evaluationId)
-    }
+    ): EvaluationWithSemesterResponse = evaluationService.getEvaluation(userId, evaluationId)
 
     @PatchMapping("/v1/evaluations/{id}")
     fun updateLectureEvaluation(
@@ -103,22 +93,22 @@ class EvaluationController(
         @RequestBody @Valid
         updateEvaluationRequest: UpdateEvaluationRequest,
         @RequestAttribute(value = "UserId") userId: String,
-    ): EvaluationWithSemesterResponse {
-        return evaluationService.updateEvaluation(userId, evaluationId, updateEvaluationRequest)
-    }
+    ): EvaluationWithSemesterResponse = evaluationService.updateEvaluation(userId, evaluationId, updateEvaluationRequest)
 
     @DeleteMapping("/v1/evaluations/{id}")
     fun deleteLectureEvaluation(
         @PathVariable(value = "id") evaluationId: Long,
         @RequestAttribute(value = "UserId") userId: String,
-    ) {
-        return evaluationService.deleteEvaluation(userId, evaluationId)
-    }
+    ) = evaluationService.deleteEvaluation(userId, evaluationId)
 
     @Operation(
         responses = [
             ApiResponse(responseCode = "200"),
-            ApiResponse(responseCode = "409", description = "29003 EVALUATION_REPORT_ALREADY_EXISTS", content = [Content(schema = Schema(implementation = ErrorResponse::class))]),
+            ApiResponse(
+                responseCode = "409",
+                description = "29003 EVALUATION_REPORT_ALREADY_EXISTS",
+                content = [Content(schema = Schema(implementation = ErrorResponse::class))],
+            ),
         ],
     )
     @PostMapping("/v1/evaluations/{id}/report")
@@ -127,23 +117,17 @@ class EvaluationController(
         @RequestBody @Valid
         createEvaluationReportRequest: CreateEvaluationReportRequest,
         @RequestAttribute(value = "UserId") userId: String,
-    ): EvaluationReportDto {
-        return evaluationService.reportEvaluation(userId, evaluationId, createEvaluationReportRequest)
-    }
+    ): EvaluationReportDto = evaluationService.reportEvaluation(userId, evaluationId, createEvaluationReportRequest)
 
     @PostMapping("/v1/evaluations/{id}/likes")
     fun likeEvaluation(
         @PathVariable(value = "id") evaluationId: Long,
         @RequestAttribute(value = "UserId") userId: String,
-    ) {
-        return evaluationService.likeEvaluation(userId, evaluationId)
-    }
+    ) = evaluationService.likeEvaluation(userId, evaluationId)
 
     @DeleteMapping("/v1/evaluations/{id}/likes")
     fun cancelLikeEvaluation(
         @PathVariable(value = "id") evaluationId: Long,
         @RequestAttribute(value = "UserId") userId: String,
-    ) {
-        return evaluationService.cancelLikeEvaluation(userId, evaluationId)
-    }
+    ) = evaluationService.cancelLikeEvaluation(userId, evaluationId)
 }

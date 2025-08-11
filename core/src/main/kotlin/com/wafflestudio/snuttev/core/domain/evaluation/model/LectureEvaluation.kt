@@ -22,49 +22,36 @@ class LectureEvaluation(
     @JoinColumn(name = "semester_lecture_id", nullable = false)
     @OptimisticLock(excluded = true)
     var semesterLecture: SemesterLecture,
-
     @Column(name = "user_id", nullable = false)
     val userId: String,
-
     @Column(columnDefinition = "longtext", nullable = false)
     @OptimisticLock(excluded = true)
     var content: String,
-
     @Column(name = "grade_satisfaction", nullable = true)
     @OptimisticLock(excluded = true)
     var gradeSatisfaction: Double?,
-
     @Column(name = "teaching_skill", nullable = true)
     @OptimisticLock(excluded = true)
     var teachingSkill: Double?,
-
     @Column(nullable = true)
     @OptimisticLock(excluded = true)
     var gains: Double?,
-
     @Column(name = "life_balance", nullable = true)
     @OptimisticLock(excluded = true)
     var lifeBalance: Double?,
-
     @Column(nullable = false)
     @OptimisticLock(excluded = true)
     var rating: Double,
-
     @Column(name = "like_count", nullable = false)
     var likeCount: Long = 0,
-
     @Column(name = "is_hidden", nullable = false)
     @OptimisticLock(excluded = true)
     var isHidden: Boolean = false,
-
     @Column(name = "is_reported", nullable = false)
     val isReported: Boolean = false,
-
     @Column(name = "from_snuev", nullable = false)
     val fromSnuev: Boolean = false,
-
     createdAt: LocalDateTime = LocalDateTime.now(),
-
     @OneToMany(mappedBy = "lectureEvaluation")
     val evaluationLikes: List<EvaluationLike> = listOf(),
 ) : BaseEntity(createdAt = createdAt)

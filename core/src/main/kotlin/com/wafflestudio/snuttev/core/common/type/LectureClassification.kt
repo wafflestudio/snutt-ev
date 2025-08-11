@@ -2,7 +2,9 @@ package com.wafflestudio.snuttev.core.common.type
 
 import com.fasterxml.jackson.annotation.JsonValue
 
-enum class LectureClassification(@get:JsonValue val value: String) {
+enum class LectureClassification(
+    @get:JsonValue val value: String,
+) {
     LIBERAL_EDUCATION("교양"),
     ELECTIVE_SUBJECT("전선"),
     REQUISITE_SUBJECT("전필"),

@@ -5,18 +5,24 @@ import com.wafflestudio.snuttev.core.domain.lecture.model.SemesterLecture
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 
-interface LectureEvaluationRepository : JpaRepository<LectureEvaluation, Long>, LectureEvaluationRepositoryCustom {
-
+interface LectureEvaluationRepository :
+    JpaRepository<LectureEvaluation, Long>,
+    LectureEvaluationRepositoryCustom {
     fun findByIdAndIsHiddenFalse(id: Long): LectureEvaluation?
 
-    fun existsBySemesterLectureAndUserIdAndIsHiddenFalse(semesterLecture: SemesterLecture, userId: String): Boolean
+    fun existsBySemesterLectureAndUserIdAndIsHiddenFalse(
+        semesterLecture: SemesterLecture,
+        userId: String,
+    ): Boolean
 
     fun findBySemesterLectureIdInAndUserIdAndIsHiddenFalse(
         semesterLectureIds: List<Long>,
         userId: String,
     ): List<LectureEvaluation>
 
-    @Query("select count(le.id) from LectureEvaluation le inner join le.semesterLecture sl where sl.lecture.id = :lectureId and le.isHidden = false")
+    @Query(
+        "select count(le.id) from LectureEvaluation le inner join le.semesterLecture sl where sl.lecture.id = :lectureId and le.isHidden = false",
+    )
     fun countByLectureId(lectureId: Long): Long
 
     fun countByUserIdAndIsHiddenFalse(userId: String): Long

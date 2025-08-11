@@ -31,19 +31,16 @@ class LectureController(
     private val lectureService: LectureService,
     private val objectMapper: ObjectMapper,
 ) {
-
     @GetMapping("/v1/lectures")
-    fun getLectures(@ModelAttribute params: SearchLectureRequest): PaginationResponse<LectureDto> {
-        return PaginationResponse(lectureService.search(params))
-    }
+    fun getLectures(
+        @ModelAttribute params: SearchLectureRequest,
+    ): PaginationResponse<LectureDto> = PaginationResponse(lectureService.search(params))
 
     @GetMapping("/v1/lectures/{id}/semester-lectures")
     fun getSemesterLectures(
         @PathVariable(value = "id") lectureId: Long,
         @RequestAttribute(value = "UserId") userId: String,
-    ): LectureAndSemesterLecturesResponse {
-        return lectureService.getSemesterLectures(lectureId, userId)
-    }
+    ): LectureAndSemesterLecturesResponse = lectureService.getSemesterLectures(lectureId, userId)
 
     @Operation(
         parameters = [
@@ -76,9 +73,7 @@ class LectureController(
     fun getLectureId(
         @RequestParam("course_number") courseNumber: String,
         @RequestParam instructor: String,
-    ): LectureIdResponse {
-        return lectureService.getLectureIdFromCourseNumber(courseNumber, instructor)
-    }
+    ): LectureIdResponse = lectureService.getLectureIdFromCourseNumber(courseNumber, instructor)
 
     @Operation(
         parameters = [
@@ -104,9 +99,7 @@ class LectureController(
     @GetMapping("/v1/lectures/id", params = ["semesterLectureSnuttId"])
     fun getLectureId(
         @RequestParam("semesterLectureSnuttId") semesterLectureSnuttId: String,
-    ): LectureIdResponse {
-        return lectureService.getLectureIdFromSnuttId(semesterLectureSnuttId)
-    }
+    ): LectureIdResponse = lectureService.getLectureIdFromSnuttId(semesterLectureSnuttId)
 
     @Operation(
         parameters = [

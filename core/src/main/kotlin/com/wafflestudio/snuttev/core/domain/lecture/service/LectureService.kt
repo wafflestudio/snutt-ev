@@ -47,9 +47,10 @@ class LectureService(
         snuttLectureInfos: List<SnuttLectureInfo>,
         excludeLecturesWithEvaluations: Boolean,
     ): List<LectureTakenByUserResponse> {
-        val distinctLectures = snuttLectureInfos
-            .filter { !it.courseNumber.isNullOrEmpty() && !it.instructor.isNullOrEmpty() }
-            .associateBy { "${it.courseNumber}${it.instructor}" }
+        val distinctLectures =
+            snuttLectureInfos
+                .filter { !it.courseNumber.isNullOrEmpty() && !it.instructor.isNullOrEmpty() }
+                .associateBy { "${it.courseNumber}${it.instructor}" }
         val lectureKeys = distinctLectures.keys
         var snuttevLectures = lectureRepository.findAllByLectureKeys(lectureKeys)
 
@@ -81,19 +82,22 @@ class LectureService(
         userId: String,
     ): LectureAndSemesterLecturesResponse {
         val semesterLecturesWithLecture =
-            semesterLectureRepository.findAllByLectureIdOrderByYearDescSemesterDesc(lectureId)
+            semesterLectureRepository
+                .findAllByLectureIdOrderByYearDescSemesterDesc(lectureId)
                 .ifEmpty { throw LectureNotFoundException }
 
         val firstSemesterLectureWithLecture = semesterLecturesWithLecture.first()
-        val visibleSemesterLecturesWithLecture = semesterLecturesWithLecture.let { semesterLectures ->
-            val (year, nextSemester) = semesterUtils.getYearAndSemesterOfNextSemester()
-            semesterLectures.filterNot { it.year == year && it.semester == nextSemester.value }
-        }
+        val visibleSemesterLecturesWithLecture =
+            semesterLecturesWithLecture.let { semesterLectures ->
+                val (year, nextSemester) = semesterUtils.getYearAndSemesterOfNextSemester()
+                semesterLectures.filterNot { it.year == year && it.semester == nextSemester.value }
+            }
 
-        val evaluations = lectureEvaluationRepository.findBySemesterLectureIdInAndUserIdAndIsHiddenFalse(
-            visibleSemesterLecturesWithLecture.map { it.id!! },
-            userId,
-        )
+        val evaluations =
+            lectureEvaluationRepository.findBySemesterLectureIdInAndUserIdAndIsHiddenFalse(
+                visibleSemesterLecturesWithLecture.map { it.id!! },
+                userId,
+            )
 
         return LectureAndSemesterLecturesResponse(
             id = firstSemesterLectureWithLecture.lectureId,
@@ -105,18 +109,23 @@ class LectureService(
             academicYear = firstSemesterLectureWithLecture.academicYear,
             category = firstSemesterLectureWithLecture.category,
             classification = firstSemesterLectureWithLecture.classification,
-            semesterLectures = visibleSemesterLecturesWithLecture.map { semesterLecture ->
-                genSemesterLectureDto(
-                    semesterLecture,
-                    evaluations.any { it.semesterLecture.id == semesterLecture.id },
-                )
-            },
+            semesterLectures =
+                visibleSemesterLecturesWithLecture.map { semesterLecture ->
+                    genSemesterLectureDto(
+                        semesterLecture,
+                        evaluations.any { it.semesterLecture.id == semesterLecture.id },
+                    )
+                },
         )
     }
 
-    fun getLectureIdFromCourseNumber(courseNumber: String, instructor: String): LectureIdResponse {
-        val lecture = lectureRepository.findByCourseNumberAndInstructor(courseNumber, instructor)
-            ?: throw LectureNotFoundException
+    fun getLectureIdFromCourseNumber(
+        courseNumber: String,
+        instructor: String,
+    ): LectureIdResponse {
+        val lecture =
+            lectureRepository.findByCourseNumberAndInstructor(courseNumber, instructor)
+                ?: throw LectureNotFoundException
         return LectureIdResponse(lecture.id!!)
     }
 
@@ -147,17 +156,19 @@ class LectureService(
 
     private fun mappingTagsToLectureProperty(request: SearchLectureRequest): SearchQueryDto {
         val tags = tagRepository.getTagsWithTagGroupByTagsIdIsIn(request.tags)
-        val tagMap: Map<String, List<Any>> = tags.groupBy({ it.tagGroup.name }, {
-            when (it.tagGroup.valueType) {
-                TagValueType.INT -> it.intValue!!
-                TagValueType.STRING -> it.stringValue!!
-                TagValueType.LOGIC -> ""
-            }
-        },)
-        val yearSemesters = tagMap["학기"]?.filterIsInstance<String>()?.map {
-            val (year, semester) = it.split(",")
-            year.toInt() to semester.toInt()
-        } ?: listOf()
+        val tagMap: Map<String, List<Any>> =
+            tags.groupBy({ it.tagGroup.name }, {
+                when (it.tagGroup.valueType) {
+                    TagValueType.INT -> it.intValue!!
+                    TagValueType.STRING -> it.stringValue!!
+                    TagValueType.LOGIC -> ""
+                }
+            })
+        val yearSemesters =
+            tagMap["학기"]?.filterIsInstance<String>()?.map {
+                val (year, semester) = it.split(",")
+                year.toInt() to semester.toInt()
+            } ?: listOf()
         return SearchQueryDto(
             query = request.query,
             classification = tagMap["구분"]?.filterIsInstance<String>(),

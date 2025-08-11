@@ -11,12 +11,8 @@ class TagController(
     private val tagService: TagService,
 ) {
     @GetMapping("/v1/tags/main")
-    fun getMainTags(): TagGroupDto {
-        return tagService.getMainTags()
-    }
+    fun getMainTags(): TagGroupDto = tagService.getMainTags()
 
     @GetMapping("v1/tags/search")
-    fun getSearchTags(): SearchTagResponse {
-        return tagService.getSearchTags()
-    }
+    fun getSearchTags(): SearchTagResponse = tagService.getSearchTags()
 }
