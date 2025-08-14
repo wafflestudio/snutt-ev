@@ -1,4 +1,9 @@
-spring.profiles.default: local
+spring:
+  profiles:
+    default: local
+  threads:
+    virtual:
+      enabled: true
 ---
 
 spring:
