@@ -35,14 +35,10 @@ class ErrorHandler {
         e: Exception,
         request: HttpServletRequest,
         response: HttpServletResponse,
-    ): ResponseEntity<Any> {
-        return ResponseEntity(HttpStatus.BAD_REQUEST)
-    }
+    ): ResponseEntity<Any> = ResponseEntity(HttpStatus.BAD_REQUEST)
 
     @ExceptionHandler(ClientAbortException::class, AsyncRequestNotUsableException::class)
-    fun handleClientAbortException(e: Exception): ResponseEntity<Void> {
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
-    }
+    fun handleClientAbortException(e: Exception): ResponseEntity<Void> = ResponseEntity.status(HttpStatus.NO_CONTENT).build()
 
     @ExceptionHandler(
         ObjectOptimisticLockingFailureException::class,
@@ -51,15 +47,12 @@ class ErrorHandler {
         e: Exception,
         request: HttpServletRequest,
         response: HttpServletResponse,
-    ): ResponseEntity<Any> {
-        return ResponseEntity(HttpStatus.CONFLICT)
-    }
+    ): ResponseEntity<Any> = ResponseEntity(HttpStatus.CONFLICT)
 
     @ExceptionHandler(SnuttException::class)
-    fun handlerSnuttException(e: SnuttException): ResponseEntity<ErrorResponse> {
-        return ResponseEntity(
+    fun handlerSnuttException(e: SnuttException): ResponseEntity<ErrorResponse> =
+        ResponseEntity(
             ErrorResponse(ErrorInfo(e.errorType.code, e.errorType.name)),
             e.errorType.httpStatus,
         )
-    }
 }

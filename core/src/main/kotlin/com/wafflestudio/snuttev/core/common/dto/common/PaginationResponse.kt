@@ -18,7 +18,7 @@ data class PaginationResponse<T>(
     )
 }
 
-data class CursorPaginationResponse<T> (
+data class CursorPaginationResponse<T>(
     val content: List<T>,
     val cursor: String?,
     val size: Int,

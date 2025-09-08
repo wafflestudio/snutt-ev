@@ -35,24 +35,21 @@ class SnuttRatingSyncJobConfig(
     }
 
     @Bean
-    fun ratingSyncJob(jobRepository: JobRepository): Job {
-        return JobBuilder(RATING_SYNC_JOB_NAME, jobRepository)
+    fun ratingSyncJob(jobRepository: JobRepository): Job =
+        JobBuilder(RATING_SYNC_JOB_NAME, jobRepository)
             .start(customReaderStep(jobRepository))
             .build()
-    }
 
-    private fun customReaderStep(jobRepository: JobRepository): Step {
-        return StepBuilder(CUSTOM_READER_JOB_STEP, jobRepository)
+    private fun customReaderStep(jobRepository: JobRepository): Step =
+        StepBuilder(CUSTOM_READER_JOB_STEP, jobRepository)
             .chunk<SnuttLectureIdMap, SnuttLectureIdMap>(
                 CHUNK_SIZE,
                 JpaTransactionManager().apply {
                     this.entityManagerFactory = this@SnuttRatingSyncJobConfig.entityManagerFactory
                 },
-            )
-            .reader(reader())
+            ).reader(reader())
             .writer(writer())
             .build()
-    }
 
     private fun reader(): JpaPagingItemReader<SnuttLectureIdMap> =
         JpaPagingItemReaderBuilder<SnuttLectureIdMap>()
@@ -62,24 +59,24 @@ class SnuttRatingSyncJobConfig(
             .pageSize(CHUNK_SIZE)
             .build()
 
-    private fun writer(): ItemWriter<SnuttLectureIdMap> {
-        return ItemWriter { items ->
+    private fun writer(): ItemWriter<SnuttLectureIdMap> =
+        ItemWriter { items ->
             val lectureIdtoLectureRatingMap =
-                lectureRepository.findAllRatingsByLectureIds(
-                    items.mapNotNull { it.semesterLecture.lecture.id },
-                )
-                    .associateBy { it.id }
+                lectureRepository
+                    .findAllRatingsByLectureIds(
+                        items.mapNotNull { it.semesterLecture.lecture.id },
+                    ).associateBy { it.id }
             val bulkOps = mongoTemplate.bulkOps(BulkOperations.BulkMode.UNORDERED, "lectures")
             items.forEach {
                 val evInfo = lectureIdtoLectureRatingMap[it.semesterLecture.lecture.id]
                 bulkOps.updateOne(
                     Query(Criteria.where("_id").`is`(it.snuttId)),
-                    Update().set("evInfo.evId", evInfo?.id)
+                    Update()
+                        .set("evInfo.evId", evInfo?.id)
                         .set("evInfo.avgRating", evInfo?.avgRating)
                         .set("evInfo.count", evInfo?.count),
                 )
             }
             bulkOps.execute()
         }
-    }
 }

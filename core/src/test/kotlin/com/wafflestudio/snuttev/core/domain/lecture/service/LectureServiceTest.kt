@@ -24,7 +24,6 @@ class LectureServiceTest(
     @Autowired private val lectureRepository: LectureRepository,
     @Autowired private val semesterLectureRepository: SemesterLectureRepository,
 ) {
-
     @BeforeEach
     fun setUp() {
         saveLectures()
@@ -36,11 +35,12 @@ class LectureServiceTest(
         val semesterLectures = semesterLectureRepository.findAll().filter { it.semester == Semester.SPRING.value }
         val snuttLectureInfo = genSnuttLectureInfosFromSemesterLectures(semesterLectures)
 
-        val response = lectureService.getSnuttevLecturesWithSnuttLectureInfos(
-            userId = userId,
-            snuttLectureInfos = snuttLectureInfo,
-            excludeLecturesWithEvaluations = false,
-        )
+        val response =
+            lectureService.getSnuttevLecturesWithSnuttLectureInfos(
+                userId = userId,
+                snuttLectureInfos = snuttLectureInfo,
+                excludeLecturesWithEvaluations = false,
+            )
 
         assertThat(response.size).isEqualTo(semesterLectures.size)
     }
@@ -55,11 +55,12 @@ class LectureServiceTest(
             saveEvaluation(it, userId)
         }
 
-        val response = lectureService.getSnuttevLecturesWithSnuttLectureInfos(
-            userId = userId,
-            snuttLectureInfos = snuttLectureInfo,
-            excludeLecturesWithEvaluations = false,
-        )
+        val response =
+            lectureService.getSnuttevLecturesWithSnuttLectureInfos(
+                userId = userId,
+                snuttLectureInfos = snuttLectureInfo,
+                excludeLecturesWithEvaluations = false,
+            )
 
         assertThat(response.size).isEqualTo(semesterLectures.size)
     }
@@ -70,11 +71,12 @@ class LectureServiceTest(
         val semesterLectures = semesterLectureRepository.findAll().filter { it.semester == Semester.SPRING.value }
         val snuttLectureInfo = genSnuttLectureInfosFromSemesterLectures(semesterLectures)
 
-        val response = lectureService.getSnuttevLecturesWithSnuttLectureInfos(
-            userId = userId,
-            snuttLectureInfos = snuttLectureInfo,
-            excludeLecturesWithEvaluations = true,
-        )
+        val response =
+            lectureService.getSnuttevLecturesWithSnuttLectureInfos(
+                userId = userId,
+                snuttLectureInfos = snuttLectureInfo,
+                excludeLecturesWithEvaluations = true,
+            )
 
         assertThat(response.size).isEqualTo(semesterLectures.size)
     }
@@ -88,11 +90,12 @@ class LectureServiceTest(
         val userIds = listOf(userId, "user2")
         saveEvaluationsFromMultipleUsers(semesterLecture = semesterLectures.first(), userIds)
 
-        val response = lectureService.getSnuttevLecturesWithSnuttLectureInfos(
-            userId = userId,
-            snuttLectureInfos = snuttLectureInfo,
-            excludeLecturesWithEvaluations = true,
-        )
+        val response =
+            lectureService.getSnuttevLecturesWithSnuttLectureInfos(
+                userId = userId,
+                snuttLectureInfos = snuttLectureInfo,
+                excludeLecturesWithEvaluations = true,
+            )
 
         assertThat(response.size).isEqualTo(1)
     }
@@ -106,40 +109,42 @@ class LectureServiceTest(
         val userIds = listOf(userId, "user2")
         saveEvaluationsForMultipleLecturesFromMultipleUsers(semesterLectures, userIds)
 
-        val response = lectureService.getSnuttevLecturesWithSnuttLectureInfos(
-            userId = userId,
-            snuttLectureInfos = snuttLectureInfo,
-            excludeLecturesWithEvaluations = true,
-        )
+        val response =
+            lectureService.getSnuttevLecturesWithSnuttLectureInfos(
+                userId = userId,
+                snuttLectureInfos = snuttLectureInfo,
+                excludeLecturesWithEvaluations = true,
+            )
 
         assertThat(response.size).isEqualTo(0)
     }
 
     private fun saveLectures() {
-        val lectures = lectureRepository.saveAll(
-            listOf(
-                Lecture(
-                    title = "소프트웨어 개발의 원리와 실습",
-                    instructor = "전병곤",
-                    department = "컴퓨터공학부",
-                    courseNumber = "M1522.002400",
-                    credit = 4,
-                    academicYear = "3학년",
-                    category = "",
-                    classification = LectureClassification.ELECTIVE_SUBJECT,
+        val lectures =
+            lectureRepository.saveAll(
+                listOf(
+                    Lecture(
+                        title = "소프트웨어 개발의 원리와 실습",
+                        instructor = "전병곤",
+                        department = "컴퓨터공학부",
+                        courseNumber = "M1522.002400",
+                        credit = 4,
+                        academicYear = "3학년",
+                        category = "",
+                        classification = LectureClassification.ELECTIVE_SUBJECT,
+                    ),
+                    Lecture(
+                        title = "소프트웨어 개발의 원리와 실습",
+                        instructor = "허충길",
+                        department = "컴퓨터공학부",
+                        courseNumber = "M1522.002401",
+                        credit = 4,
+                        academicYear = "3학년",
+                        category = "",
+                        classification = LectureClassification.ELECTIVE_SUBJECT,
+                    ),
                 ),
-                Lecture(
-                    title = "소프트웨어 개발의 원리와 실습",
-                    instructor = "허충길",
-                    department = "컴퓨터공학부",
-                    courseNumber = "M1522.002401",
-                    credit = 4,
-                    academicYear = "3학년",
-                    category = "",
-                    classification = LectureClassification.ELECTIVE_SUBJECT,
-                ),
-            ),
-        )
+            )
 
         lectures.forEach { lecture ->
             listOf(Semester.SPRING.value, Semester.AUTUMN.value).forEach { semester ->
@@ -158,8 +163,8 @@ class LectureServiceTest(
         }
     }
 
-    private fun genSnuttLectureInfosFromSemesterLectures(semesterLectures: List<SemesterLecture>): List<SnuttLectureInfo> {
-        return semesterLectures
+    private fun genSnuttLectureInfosFromSemesterLectures(semesterLectures: List<SemesterLecture>): List<SnuttLectureInfo> =
+        semesterLectures
             .map {
                 SnuttLectureInfo(
                     year = it.year,
@@ -168,21 +173,29 @@ class LectureServiceTest(
                     courseNumber = it.lecture.courseNumber,
                 )
             }
-    }
 
-    private fun saveEvaluationsForMultipleLecturesFromMultipleUsers(semesterLectures: List<SemesterLecture>, userIds: List<String>) {
+    private fun saveEvaluationsForMultipleLecturesFromMultipleUsers(
+        semesterLectures: List<SemesterLecture>,
+        userIds: List<String>,
+    ) {
         semesterLectures.forEach {
             saveEvaluationsFromMultipleUsers(it, userIds)
         }
     }
 
-    private fun saveEvaluationsFromMultipleUsers(semesterLecture: SemesterLecture, userIds: List<String>) {
+    private fun saveEvaluationsFromMultipleUsers(
+        semesterLecture: SemesterLecture,
+        userIds: List<String>,
+    ) {
         userIds.forEach {
             saveEvaluation(semesterLecture, it)
         }
     }
 
-    private fun saveEvaluation(semesterLecture: SemesterLecture, userId: String) {
+    private fun saveEvaluation(
+        semesterLecture: SemesterLecture,
+        userId: String,
+    ) {
         evaluationRepository.save(
             LectureEvaluation(
                 semesterLecture = semesterLecture,

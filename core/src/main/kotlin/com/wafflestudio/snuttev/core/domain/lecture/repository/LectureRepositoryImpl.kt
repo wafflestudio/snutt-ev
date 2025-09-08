@@ -19,118 +19,146 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
 
-class LectureRepositoryImpl(private val queryFactory: JPAQueryFactory) : LectureRepositoryCustom {
-    override fun searchLectures(request: SearchQueryDto, pageable: Pageable): Page<LectureDto> {
-        val predicates = arrayOf(
-            lecture.credit.isIn(request.credit),
-            lecture.academicYear.isIn(request.academicYear),
-            lecture.classification.isIn(request.classification),
-            lecture.department.isIn(request.department),
-            lecture.category.isIn(request.category),
-            extractCriteriaFromQuery(request.query),
-        )
+class LectureRepositoryImpl(
+    private val queryFactory: JPAQueryFactory,
+) : LectureRepositoryCustom {
+    override fun searchLectures(
+        request: SearchQueryDto,
+        pageable: Pageable,
+    ): Page<LectureDto> {
+        val predicates =
+            arrayOf(
+                lecture.credit.isIn(request.credit),
+                lecture.academicYear.isIn(request.academicYear),
+                lecture.classification.isIn(request.classification),
+                lecture.department.isIn(request.department),
+                lecture.category.isIn(request.category),
+                extractCriteriaFromQuery(request.query),
+            )
 
-        val queryResult = queryFactory.select(
-            Projections.constructor(
-                LectureDto::class.java,
-                lecture.id,
-                lecture.title,
-                lecture.instructor,
-                lecture.department,
-                lecture.courseNumber,
-                lecture.credit,
-                lecture.academicYear,
-                lecture.category,
-                lecture.classification,
-                Projections.constructor(
-                    LectureEvaluationSimpleSummary::class.java,
-                    lectureEvaluation.rating.avg(),
-                ),
-            ),
-        ).from(lecture)
-            .leftJoin(lecture.semesterLectures, semesterLecture)
-            .leftJoin(semesterLecture.evaluations, lectureEvaluation)
-            .groupBy(lecture)
-            .where(*predicates, lectureEvaluation.isNull.or(lectureEvaluation.isHidden.eq(false)))
-            .offset(pageable.offset).limit(pageable.pageSize.toLong()).fetch()
+        val queryResult =
+            queryFactory
+                .select(
+                    Projections.constructor(
+                        LectureDto::class.java,
+                        lecture.id,
+                        lecture.title,
+                        lecture.instructor,
+                        lecture.department,
+                        lecture.courseNumber,
+                        lecture.credit,
+                        lecture.academicYear,
+                        lecture.category,
+                        lecture.classification,
+                        Projections.constructor(
+                            LectureEvaluationSimpleSummary::class.java,
+                            lectureEvaluation.rating.avg(),
+                        ),
+                    ),
+                ).from(lecture)
+                .leftJoin(lecture.semesterLectures, semesterLecture)
+                .leftJoin(semesterLecture.evaluations, lectureEvaluation)
+                .groupBy(lecture)
+                .where(*predicates, lectureEvaluation.isNull.or(lectureEvaluation.isHidden.eq(false)))
+                .offset(pageable.offset)
+                .limit(pageable.pageSize.toLong())
+                .fetch()
 
-        val total = queryFactory.select(
-            lecture.count(),
-        ).from(lecture)
-            .where(*predicates)
-            .fetchOne()!!
-
-        return PageImpl(queryResult, pageable, total)
-    }
-
-    override fun searchSemesterLectures(request: SearchQueryDto, pageable: Pageable): Page<LectureDto> {
-        val predicates = arrayOf(
-            request.yearSemesters.map { (year, semester) ->
-                semesterLecture.year.eq(year).and(semesterLecture.semester.eq(semester))
-            }.reduce { acc, next -> acc.or(next) },
-            semesterLecture.credit.isIn(request.credit),
-            semesterLecture.academicYear.isIn(request.academicYear),
-            semesterLecture.classification.isIn(request.classification),
-            semesterLecture.lecture.department.isIn(request.department),
-            semesterLecture.category.isIn(request.category),
-            extractCriteriaFromQuery(request.query),
-        )
-
-        val lectureSubQuery = queryFactory.selectFrom(lecture)
-            .innerJoin(lecture.semesterLectures, semesterLecture)
-            .where(*predicates)
-            .offset(pageable.offset).limit(pageable.pageSize.toLong()).fetch()
-
-        val queryResult = queryFactory.select(
-            Projections.constructor(
-                LectureDto::class.java,
-                lecture.id,
-                lecture.title,
-                lecture.instructor,
-                lecture.department,
-                lecture.courseNumber,
-                lecture.credit,
-                lecture.academicYear,
-                lecture.category,
-                lecture.classification,
-                Projections.constructor(
-                    LectureEvaluationSimpleSummary::class.java,
-                    lectureEvaluation.rating.avg(),
-                ),
-            ),
-        ).from(lecture)
-            .innerJoin(lecture.semesterLectures, semesterLecture)
-            .leftJoin(semesterLecture.evaluations, lectureEvaluation)
-            .where(lecture.id.`in`(lectureSubQuery.map { it.id }), lectureEvaluation.isNull.or(lectureEvaluation.isHidden.eq(false)))
-            .groupBy(lecture)
-            .fetch()
-
-        val total = queryFactory.select(
-            semesterLecture.count(),
-        ).from(semesterLecture)
-            .innerJoin(semesterLecture.lecture, lecture)
-            .where(*predicates)
-            .fetchOne()!!
+        val total =
+            queryFactory
+                .select(
+                    lecture.count(),
+                ).from(lecture)
+                .where(*predicates)
+                .fetchOne()!!
 
         return PageImpl(queryResult, pageable, total)
     }
 
-    private fun StringPath.isIn(tags: List<String>?): BooleanExpression? {
-        return if (!tags.isNullOrEmpty()) this.`in`(tags) else null
+    override fun searchSemesterLectures(
+        request: SearchQueryDto,
+        pageable: Pageable,
+    ): Page<LectureDto> {
+        val predicates =
+            arrayOf(
+                request.yearSemesters
+                    .map { (year, semester) ->
+                        semesterLecture.year.eq(year).and(semesterLecture.semester.eq(semester))
+                    }.reduce { acc, next -> acc.or(next) },
+                semesterLecture.credit.isIn(request.credit),
+                semesterLecture.academicYear.isIn(request.academicYear),
+                semesterLecture.classification.isIn(request.classification),
+                semesterLecture.lecture.department.isIn(request.department),
+                semesterLecture.category.isIn(request.category),
+                extractCriteriaFromQuery(request.query),
+            )
+
+        val lectureSubQuery =
+            queryFactory
+                .selectFrom(lecture)
+                .innerJoin(lecture.semesterLectures, semesterLecture)
+                .where(*predicates)
+                .offset(pageable.offset)
+                .limit(pageable.pageSize.toLong())
+                .fetch()
+
+        val queryResult =
+            queryFactory
+                .select(
+                    Projections.constructor(
+                        LectureDto::class.java,
+                        lecture.id,
+                        lecture.title,
+                        lecture.instructor,
+                        lecture.department,
+                        lecture.courseNumber,
+                        lecture.credit,
+                        lecture.academicYear,
+                        lecture.category,
+                        lecture.classification,
+                        Projections.constructor(
+                            LectureEvaluationSimpleSummary::class.java,
+                            lectureEvaluation.rating.avg(),
+                        ),
+                    ),
+                ).from(lecture)
+                .innerJoin(lecture.semesterLectures, semesterLecture)
+                .leftJoin(semesterLecture.evaluations, lectureEvaluation)
+                .where(lecture.id.`in`(lectureSubQuery.map { it.id }), lectureEvaluation.isNull.or(lectureEvaluation.isHidden.eq(false)))
+                .groupBy(lecture)
+                .fetch()
+
+        val total =
+            queryFactory
+                .select(
+                    semesterLecture.count(),
+                ).from(semesterLecture)
+                .innerJoin(semesterLecture.lecture, lecture)
+                .where(*predicates)
+                .fetchOne()!!
+
+        return PageImpl(queryResult, pageable, total)
     }
 
-    private fun EnumPath<LectureClassification>.isIn(tags: List<String>?): BooleanExpression? {
-        return if (!tags.isNullOrEmpty()) this.`in`(tags.map { LectureClassification.customValueOf(it) }) else null
-    }
+    private fun StringPath.isIn(tags: List<String>?): BooleanExpression? = if (!tags.isNullOrEmpty()) this.`in`(tags) else null
+
+    private fun EnumPath<LectureClassification>.isIn(tags: List<String>?): BooleanExpression? =
+        if (!tags.isNullOrEmpty()) {
+            this.`in`(
+                tags.map {
+                    LectureClassification.customValueOf(it)
+                },
+            )
+        } else {
+            null
+        }
 
     private fun EnumPath<LectureClassification>.eq(keyword: String): BooleanExpression? {
         val keywordLectureClassification = LectureClassification.customValueOf(keyword)
         return if (keywordLectureClassification != null) this.eq(keywordLectureClassification) else null
     }
 
-    private fun NumberPath<Int>.isIn(tags: List<Int>?): BooleanExpression? {
-        return if (!tags.isNullOrEmpty()) this.`in`(tags) else null
-    }
+    private fun NumberPath<Int>.isIn(tags: List<Int>?): BooleanExpression? = if (!tags.isNullOrEmpty()) this.`in`(tags) else null
 
     private fun extractCriteriaFromQuery(query: String?): Predicate? {
         val builder = BooleanBuilder()
@@ -140,11 +168,12 @@ class LectureRepositoryImpl(private val queryFactory: JPAQueryFactory) : Lecture
             val fuzzyKeyword = keyword.fold("%") { acc, c -> "$acc$c%" }
             val orBuilder = BooleanBuilder()
             when {
-                keyword == "전공" -> orBuilder.or(
-                    lecture.classification.`in`(
-                        listOf(LectureClassification.ELECTIVE_SUBJECT, LectureClassification.REQUISITE_SUBJECT),
-                    ),
-                )
+                keyword == "전공" ->
+                    orBuilder.or(
+                        lecture.classification.`in`(
+                            listOf(LectureClassification.ELECTIVE_SUBJECT, LectureClassification.REQUISITE_SUBJECT),
+                        ),
+                    )
                 keyword == "체육" -> orBuilder.or(lecture.category.eq("체육"))
                 keyword in listOf("석박", "대학원") -> {
                     orBuilder.or(lecture.academicYear.`in`(listOf("석사", "박사", "석박사통합")))
@@ -178,11 +207,7 @@ class LectureRepositoryImpl(private val queryFactory: JPAQueryFactory) : Lecture
         return builder.value
     }
 
-    private fun Char.isHangul(): Boolean {
-        return this in '가'..'힣'
-    }
+    private fun Char.isHangul(): Boolean = this in '가'..'힣'
 
-    private fun String.hasKorean(): Boolean {
-        return this.any { it.isHangul() }
-    }
+    private fun String.hasKorean(): Boolean = this.any { it.isHangul() }
 }

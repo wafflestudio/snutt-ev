@@ -67,16 +67,17 @@ class EvaluationService internal constructor(
     ): LectureEvaluationDto {
         val semesterLecture = getSemesterLectureToWriteEvaluation(semesterLectureId, userId)
 
-        val lectureEvaluation = LectureEvaluation(
-            semesterLecture = semesterLecture,
-            userId = userId,
-            content = createEvaluationRequest.content,
-            gradeSatisfaction = createEvaluationRequest.gradeSatisfaction,
-            teachingSkill = createEvaluationRequest.teachingSkill,
-            gains = createEvaluationRequest.gains,
-            lifeBalance = createEvaluationRequest.lifeBalance,
-            rating = createEvaluationRequest.rating,
-        )
+        val lectureEvaluation =
+            LectureEvaluation(
+                semesterLecture = semesterLecture,
+                userId = userId,
+                content = createEvaluationRequest.content,
+                gradeSatisfaction = createEvaluationRequest.gradeSatisfaction,
+                teachingSkill = createEvaluationRequest.teachingSkill,
+                gains = createEvaluationRequest.gains,
+                lifeBalance = createEvaluationRequest.lifeBalance,
+                rating = createEvaluationRequest.rating,
+            )
         lectureEvaluationRepository.save(lectureEvaluation)
 
         cache.deleteAll(CacheKey.EVALUATIONS_BY_TAG_PAGE)
@@ -102,13 +103,14 @@ class EvaluationService internal constructor(
             academicYear = lectureEvaluationSummaryDao.academicYear,
             category = lectureEvaluationSummaryDao.category,
             classification = lectureEvaluationSummaryDao.classification,
-            evaluation = LectureEvaluationSummary(
-                avgGradeSatisfaction = lectureEvaluationSummaryDao.avgGradeSatisfaction,
-                avgTeachingSkill = lectureEvaluationSummaryDao.avgTeachingSkill,
-                avgGains = lectureEvaluationSummaryDao.avgGains,
-                avgLifeBalance = lectureEvaluationSummaryDao.avgLifeBalance,
-                avgRating = lectureEvaluationSummaryDao.avgRating,
-            ),
+            evaluation =
+                LectureEvaluationSummary(
+                    avgGradeSatisfaction = lectureEvaluationSummaryDao.avgGradeSatisfaction,
+                    avgTeachingSkill = lectureEvaluationSummaryDao.avgTeachingSkill,
+                    avgGains = lectureEvaluationSummaryDao.avgGains,
+                    avgLifeBalance = lectureEvaluationSummaryDao.avgLifeBalance,
+                    avgRating = lectureEvaluationSummaryDao.avgRating,
+                ),
         )
     }
 
@@ -121,12 +123,13 @@ class EvaluationService internal constructor(
 
         val lectureEvaluationsCount = lectureEvaluationRepository.countByLectureId(lectureId)
 
-        var evaluationWithSemesterDtos = lectureEvaluationRepository.findNotMyEvaluationsWithSemesterByLectureId(
-            lectureId,
-            userId,
-            evaluationCursor,
-            DEFAULT_PAGE_SIZE + 1,
-        )
+        var evaluationWithSemesterDtos =
+            lectureEvaluationRepository.findNotMyEvaluationsWithSemesterByLectureId(
+                lectureId,
+                userId,
+                evaluationCursor,
+                DEFAULT_PAGE_SIZE + 1,
+            )
 
         var nextCursor: String? = null
         if (evaluationWithSemesterDtos.size > DEFAULT_PAGE_SIZE) {
@@ -145,26 +148,34 @@ class EvaluationService internal constructor(
         )
     }
 
-    fun getMyEvaluationsOfLecture(userId: String, lectureId: Long): EvaluationsResponse {
-        val evaluationWithSemesterDtos = lectureEvaluationRepository.findMyEvaluationsWithSemesterByLectureId(
-            lectureId,
-            userId,
-        )
+    fun getMyEvaluationsOfLecture(
+        userId: String,
+        lectureId: Long,
+    ): EvaluationsResponse {
+        val evaluationWithSemesterDtos =
+            lectureEvaluationRepository.findMyEvaluationsWithSemesterByLectureId(
+                lectureId,
+                userId,
+            )
         return EvaluationsResponse(
             evaluations = evaluationWithSemesterDtos.map { EvaluationWithSemesterResponse.of(it, userId) },
         )
     }
 
-    fun getMyEvaluations(userId: String, cursor: String?): CursorPaginationResponse<EvaluationWithLectureResponse> {
+    fun getMyEvaluations(
+        userId: String,
+        cursor: String?,
+    ): CursorPaginationResponse<EvaluationWithLectureResponse> {
         val evaluationIdCursor = PageUtils.getCursor<Long>(cursor)
 
         val lectureEvaluationsCount = lectureEvaluationRepository.countByUserIdAndIsHiddenFalse(userId)
 
-        var evaluationWithLectureDtos = lectureEvaluationRepository.findMyEvaluationsWithLecture(
-            userId,
-            evaluationIdCursor,
-            DEFAULT_PAGE_SIZE + 1,
-        )
+        var evaluationWithLectureDtos =
+            lectureEvaluationRepository.findMyEvaluationsWithLecture(
+                userId,
+                evaluationIdCursor,
+                DEFAULT_PAGE_SIZE + 1,
+            )
 
         var nextCursor: String? = null
         if (evaluationWithLectureDtos.size > DEFAULT_PAGE_SIZE) {
@@ -190,31 +201,33 @@ class EvaluationService internal constructor(
     ): CursorPaginationResponse<EvaluationWithLectureResponse> {
         val evaluationIdCursor = PageUtils.getCursor<Long>(cursor)
 
-        var evaluationWithLectureDtos = cache.withCache(
-            builtCacheKey = CacheKey.EVALUATIONS_BY_TAG_PAGE.build(
-                tagId,
-                evaluationIdCursor,
-                DEFAULT_PAGE_SIZE + 1,
-            ),
-            postHitProcessor = { dtos ->
-                val evaluationsIds = dtos.map { it.id }
-                val likes = evaluationLikeRepository.findAllByLectureEvaluationIdIn(evaluationsIds)
-                dtos.map { dto ->
-                    dto.copy(
-                        likeCount = likes.count { it.lectureEvaluation.id == dto.id }.toLong(),
-                        isLiked = likes.any { it.lectureEvaluation.id == dto.id && it.userId == userId },
-                    )
-                }
-            },
-        ) {
-            val tag = tagRepository.findByIdOrNull(tagId) ?: throw TagNotFoundException
-            lectureEvaluationRepository.findEvaluationWithLectureByTag(
-                userId,
-                tag,
-                evaluationIdCursor,
-                DEFAULT_PAGE_SIZE + 1,
-            )
-        } ?: emptyList()
+        var evaluationWithLectureDtos =
+            cache.withCache(
+                builtCacheKey =
+                    CacheKey.EVALUATIONS_BY_TAG_PAGE.build(
+                        tagId,
+                        evaluationIdCursor,
+                        DEFAULT_PAGE_SIZE + 1,
+                    ),
+                postHitProcessor = { dtos ->
+                    val evaluationsIds = dtos.map { it.id }
+                    val likes = evaluationLikeRepository.findAllByLectureEvaluationIdIn(evaluationsIds)
+                    dtos.map { dto ->
+                        dto.copy(
+                            likeCount = likes.count { it.lectureEvaluation.id == dto.id }.toLong(),
+                            isLiked = likes.any { it.lectureEvaluation.id == dto.id && it.userId == userId },
+                        )
+                    }
+                },
+            ) {
+                val tag = tagRepository.findByIdOrNull(tagId) ?: throw TagNotFoundException
+                lectureEvaluationRepository.findEvaluationWithLectureByTag(
+                    userId,
+                    tag,
+                    evaluationIdCursor,
+                    DEFAULT_PAGE_SIZE + 1,
+                )
+            } ?: emptyList()
 
         var nextCursor: String? = null
         if (evaluationWithLectureDtos.size > DEFAULT_PAGE_SIZE) {
@@ -235,11 +248,11 @@ class EvaluationService internal constructor(
     fun getEvaluation(
         userId: String,
         evaluationId: Long,
-    ): EvaluationWithSemesterResponse {
-        return lectureEvaluationRepository.findEvaluationWithSemesterById(evaluationId, userId)
+    ): EvaluationWithSemesterResponse =
+        lectureEvaluationRepository
+            .findEvaluationWithSemesterById(evaluationId, userId)
             ?.let { EvaluationWithSemesterResponse.of(it, userId) }
             ?: throw LectureEvaluationNotFoundException
-    }
 
     @Transactional
     fun updateEvaluation(
@@ -247,8 +260,9 @@ class EvaluationService internal constructor(
         evaluationId: Long,
         updateEvaluationRequest: UpdateEvaluationRequest,
     ): EvaluationWithSemesterResponse {
-        val evaluation = lectureEvaluationRepository.findByIdAndIsHiddenFalse(evaluationId)
-            ?: throw LectureEvaluationNotFoundException
+        val evaluation =
+            lectureEvaluationRepository.findByIdAndIsHiddenFalse(evaluationId)
+                ?: throw LectureEvaluationNotFoundException
         if (evaluation.userId != userId) {
             throw NotMyLectureEvaluationException
         }
@@ -292,8 +306,9 @@ class EvaluationService internal constructor(
         semesterLectureId: Long,
         userId: String,
     ): SemesterLecture {
-        val semesterLecture = semesterLectureRepository.findByIdOrNull(semesterLectureId)
-            ?: throw SemesterLectureNotFoundException
+        val semesterLecture =
+            semesterLectureRepository.findByIdOrNull(semesterLectureId)
+                ?: throw SemesterLectureNotFoundException
 
         if (lectureEvaluationRepository.existsBySemesterLectureAndUserIdAndIsHiddenFalse(semesterLecture, userId)) {
             throw EvaluationAlreadyExistsException
@@ -307,7 +322,8 @@ class EvaluationService internal constructor(
         userId: String,
         evaluationId: Long,
     ) {
-        val lectureEvaluation = lectureEvaluationRepository.findByIdAndIsHiddenFalse(evaluationId) ?: throw LectureEvaluationNotFoundException
+        val lectureEvaluation =
+            lectureEvaluationRepository.findByIdAndIsHiddenFalse(evaluationId) ?: throw LectureEvaluationNotFoundException
         if (lectureEvaluation.userId != userId) {
             throw NotMyLectureEvaluationException
         }
@@ -323,7 +339,8 @@ class EvaluationService internal constructor(
         evaluationId: Long,
         createEvaluationReportRequest: CreateEvaluationReportRequest,
     ): EvaluationReportDto {
-        val lectureEvaluation = lectureEvaluationRepository.findByIdAndIsHiddenFalse(evaluationId) ?: throw LectureEvaluationNotFoundException
+        val lectureEvaluation =
+            lectureEvaluationRepository.findByIdAndIsHiddenFalse(evaluationId) ?: throw LectureEvaluationNotFoundException
         if (lectureEvaluation.userId == userId) {
             throw MyLectureEvaluationException
         }
@@ -332,11 +349,12 @@ class EvaluationService internal constructor(
             throw EvaluationReportAlreadyExistsException
         }
 
-        val evaluationReport = EvaluationReport(
-            lectureEvaluation = lectureEvaluation,
-            userId = userId,
-            content = createEvaluationReportRequest.content,
-        )
+        val evaluationReport =
+            EvaluationReport(
+                lectureEvaluation = lectureEvaluation,
+                userId = userId,
+                content = createEvaluationReportRequest.content,
+            )
         evaluationReportRepository.save(evaluationReport)
         return genEvaluationReportDto(evaluationReport)
     }

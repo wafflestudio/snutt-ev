@@ -9,15 +9,12 @@ import org.springframework.context.annotation.Configuration
 
 @Configuration
 class SwaggerConfig {
+    @Bean
+    fun modelResolver(objectMapper: ObjectMapper): ModelResolver = ModelResolver(objectMapper)
 
     @Bean
-    fun modelResolver(objectMapper: ObjectMapper): ModelResolver {
-        return ModelResolver(objectMapper)
-    }
-
-    @Bean
-    fun openAPI(): OpenAPI {
-        return OpenAPI().info(
+    fun openAPI(): OpenAPI =
+        OpenAPI().info(
             Info()
                 .title("Snutt Lecture Evaluation Service API definition")
                 .description(
@@ -31,8 +28,6 @@ class SwaggerConfig {
                         "fb_name": "string" (nullable)
                     }
                 """,
-                )
-                .version("v0.0.1"),
+                ).version("v0.0.1"),
         )
-    }
 }

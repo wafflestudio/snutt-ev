@@ -42,7 +42,10 @@ internal final class Cache(
         return null
     }
 
-    fun <T : Any> set(builtCacheKey: CacheKey.BuiltCacheKey, value: T?) {
+    fun <T : Any> set(
+        builtCacheKey: CacheKey.BuiltCacheKey,
+        value: T?,
+    ) {
         value?.let {
             try {
                 log.debug("[CACHE SET] {}", builtCacheKey.key)

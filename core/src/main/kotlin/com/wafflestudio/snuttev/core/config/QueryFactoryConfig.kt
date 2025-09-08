@@ -9,9 +9,6 @@ import org.springframework.context.annotation.Configuration
 class QueryFactoryConfig(
     private val em: EntityManager,
 ) {
-
     @Bean
-    fun queryFactory(): JPAQueryFactory? {
-        return JPAQueryFactory(em)
-    }
+    fun queryFactory(): JPAQueryFactory? = JPAQueryFactory(em)
 }

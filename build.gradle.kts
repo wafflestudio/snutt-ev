@@ -1,20 +1,20 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jlleitschuh.gradle.ktlint.KtlintExtension
 import org.springframework.boot.gradle.tasks.bundling.BootJar
 
 plugins {
-    id("org.springframework.boot") version "3.2.4" apply false
-    id("io.spring.dependency-management") version "1.1.3"
-    kotlin("jvm") version "1.9.22"
-    kotlin("plugin.spring") version "1.9.22"
-    kotlin("plugin.allopen") version "1.9.22"
-    kotlin("plugin.noarg") version "1.9.22"
-    id("org.jlleitschuh.gradle.ktlint") version "11.3.2"
+    id("org.springframework.boot") version "3.5.4" apply false
+    kotlin("jvm") version "2.2.0"
+    kotlin("plugin.spring") version "2.2.0"
+    kotlin("plugin.allopen") version "2.2.0"
+    kotlin("plugin.noarg") version "2.2.0"
+    id("org.jlleitschuh.gradle.ktlint") version "13.0.0"
 }
 
 group = "com.wafflestudio"
 version = "1.0.0"
-java.sourceCompatibility = JavaVersion.VERSION_17
+java.sourceCompatibility = JavaVersion.VERSION_21
 
 allprojects {
     repositories {
@@ -37,6 +37,8 @@ subprojects {
     }
 
     dependencies {
+        api(platform(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES))
+
         implementation("org.springframework.boot:spring-boot-starter-web")
         implementation("org.springframework.boot:spring-boot-starter-validation")
         implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
@@ -51,15 +53,15 @@ subprojects {
         testImplementation("org.springframework.boot:spring-boot-starter-test")
         testImplementation("com.h2database:h2")
         testImplementation("org.junit.jupiter:junit-jupiter-api")
-        testImplementation("io.mockk:mockk:1.13.5")
-        testImplementation("io.kotest:kotest-runner-junit5:5.6.2")
-        testImplementation("io.kotest:kotest-assertions-core:5.6.2")
+        testImplementation("io.mockk:mockk:1.14.5")
+        testImplementation("io.kotest:kotest-runner-junit5:5.9.1")
+        testImplementation("io.kotest:kotest-assertions-core:5.9.1")
     }
 
     tasks.withType<KotlinCompile> {
-        kotlinOptions {
-            freeCompilerArgs = listOf("-Xjsr305=strict")
-            jvmTarget = "17"
+        compilerOptions {
+            freeCompilerArgs.add("-Xjsr305=strict")
+            jvmTarget.set(JvmTarget.JVM_21)
         }
     }
 
@@ -95,11 +97,22 @@ project(":core") {
 
 fun RepositoryHandler.mavenCodeArtifact() {
     maven {
-        val authToken = properties["codeArtifactAuthToken"] as String? ?: ProcessBuilder(
-            "aws", "codeartifact", "get-authorization-token",
-            "--domain", "wafflestudio", "--domain-owner", "405906814034",
-            "--query", "authorizationToken", "--region", "ap-northeast-1", "--output", "text",
-        ).start().inputStream.bufferedReader().readText().trim()
+        val authToken =
+            properties["codeArtifactAuthToken"] as String? ?: ProcessBuilder(
+                "aws",
+                "codeartifact",
+                "get-authorization-token",
+                "--domain",
+                "wafflestudio",
+                "--domain-owner",
+                "405906814034",
+                "--query",
+                "authorizationToken",
+                "--region",
+                "ap-northeast-1",
+                "--output",
+                "text",
+            ).start().inputStream.bufferedReader().readText().trim()
         url = uri("https://wafflestudio-405906814034.d.codeartifact.ap-northeast-1.amazonaws.com/maven/spring-waffle/")
         credentials {
             username = "aws"
