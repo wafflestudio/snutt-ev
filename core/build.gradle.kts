@@ -13,10 +13,10 @@ noArg {
 dependencies {
     implementation("com.querydsl:querydsl-jpa::jakarta")
 
-    implementation("org.flywaydb:flyway-core:9.18.0")
-    implementation("org.flywaydb:flyway-mysql:9.18.0")
-    implementation("software.amazon.awssdk:secretsmanager:2.20.66")
-    implementation("software.amazon.awssdk:sts:2.20.66")
+    implementation("org.flywaydb:flyway-core:11.13.2")
+    implementation("org.flywaydb:flyway-mysql:11.13.2")
+    implementation("software.amazon.awssdk:secretsmanager:2.34.6")
+    implementation("software.amazon.awssdk:sts:2.34.6")
 
     implementation("org.springframework.boot:spring-boot-starter-data-redis")
 
