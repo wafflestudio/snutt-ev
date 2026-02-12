@@ -1,11 +1,12 @@
 plugins {
     kotlin("kapt")
-    id("org.hibernate.orm")
+    id("org.hibernate.orm") apply false
 }
 
-hibernate {
-    enhancement {
-        enableLazyInitialization = true
+if (gradle.startParameter.taskNames.none { it.contains("ktlint", ignoreCase = true) }) {
+    apply(plugin = "org.hibernate.orm")
+    configure<org.hibernate.orm.tooling.gradle.HibernateOrmSpec> {
+        enhancement { enableLazyInitialization = true }
     }
 }
 
