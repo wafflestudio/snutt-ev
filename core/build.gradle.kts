@@ -1,5 +1,12 @@
 plugins {
     kotlin("kapt")
+    id("org.hibernate.orm")
+}
+
+hibernate {
+    enhancement {
+        enableLazyInitialization = true
+    }
 }
 
 allOpen {
