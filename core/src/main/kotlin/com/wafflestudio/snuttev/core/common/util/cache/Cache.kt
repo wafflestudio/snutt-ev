@@ -12,7 +12,7 @@ import java.time.Duration
 @Component
 internal final class Cache(
     private val redisTemplate: StringRedisTemplate,
-    @Value("\${spring.data.redis.default-ttl}") private val defaultTtl: Duration,
+    @param:Value("\${spring.data.redis.default-ttl}") private val defaultTtl: Duration,
     private val objectMapper: ObjectMapper,
 ) {
     private val log: Logger get() = LoggerFactory.getLogger(Cache::class.java)
