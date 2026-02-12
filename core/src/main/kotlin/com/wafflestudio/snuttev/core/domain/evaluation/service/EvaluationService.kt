@@ -20,6 +20,7 @@ import com.wafflestudio.snuttev.core.domain.evaluation.dto.CreateEvaluationRepor
 import com.wafflestudio.snuttev.core.domain.evaluation.dto.CreateEvaluationRequest
 import com.wafflestudio.snuttev.core.domain.evaluation.dto.EvaluationCursor
 import com.wafflestudio.snuttev.core.domain.evaluation.dto.EvaluationReportDto
+import com.wafflestudio.snuttev.core.domain.evaluation.dto.EvaluationWithLectureDto
 import com.wafflestudio.snuttev.core.domain.evaluation.dto.EvaluationWithLectureResponse
 import com.wafflestudio.snuttev.core.domain.evaluation.dto.EvaluationWithSemesterResponse
 import com.wafflestudio.snuttev.core.domain.evaluation.dto.EvaluationsResponse
@@ -39,12 +40,14 @@ import com.wafflestudio.snuttev.core.domain.lecture.repository.SemesterLectureRe
 import com.wafflestudio.snuttev.core.domain.lecture.repository.SnuttLectureIdMapRepository
 import com.wafflestudio.snuttev.core.domain.mongo.MongoService
 import com.wafflestudio.snuttev.core.domain.tag.repository.TagRepository
+import org.springframework.aot.hint.annotation.RegisterReflectionForBinding
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
+@RegisterReflectionForBinding(EvaluationCursor::class, EvaluationWithLectureDto::class)
 class EvaluationService internal constructor(
     private val semesterLectureRepository: SemesterLectureRepository,
     private val lectureEvaluationRepository: LectureEvaluationRepository,

@@ -17,6 +17,7 @@ import io.swagger.v3.oas.annotations.enums.ParameterIn
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
+import org.springframework.aot.hint.annotation.RegisterReflectionForBinding
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.ModelAttribute
 import org.springframework.web.bind.annotation.PathVariable
@@ -29,6 +30,7 @@ import tools.jackson.databind.ObjectMapper
 import tools.jackson.module.kotlin.readValue
 
 @RestController
+@RegisterReflectionForBinding(SnuttLectureInfo::class)
 class LectureController(
     private val lectureService: LectureService,
     private val objectMapper: ObjectMapper,
