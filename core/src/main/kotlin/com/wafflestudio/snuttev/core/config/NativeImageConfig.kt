@@ -19,6 +19,8 @@ import com.wafflestudio.snuttev.core.domain.lecture.dto.LectureIdListResponse
 import com.wafflestudio.snuttev.core.domain.lecture.dto.LectureIdResponse
 import com.wafflestudio.snuttev.core.domain.lecture.dto.LectureTakenByUserResponse
 import com.wafflestudio.snuttev.core.domain.lecture.dto.SnuttLectureInfo
+import com.wafflestudio.snuttev.core.domain.lecture.model.LectureEvaluationSummaryDao
+import com.wafflestudio.snuttev.core.domain.lecture.model.LectureRatingDao
 import com.wafflestudio.snuttev.core.domain.tag.dto.SearchTagResponse
 import com.wafflestudio.snuttev.core.domain.tag.dto.TagGroupDto
 import org.springframework.aot.hint.annotation.RegisterReflectionForBinding
@@ -47,5 +49,7 @@ import org.springframework.context.annotation.Configuration
     SnuttLectureInfo::class,
     TagGroupDto::class,
     SearchTagResponse::class,
+    LectureEvaluationSummaryDao::class,
+    LectureRatingDao::class,
 )
 class NativeImageConfig
