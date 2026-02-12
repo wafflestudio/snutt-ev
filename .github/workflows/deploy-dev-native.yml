@@ -9,7 +9,7 @@ jobs:
     uses: ./.github/workflows/_deploy-native.yml
     with:
       ocir_repository: snutt-dev/snutt-ev
-      dockerfile: Dockerfile-native
+      dockerfile: api/Dockerfile-native
     secrets:
       OCI_AUTH_TOKEN: ${{ secrets.OCI_AUTH_TOKEN }}
       DEPLOYER_APP_ID: ${{ secrets.DEPLOYER_APP_ID }}
@@ -19,7 +19,7 @@ jobs:
     uses: ./.github/workflows/_deploy-native.yml
     with:
       ocir_repository: snutt-dev/snutt-ev-batch
-      dockerfile: Dockerfile-native-batch
+      dockerfile: batch/Dockerfile-native
     secrets:
       OCI_AUTH_TOKEN: ${{ secrets.OCI_AUTH_TOKEN }}
       DEPLOYER_APP_ID: ${{ secrets.DEPLOYER_APP_ID }}

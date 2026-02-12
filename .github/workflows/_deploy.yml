@@ -9,7 +9,7 @@ on:
       dockerfile:
         required: true
         type: string
-        description: 'Dockerfile path (e.g., Dockerfile)'
+        description: 'Dockerfile path (e.g., api/Dockerfile)'
     secrets:
       OCI_AUTH_TOKEN:
         required: true
