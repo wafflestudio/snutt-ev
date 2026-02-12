@@ -6,6 +6,7 @@ import com.wafflestudio.snuttev.core.common.error.ErrorResponse
 import com.wafflestudio.snuttev.core.domain.lecture.dto.EvLectureSummaryForSnutt
 import com.wafflestudio.snuttev.core.domain.lecture.dto.LectureAndSemesterLecturesResponse
 import com.wafflestudio.snuttev.core.domain.lecture.dto.LectureDto
+import com.wafflestudio.snuttev.core.domain.lecture.dto.LectureIdListResponse
 import com.wafflestudio.snuttev.core.domain.lecture.dto.LectureIdResponse
 import com.wafflestudio.snuttev.core.domain.lecture.dto.LectureTakenByUserResponse
 import com.wafflestudio.snuttev.core.domain.lecture.dto.SearchLectureRequest
@@ -17,7 +18,6 @@ import io.swagger.v3.oas.annotations.enums.ParameterIn
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
-import org.springframework.aot.hint.annotation.RegisterReflectionForBinding
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.ModelAttribute
 import org.springframework.web.bind.annotation.PathVariable
@@ -30,12 +30,6 @@ import tools.jackson.databind.ObjectMapper
 import tools.jackson.module.kotlin.readValue
 
 @RestController
-@RegisterReflectionForBinding(
-    SnuttLectureInfo::class,
-    LectureIdResponse::class,
-    LectureIdListResponse::class,
-    ListResponse::class,
-)
 class LectureController(
     private val lectureService: LectureService,
     private val objectMapper: ObjectMapper,
@@ -213,5 +207,3 @@ class LectureController(
         )
     }
 }
-
-private class LectureIdListResponse : ListResponse<LectureIdResponse>(listOf())

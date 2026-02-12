@@ -9,12 +9,10 @@ import com.wafflestudio.snuttev.core.domain.tag.dto.TagGroupDto
 import com.wafflestudio.snuttev.core.domain.tag.model.Tag
 import com.wafflestudio.snuttev.core.domain.tag.model.TagGroup
 import com.wafflestudio.snuttev.core.domain.tag.repository.TagGroupRepository
-import org.springframework.aot.hint.annotation.RegisterReflectionForBinding
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
-@RegisterReflectionForBinding(TagGroupDto::class)
 class TagService internal constructor(
     private val tagGroupRepository: TagGroupRepository,
     private val cache: Cache,

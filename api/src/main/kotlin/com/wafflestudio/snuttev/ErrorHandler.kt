@@ -7,7 +7,6 @@ import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import jakarta.validation.ConstraintViolationException
 import org.apache.catalina.connector.ClientAbortException
-import org.springframework.aot.hint.annotation.RegisterReflectionForBinding
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.http.converter.HttpMessageNotReadableException
@@ -22,7 +21,6 @@ import org.springframework.web.context.request.async.AsyncRequestNotUsableExcept
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException
 
 @RestControllerAdvice
-@RegisterReflectionForBinding(ErrorResponse::class)
 class ErrorHandler {
     @ExceptionHandler(
         ConstraintViolationException::class,
