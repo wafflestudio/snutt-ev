@@ -1,0 +1,24 @@
+name: Deploy Manual
+
+on:
+  workflow_dispatch:
+    inputs:
+      ocir_repository:
+        description: 'OCIR 리포지토리 (예: snutt-dev/snutt-ev)'
+        required: true
+        type: string
+      dockerfile:
+        description: 'Dockerfile 경로 (예: Dockerfile, Dockerfile-batch)'
+        required: true
+        type: string
+
+jobs:
+  deploy:
+    uses: ./.github/workflows/_deploy.yml
+    with:
+      ocir_repository: ${{ inputs.ocir_repository }}
+      dockerfile: ${{ inputs.dockerfile }}
+    secrets:
+      OCI_AUTH_TOKEN: ${{ secrets.OCI_AUTH_TOKEN }}
+      DEPLOYER_APP_ID: ${{ secrets.DEPLOYER_APP_ID }}
+      DEPLOYER_APP_PRIVATE_KEY: ${{ secrets.DEPLOYER_APP_PRIVATE_KEY }}
