@@ -24,7 +24,7 @@ class DataLoader(
     private val tagGroupRepository: TagGroupRepository,
     private val tagRepository: TagRepository,
 ) : ApplicationRunner {
-    override fun run(args: ApplicationArguments?) {
+    override fun run(args: ApplicationArguments) {
         val lecture =
             Lecture(
                 title = "소프트웨어 개발의 원리와 실습",

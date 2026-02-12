@@ -1,0 +1,62 @@
+name: deploy-native-template
+
+on:
+  workflow_call:
+    inputs:
+      ocir_repository:
+        required: true
+        type: string
+      dockerfile:
+        required: true
+        type: string
+        description: 'Dockerfile path (e.g., Dockerfile-native)'
+    secrets:
+      OCI_AUTH_TOKEN:
+        required: true
+      DEPLOYER_APP_ID:
+        required: true
+      DEPLOYER_APP_PRIVATE_KEY:
+        required: true
+
+jobs:
+  deploy:
+    name: Deploy Native
+    runs-on: ubuntu-24.04-arm
+
+    env:
+      IMAGE_TAG: ${{ github.run_number }}
+      BUILD_NUMBER: ${{ github.run_number }}
+      OCIR_REGISTRY: yny.ocir.io
+      OCIR_NAMESPACE: ax1dvc8vmenm
+      OCIR_REPOSITORY: ${{ inputs.ocir_repository }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Login to OCIR
+        run: echo "${{ secrets.OCI_AUTH_TOKEN }}" | docker login $OCIR_REGISTRY -u ax1dvc8vmenm/members/snutt-deployer --password-stdin
+
+      - name: Docker build, tag, and push image to OCIR
+        id: build-push-image
+        run: |
+          echo "${{ github.token }}" > .github_token
+          docker build \
+            --secret id=github_token,src=./.github_token \
+            -f ${{ inputs.dockerfile }} \
+            -t $OCIR_REGISTRY/$OCIR_NAMESPACE/$OCIR_REPOSITORY:$IMAGE_TAG \
+            . \
+            --platform linux/arm64
+          rm -f .github_token
+          docker push $OCIR_REGISTRY/$OCIR_NAMESPACE/$OCIR_REPOSITORY:$IMAGE_TAG
+          echo "image=$OCIR_REGISTRY/$OCIR_NAMESPACE/$OCIR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
+
+      - name: Update image tag in waffle-world-oci
+        uses: ./.github/actions/update-image-tag
+        with:
+          app-id: ${{ secrets.DEPLOYER_APP_ID }}
+          private-key: ${{ secrets.DEPLOYER_APP_PRIVATE_KEY }}
+          ocir-registry: ${{ env.OCIR_REGISTRY }}
+          ocir-namespace: ${{ env.OCIR_NAMESPACE }}
+          ocir-repository: ${{ env.OCIR_REPOSITORY }}
+          image-tag: ${{ env.IMAGE_TAG }}

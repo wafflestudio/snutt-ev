@@ -1,7 +1,5 @@
 package com.wafflestudio.snuttev.controller
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
 import com.wafflestudio.snuttev.core.common.dto.common.ListResponse
 import com.wafflestudio.snuttev.core.common.dto.common.PaginationResponse
 import com.wafflestudio.snuttev.core.common.error.ErrorResponse
@@ -27,6 +25,8 @@ import org.springframework.web.bind.annotation.RequestAttribute
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import tools.jackson.databind.ObjectMapper
+import tools.jackson.module.kotlin.readValue
 
 @RestController
 class LectureController(

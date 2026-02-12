@@ -2,7 +2,7 @@ package com.wafflestudio.snuttev.core.common.dto.common
 
 import org.springframework.data.domain.Page
 
-data class PaginationResponse<T>(
+data class PaginationResponse<T : Any>(
     val content: List<T>,
     val page: Int,
     val size: Int,
