@@ -1,4 +1,4 @@
-FROM ghcr.io/graalvm/jdk-community:25
+FROM container-registry.oracle.com/graalvm/jdk:25
 WORKDIR /app
 COPY . /app
 RUN microdnf install -y findutils --nodocs
