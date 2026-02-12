@@ -1,7 +1,6 @@
 FROM eclipse-temurin:21-alpine
 WORKDIR /app
-ARG CODEARTIFACT_AUTH_TOKEN
 COPY . /app
-RUN ./gradlew :api:bootJar -PcodeArtifactAuthToken=$CODEARTIFACT_AUTH_TOKEN
+RUN --mount=type=secret,id=github_token GITHUB_TOKEN=$(cat /run/secrets/github_token) ./gradlew :api:bootJar
 EXPOSE 8080
 ENTRYPOINT java $JAVA_OPTS -jar api/build/libs/snuttev-api.jar
