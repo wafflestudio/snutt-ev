@@ -30,7 +30,12 @@ import tools.jackson.databind.ObjectMapper
 import tools.jackson.module.kotlin.readValue
 
 @RestController
-@RegisterReflectionForBinding(SnuttLectureInfo::class)
+@RegisterReflectionForBinding(
+    SnuttLectureInfo::class,
+    LectureIdResponse::class,
+    LectureIdListResponse::class,
+    ListResponse::class,
+)
 class LectureController(
     private val lectureService: LectureService,
     private val objectMapper: ObjectMapper,
