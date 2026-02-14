@@ -5,7 +5,6 @@ spring:
     virtual:
       enabled: true
 ---
-
 spring:
   config:
     activate:
@@ -27,10 +26,11 @@ spring:
 logging:
   config: classpath:logback/local.xml
 
-oci-vault-secret-ids: ocid1.vaultsecret.oc1.ap-chuncheon-1.amaaaaaat2m5lbqafa7scbk7gagxd5gpvdsk276l557wyntv7tcwqeviumha
+oci:
+  vault:
+    secret-ids: ocid1.vaultsecret.oc1.ap-chuncheon-1.amaaaaaat2m5lbqafa7scbk7gagxd5gpvdsk276l557wyntv7tcwqeviumha
 
 ---
-
 spring.config.activate.on-profile: test
 
 spring:
@@ -51,10 +51,11 @@ spring:
       ddl-auto: none
 
 ---
-
 spring.config.activate.on-profile: dev
 
-oci-vault-secret-ids: ocid1.vaultsecret.oc1.ap-chuncheon-1.amaaaaaat2m5lbqafa7scbk7gagxd5gpvdsk276l557wyntv7tcwqeviumha
+oci:
+  vault:
+    secret-ids: ocid1.vaultsecret.oc1.ap-chuncheon-1.amaaaaaat2m5lbqafa7scbk7gagxd5gpvdsk276l557wyntv7tcwqeviumha
 
 spring:
   datasource:
@@ -68,10 +69,11 @@ spring:
       default-ttl: 5m
 
 ---
-
 spring.config.activate.on-profile: prod
 
-oci-vault-secret-ids: ocid1.vaultsecret.oc1.ap-chuncheon-1.amaaaaaat2m5lbqacwytts3muhrtzpf44mq75rvycqdowudm27z433s6htma
+oci:
+  vault:
+    secret-ids: ocid1.vaultsecret.oc1.ap-chuncheon-1.amaaaaaat2m5lbqacwytts3muhrtzpf44mq75rvycqdowudm27z433s6htma
 
 spring:
   datasource:
