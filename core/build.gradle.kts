@@ -1,5 +1,13 @@
 plugins {
     kotlin("kapt")
+    id("org.hibernate.orm") apply false
+}
+
+if (gradle.startParameter.taskNames.none { it.contains("ktlint", ignoreCase = true) }) {
+    apply(plugin = "org.hibernate.orm")
+    configure<org.hibernate.orm.tooling.gradle.HibernateOrmSpec> {
+        enhancement { enableLazyInitialization = true }
+    }
 }
 
 allOpen {
@@ -13,11 +21,8 @@ noArg {
 dependencies {
     implementation("com.querydsl:querydsl-jpa::jakarta")
 
-    implementation("org.flywaydb:flyway-core:11.13.2")
-    implementation("org.flywaydb:flyway-mysql:11.13.2")
-    implementation("software.amazon.awssdk:secretsmanager:2.34.6")
-    implementation("software.amazon.awssdk:sts:2.34.6")
-
+    implementation("org.springframework.boot:spring-boot-starter-flyway")
+    implementation("org.flywaydb:flyway-mysql")
     implementation("org.springframework.boot:spring-boot-starter-data-redis")
 
     runtimeOnly("com.mysql:mysql-connector-j")

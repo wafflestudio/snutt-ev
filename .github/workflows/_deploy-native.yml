@@ -1,4 +1,4 @@
-name: deploy-template
+name: deploy-native-template
 
 on:
   workflow_call:
@@ -9,7 +9,7 @@ on:
       dockerfile:
         required: true
         type: string
-        description: 'Dockerfile path (e.g., api/Dockerfile)'
+        description: 'Dockerfile path (e.g., api/Dockerfile-native)'
     secrets:
       OCI_AUTH_TOKEN:
         required: true
@@ -20,7 +20,7 @@ on:
 
 jobs:
   deploy:
-    name: Deploy
+    name: Deploy Native
     runs-on: ubuntu-24.04-arm
 
     env:

@@ -3,12 +3,11 @@ spring.profiles.default: local
 spring:
   config:
     import: application-core.yml
-  data:
-    mongodb:
-      host: localhost
-      port: 27017
-      authentication-database: admin
-      database: snutt
+  mongodb:
+    host: localhost
+    port: 27017
+    authentication-database: admin
+    database: snutt
   batch:
     job:
       name: ${job.name:EMPTY}
@@ -20,21 +19,19 @@ spring:
 spring.config.activate.on-profile: dev
 
 spring:
-  data:
-    mongodb:
-      host:
-      port:
-      authentication-database:
-      database:
+  mongodb:
+    host:
+    port:
+    authentication-database:
+    database:
 
 ---
 
 spring.config.activate.on-profile: prod
 
 spring:
-  data:
-    mongodb:
-      host:
-      port:
-      authentication-database:
-      database:
+  mongodb:
+    host:
+    port:
+    authentication-database:
+    database:

@@ -8,7 +8,7 @@ on:
         required: true
         type: string
       dockerfile:
-        description: 'Dockerfile 경로 (예: Dockerfile, Dockerfile-batch)'
+        description: 'Dockerfile 경로 (예: api/Dockerfile, batch/Dockerfile)'
         required: true
         type: string
 

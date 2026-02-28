@@ -1,4 +1,4 @@
-name: Deploy-prod
+name: Deploy-prod-native
 
 on:
   push:
@@ -6,20 +6,20 @@ on:
 
 jobs:
   deploy-api:
-    uses: ./.github/workflows/_deploy.yml
+    uses: ./.github/workflows/_deploy-native.yml
     with:
       ocir_repository: snutt-prod/snutt-ev
-      dockerfile: api/Dockerfile
+      dockerfile: api/Dockerfile-native
     secrets:
       OCI_AUTH_TOKEN: ${{ secrets.OCI_AUTH_TOKEN }}
       DEPLOYER_APP_ID: ${{ secrets.DEPLOYER_APP_ID }}
       DEPLOYER_APP_PRIVATE_KEY: ${{ secrets.DEPLOYER_APP_PRIVATE_KEY }}
 
   deploy-batch:
-    uses: ./.github/workflows/_deploy.yml
+    uses: ./.github/workflows/_deploy-native.yml
     with:
       ocir_repository: snutt-prod/snutt-ev-batch
-      dockerfile: batch/Dockerfile
+      dockerfile: batch/Dockerfile-native
     secrets:
       OCI_AUTH_TOKEN: ${{ secrets.OCI_AUTH_TOKEN }}
       DEPLOYER_APP_ID: ${{ secrets.DEPLOYER_APP_ID }}
