@@ -1,6 +1,5 @@
 package com.wafflestudio.snuttev.sync
 
-import com.wafflestudio.snuttev.core.domain.lecture.model.SnuttLectureIdMap
 import com.wafflestudio.snuttev.core.domain.lecture.repository.LectureRepository
 import jakarta.persistence.EntityManagerFactory
 import org.springframework.batch.core.job.Job
@@ -31,7 +30,7 @@ class SnuttRatingSyncJobConfig(
     companion object {
         const val RATING_SYNC_JOB_NAME = "RATING_SYNC_JOB"
         private const val CUSTOM_READER_JOB_STEP = RATING_SYNC_JOB_NAME + "_STEP"
-        private const val CHUNK_SIZE = 1000000
+        private const val CHUNK_SIZE = 1000
     }
 
     @Bean
@@ -42,7 +41,7 @@ class SnuttRatingSyncJobConfig(
 
     private fun customReaderStep(jobRepository: JobRepository): Step =
         StepBuilder(CUSTOM_READER_JOB_STEP, jobRepository)
-            .chunk<SnuttLectureIdMap, SnuttLectureIdMap>(CHUNK_SIZE)
+            .chunk<SnuttLectureRatingSyncTarget, SnuttLectureRatingSyncTarget>(CHUNK_SIZE)
             .transactionManager(
                 JpaTransactionManager().apply {
                     this.entityManagerFactory = this@SnuttRatingSyncJobConfig.entityManagerFactory
@@ -51,24 +50,34 @@ class SnuttRatingSyncJobConfig(
             .writer(writer())
             .build()
 
-    private fun reader(): JpaPagingItemReader<SnuttLectureIdMap> =
-        JpaPagingItemReaderBuilder<SnuttLectureIdMap>()
-            .name("snuttLectureIdMapReader")
+    private fun reader(): JpaPagingItemReader<SnuttLectureRatingSyncTarget> =
+        JpaPagingItemReaderBuilder<SnuttLectureRatingSyncTarget>()
+            .name("snuttLectureRatingSyncReader")
             .entityManagerFactory(entityManagerFactory)
-            .queryString("SELECT s FROM SnuttLectureIdMap s JOIN FETCH s.semesterLecture")
-            .pageSize(CHUNK_SIZE)
+            .queryString(
+                """
+                SELECT new com.wafflestudio.snuttev.sync.SnuttLectureRatingSyncTarget(s.snuttId, sl.lecture.id)
+                FROM SnuttLectureIdMap s
+                JOIN s.semesterLecture sl
+                ORDER BY s.id
+                """.trimIndent(),
+            ).pageSize(CHUNK_SIZE)
             .build()
 
-    private fun writer(): ItemWriter<SnuttLectureIdMap> =
+    private fun writer(): ItemWriter<SnuttLectureRatingSyncTarget> =
         ItemWriter { items ->
-            val lectureIdtoLectureRatingMap =
+            val lectureIdToLectureRatingMap =
                 lectureRepository
                     .findAllRatingsByLectureIds(
-                        items.mapNotNull { it.semesterLecture.lecture.id },
+                        items
+                            .asSequence()
+                            .map { it.lectureId }
+                            .distinct()
+                            .toList(),
                     ).associateBy { it.id }
             val bulkOps = mongoTemplate.bulkOps(BulkOperations.BulkMode.UNORDERED, "lectures")
             items.forEach {
-                val evInfo = lectureIdtoLectureRatingMap[it.semesterLecture.lecture.id]
+                val evInfo = lectureIdToLectureRatingMap[it.lectureId]
                 bulkOps.updateOne(
                     Query(Criteria.where("_id").`is`(it.snuttId)),
                     Update()
@@ -80,3 +89,8 @@ class SnuttRatingSyncJobConfig(
             bulkOps.execute()
         }
 }
+
+data class SnuttLectureRatingSyncTarget(
+    val snuttId: String,
+    val lectureId: Long,
+)
