@@ -42,8 +42,8 @@ class SnuttRatingSyncJobConfig(
 
     private fun customReaderStep(jobRepository: JobRepository): Step =
         StepBuilder(CUSTOM_READER_JOB_STEP, jobRepository)
-            .chunk<SnuttLectureIdMap, SnuttLectureIdMap>(
-                CHUNK_SIZE,
+            .chunk<SnuttLectureIdMap, SnuttLectureIdMap>(CHUNK_SIZE)
+            .transactionManager(
                 JpaTransactionManager().apply {
                     this.entityManagerFactory = this@SnuttRatingSyncJobConfig.entityManagerFactory
                 },

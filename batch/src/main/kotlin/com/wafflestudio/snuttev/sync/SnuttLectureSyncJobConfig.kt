@@ -113,8 +113,8 @@ class SnuttLectureSyncJobConfig(
         query: Query,
     ): Step =
         StepBuilder(CUSTOM_READER_JOB_STEP, jobRepository)
-            .chunk<SnuttSemesterLecture, SyncProcessResult>(
-                CHUNK_SIZE,
+            .chunk<SnuttSemesterLecture, SyncProcessResult>(CHUNK_SIZE)
+            .transactionManager(
                 JpaTransactionManager().apply {
                     this.entityManagerFactory = this@SnuttLectureSyncJobConfig.entityManagerFactory
                 },
