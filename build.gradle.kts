@@ -4,8 +4,11 @@ import org.jlleitschuh.gradle.ktlint.KtlintExtension
 import org.springframework.boot.gradle.tasks.bundling.BootJar
 
 plugins {
-    id("org.springframework.boot") version "3.5.4" apply false
-    kotlin("jvm") version "2.2.0"
+    id("org.graalvm.buildtools.native") version "0.11.3" apply false
+    id("org.springframework.boot") version "4.0.1" apply false
+    id("io.spring.dependency-management") version "1.1.7"
+    id("org.hibernate.orm") version "7.2.4.Final" apply false
+    kotlin("jvm") version "2.3.0"
     kotlin("plugin.spring") version "2.2.0"
     kotlin("plugin.allopen") version "2.2.0"
     kotlin("plugin.noarg") version "2.2.0"
@@ -14,20 +17,35 @@ plugins {
 
 group = "com.wafflestudio"
 version = "1.0.0"
-java.sourceCompatibility = JavaVersion.VERSION_21
+java.sourceCompatibility = JavaVersion.VERSION_25
 
 allprojects {
     repositories {
         mavenCentral()
-        mavenCodeArtifact()
+        maven {
+            url = uri("https://maven.pkg.github.com/wafflestudio/spring-waffle")
+            credentials {
+                username = "wafflestudio"
+                password = findProperty("gpr.key") as String?
+                    ?: System.getenv("GITHUB_TOKEN")
+                    ?: runCatching {
+                        ProcessBuilder("gh", "auth", "token")
+                            .start()
+                            .inputStream
+                            .bufferedReader()
+                            .readText()
+                            .trim()
+                    }.getOrDefault("")
+            }
+        }
         mavenLocal()
     }
 }
 
 subprojects {
     apply {
+        plugin("org.graalvm.buildtools.native")
         plugin("kotlin")
-        plugin("org.springframework.boot")
         plugin("org.jetbrains.kotlin.jvm")
         plugin("org.jetbrains.kotlin.plugin.jpa")
         plugin("org.jetbrains.kotlin.plugin.spring")
@@ -36,19 +54,26 @@ subprojects {
         apply(plugin = "org.jlleitschuh.gradle.ktlint")
     }
 
+    dependencyManagement {
+        imports {
+            mavenBom("org.springframework.boot:spring-boot-dependencies:4.0.1")
+        }
+    }
+
     dependencies {
-        api(platform(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES))
 
         implementation("org.springframework.boot:spring-boot-starter-web")
         implementation("org.springframework.boot:spring-boot-starter-validation")
-        implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+        implementation("tools.jackson.module:jackson-module-kotlin")
+        implementation("com.fasterxml.jackson.core:jackson-annotations:2.20")
         implementation("org.jetbrains.kotlin:kotlin-reflect")
         implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 
         implementation("org.springframework.boot:spring-boot-starter-data-jpa")
         implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
 
-        implementation("com.wafflestudio.spring:spring-boot-starter-waffle:1.0.4")
+        implementation("com.wafflestudio.spring:spring-boot-starter-waffle-oci-vault:2.1.0")
+        implementation("com.wafflestudio.spring.truffle:spring-boot-starter-truffle:2.1.0")
 
         testImplementation("org.springframework.boot:spring-boot-starter-test")
         testImplementation("com.h2database:h2")
@@ -61,7 +86,15 @@ subprojects {
     tasks.withType<KotlinCompile> {
         compilerOptions {
             freeCompilerArgs.add("-Xjsr305=strict")
-            jvmTarget.set(JvmTarget.JVM_21)
+            jvmTarget.set(JvmTarget.JVM_25)
+        }
+    }
+
+    java {
+        sourceCompatibility = JavaVersion.VERSION_25
+        targetCompatibility = JavaVersion.VERSION_25
+        toolchain {
+            languageVersion.set(JavaLanguageVersion.of(25))
         }
     }
 
@@ -76,47 +109,15 @@ subprojects {
 }
 
 project(":api") {
-    val bootJar: BootJar by tasks
+    apply(plugin = "org.springframework.boot")
 
+    val bootJar: BootJar by tasks
     bootJar.archiveFileName.set("snuttev-api.jar")
 }
 
 project(":batch") {
-    val bootJar: BootJar by tasks
+    apply(plugin = "org.springframework.boot")
 
+    val bootJar: BootJar by tasks
     bootJar.archiveFileName.set("snuttev-batch.jar")
-}
-
-project(":core") {
-    val jar: Jar by tasks
-    val bootJar: BootJar by tasks
-
-    jar.enabled = true
-    bootJar.enabled = false
-}
-
-fun RepositoryHandler.mavenCodeArtifact() {
-    maven {
-        val authToken =
-            properties["codeArtifactAuthToken"] as String? ?: ProcessBuilder(
-                "aws",
-                "codeartifact",
-                "get-authorization-token",
-                "--domain",
-                "wafflestudio",
-                "--domain-owner",
-                "405906814034",
-                "--query",
-                "authorizationToken",
-                "--region",
-                "ap-northeast-1",
-                "--output",
-                "text",
-            ).start().inputStream.bufferedReader().readText().trim()
-        url = uri("https://wafflestudio-405906814034.d.codeartifact.ap-northeast-1.amazonaws.com/maven/spring-waffle/")
-        credentials {
-            username = "aws"
-            password = authToken
-        }
-    }
 }

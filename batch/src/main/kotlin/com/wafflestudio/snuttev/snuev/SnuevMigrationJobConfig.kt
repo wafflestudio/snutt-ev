@@ -7,15 +7,15 @@ import com.wafflestudio.snuttev.core.domain.lecture.repository.LectureRepository
 import com.wafflestudio.snuttev.core.domain.lecture.repository.SemesterLectureRepository
 import com.wafflestudio.snuttev.snuev.model.SnuevEvaluation
 import jakarta.persistence.EntityManagerFactory
-import org.springframework.batch.core.Job
-import org.springframework.batch.core.Step
+import org.springframework.batch.core.job.Job
 import org.springframework.batch.core.job.builder.JobBuilder
 import org.springframework.batch.core.repository.JobRepository
+import org.springframework.batch.core.step.Step
 import org.springframework.batch.core.step.builder.StepBuilder
-import org.springframework.batch.item.ItemProcessor
-import org.springframework.batch.item.ItemWriter
-import org.springframework.batch.item.database.JdbcCursorItemReader
-import org.springframework.batch.item.database.builder.JdbcCursorItemReaderBuilder
+import org.springframework.batch.infrastructure.item.ItemProcessor
+import org.springframework.batch.infrastructure.item.ItemWriter
+import org.springframework.batch.infrastructure.item.database.JdbcCursorItemReader
+import org.springframework.batch.infrastructure.item.database.builder.JdbcCursorItemReaderBuilder
 import org.springframework.boot.jdbc.DataSourceBuilder
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -53,8 +53,8 @@ class SnuevMigrationJobConfig(
 
     fun customReaderStep(jobRepository: JobRepository): Step =
         StepBuilder(CUSTOM_READER_JOB_STEP, jobRepository)
-            .chunk<SnuevEvaluation, LectureEvaluation>(
-                CHUNK_SIZE,
+            .chunk<SnuevEvaluation, LectureEvaluation>(CHUNK_SIZE)
+            .transactionManager(
                 JpaTransactionManager().apply {
                     this.entityManagerFactory = this@SnuevMigrationJobConfig.entityManagerFactory
                 },

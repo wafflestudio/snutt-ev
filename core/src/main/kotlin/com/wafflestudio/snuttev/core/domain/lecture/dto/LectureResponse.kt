@@ -1,9 +1,10 @@
 package com.wafflestudio.snuttev.core.domain.lecture.dto
 
-import com.fasterxml.jackson.databind.PropertyNamingStrategies
-import com.fasterxml.jackson.databind.annotation.JsonNaming
+import com.wafflestudio.snuttev.core.common.dto.common.ListResponse
 import com.wafflestudio.snuttev.core.common.type.LectureClassification
 import com.wafflestudio.snuttev.core.domain.evaluation.dto.SemesterLectureDto
+import tools.jackson.databind.PropertyNamingStrategies
+import tools.jackson.databind.annotation.JsonNaming
 
 data class LectureDto(
     val id: Long,
@@ -64,3 +65,5 @@ data class EvLectureSummaryForSnutt(
     val avgRating: Double?,
     val evaluationCount: Long,
 )
+
+class LectureIdListResponse : ListResponse<LectureIdResponse>(listOf())

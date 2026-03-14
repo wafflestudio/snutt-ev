@@ -10,6 +10,10 @@ spring:
     property-naming-strategy: SNAKE_CASE
     default-property-inclusion: non_null
 
+springdoc:
+  pre-loading-enabled: true
+  pre-loading-locales: ko-KR,en-US
+
 server:
   tomcat:
     accesslog:

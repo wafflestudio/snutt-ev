@@ -9,15 +9,15 @@ import com.wafflestudio.snuttev.core.domain.lecture.repository.SemesterLectureRe
 import com.wafflestudio.snuttev.core.domain.lecture.repository.SnuttLectureIdMapRepository
 import com.wafflestudio.snuttev.sync.model.SnuttSemesterLecture
 import jakarta.persistence.EntityManagerFactory
-import org.springframework.batch.core.Job
-import org.springframework.batch.core.Step
+import org.springframework.batch.core.job.Job
 import org.springframework.batch.core.job.builder.JobBuilder
 import org.springframework.batch.core.repository.JobRepository
+import org.springframework.batch.core.step.Step
 import org.springframework.batch.core.step.builder.StepBuilder
-import org.springframework.batch.item.ItemProcessor
-import org.springframework.batch.item.ItemWriter
-import org.springframework.batch.item.data.MongoCursorItemReader
-import org.springframework.batch.item.data.builder.MongoCursorItemReaderBuilder
+import org.springframework.batch.infrastructure.item.ItemProcessor
+import org.springframework.batch.infrastructure.item.ItemWriter
+import org.springframework.batch.infrastructure.item.data.MongoCursorItemReader
+import org.springframework.batch.infrastructure.item.data.builder.MongoCursorItemReaderBuilder
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
@@ -113,8 +113,8 @@ class SnuttLectureSyncJobConfig(
         query: Query,
     ): Step =
         StepBuilder(CUSTOM_READER_JOB_STEP, jobRepository)
-            .chunk<SnuttSemesterLecture, SyncProcessResult>(
-                CHUNK_SIZE,
+            .chunk<SnuttSemesterLecture, SyncProcessResult>(CHUNK_SIZE)
+            .transactionManager(
                 JpaTransactionManager().apply {
                     this.entityManagerFactory = this@SnuttLectureSyncJobConfig.entityManagerFactory
                 },
