@@ -4,10 +4,7 @@ spring:
   config:
     import: application-core.yml
   mongodb:
-    host: localhost
-    port: 27017
-    authentication-database: admin
-    database: snutt
+    uri: mongodb://localhost:27017/snutt?authSource=admin
   batch:
     job:
       name: ${job.name:EMPTY}
@@ -20,10 +17,7 @@ spring.config.activate.on-profile: dev
 
 spring:
   mongodb:
-    host:
-    port:
-    authentication-database:
-    database:
+    uri:
 
 ---
 
@@ -31,7 +25,4 @@ spring.config.activate.on-profile: prod
 
 spring:
   mongodb:
-    host:
-    port:
-    authentication-database:
-    database:
+    uri:
