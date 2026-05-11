@@ -7,4 +7,15 @@ import org.springframework.data.jpa.repository.Query
 interface TagRepository : JpaRepository<Tag, Long> {
     @Query("SELECT t FROM Tag t JOIN FETCH t.tagGroup WHERE t.id IN :tagIdList")
     fun getTagsWithTagGroupByTagsIdIsIn(tagIdList: List<Long>): List<Tag>
+
+    fun searchTagByStringValue(stringValue: String): Tag?
+
+    @Query(
+        """
+        SELECT COALESCE(MIN(t.ordering), 0)
+        FROM Tag t
+        WHERE t.tagGroup.id = :tagGroupId
+        """,
+    )
+    fun findMinOrderingByTagGroupId(tagGroupId: Long): Int
 }
