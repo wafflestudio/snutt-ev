@@ -33,5 +33,3 @@ object EvaluationLikeAlreadyNotExistsException : SnuttException(ErrorType.EVALUA
 object EvaluationContentBlankException : SnuttException(ErrorType.EVALUATION_CONTENT_BLANK)
 
 object LectureMismatchException : SnuttException(ErrorType.LECTURE_MISMATCH)
-
-object InvalidSemesterValueException : SnuttException(ErrorType.INVALID_SEMESTER_VALUE)

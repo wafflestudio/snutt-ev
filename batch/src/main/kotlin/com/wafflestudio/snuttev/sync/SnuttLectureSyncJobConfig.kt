@@ -1,17 +1,15 @@
 package com.wafflestudio.snuttev.sync
 
-import com.wafflestudio.snuttev.core.common.error.TagGroupNotFoundException
 import com.wafflestudio.snuttev.core.common.type.LectureClassification
-import com.wafflestudio.snuttev.core.common.type.Semester
 import com.wafflestudio.snuttev.core.domain.lecture.model.Lecture
 import com.wafflestudio.snuttev.core.domain.lecture.model.SemesterLecture
 import com.wafflestudio.snuttev.core.domain.lecture.model.SnuttLectureIdMap
 import com.wafflestudio.snuttev.core.domain.lecture.repository.LectureRepository
 import com.wafflestudio.snuttev.core.domain.lecture.repository.SemesterLectureRepository
 import com.wafflestudio.snuttev.core.domain.lecture.repository.SnuttLectureIdMapRepository
-import com.wafflestudio.snuttev.core.domain.tag.model.Tag
 import com.wafflestudio.snuttev.core.domain.tag.repository.TagGroupRepository
 import com.wafflestudio.snuttev.core.domain.tag.repository.TagRepository
+import com.wafflestudio.snuttev.core.domain.tag.service.TagService
 import com.wafflestudio.snuttev.sync.model.SnuttSemesterLecture
 import jakarta.persistence.EntityManagerFactory
 import org.springframework.batch.core.ExitStatus
@@ -48,6 +46,7 @@ class SnuttLectureSyncJobConfig(
     private val tagRepository: TagRepository,
     private val tagGroupRepository: TagGroupRepository,
     private val ratingSyncJob: Job,
+    private val tagService: TagService,
 ) {
     companion object {
         private const val JOB_NAME = "SYNC_JOB"
@@ -204,30 +203,10 @@ class SnuttLectureSyncJobConfig(
         return object : StepExecutionListener {
             override fun afterStep(stepExecution: StepExecution): ExitStatus {
                 if (stepExecution.exitStatus == ExitStatus.COMPLETED && targetYearSemester != null) {
-                    saveTagIfNotExists(targetYearSemester)
+                    tagService.saveYearSemesterTagIfNotExists(targetYearSemester.year, targetYearSemester.semester)
                 }
                 return stepExecution.exitStatus
             }
-        }
-    }
-
-    private fun saveTagIfNotExists(targetYearSemester: TargetYearSemester) {
-        val stringValue = targetYearSemester.year.toString() + "," + targetYearSemester.semester.toString()
-        if (tagRepository.searchTagByStringValue(stringValue) == null) {
-            val tagGroup = tagGroupRepository.findByName(name = "학기") ?: throw TagGroupNotFoundException
-            val name =
-                targetYearSemester.year.toString() + " " +
-                    Semester.labelOf(targetYearSemester.semester) + "학기"
-            val ordering = -1 + tagRepository.findMinOrderingByTagGroupId(tagGroup.id!!)
-            tagRepository.save(
-                Tag(
-                    tagGroup = tagGroup,
-                    name = name,
-                    ordering = ordering,
-                    stringValue = stringValue,
-                    description = null,
-                ),
-            )
         }
     }
 

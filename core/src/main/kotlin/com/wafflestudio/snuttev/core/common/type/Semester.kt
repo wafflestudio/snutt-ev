@@ -1,7 +1,5 @@
 package com.wafflestudio.snuttev.core.common.type
 
-import com.wafflestudio.snuttev.core.common.error.InvalidSemesterValueException
-
 enum class Semester(
     val value: Int,
     val label: String,
@@ -13,8 +11,6 @@ enum class Semester(
     ;
 
     companion object {
-        fun labelOf(value: Int): String =
-            entries.firstOrNull { it.value == value }?.label
-                ?: throw InvalidSemesterValueException
+        fun labelOfOrNull(value: Int): String? = entries.firstOrNull { it.value == value }?.label
     }
 }
