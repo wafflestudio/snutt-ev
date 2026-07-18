@@ -67,8 +67,8 @@ internal final class Cache(
     }
 
     fun deleteAll(cacheKey: CacheKey) {
-        val keys = redisTemplate.keys(cacheKey.keyFormat.replace("%s", "*"))
         try {
+            val keys = redisTemplate.keys(cacheKey.keyFormat.replace("%s", "*"))
             log.debug("[CACHE DELETE ALL] {}", keys)
             redisTemplate.delete(keys)
         } catch (e: Exception) {
