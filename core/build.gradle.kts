@@ -6,7 +6,9 @@ plugins {
 if (gradle.startParameter.taskNames.none { it.contains("ktlint", ignoreCase = true) }) {
     apply(plugin = "org.hibernate.orm")
     configure<org.hibernate.orm.tooling.gradle.HibernateOrmSpec> {
-        enhancement { enableLazyInitialization = true }
+        // 빈 블록이지만 bytecode enhancement의 opt-in 트리거이므로 제거하면 안 됨.
+        // (enableLazyInitialization 등 세부 옵션은 기본값 true라 명시 불필요)
+        enhancement { }
     }
 }
 
