@@ -6,7 +6,7 @@ plugins {
 if (gradle.startParameter.taskNames.none { it.contains("ktlint", ignoreCase = true) }) {
     apply(plugin = "org.hibernate.orm")
     configure<org.hibernate.orm.tooling.gradle.HibernateOrmSpec> {
-        enhancement { enableLazyInitialization = true }
+        enhancement { }
     }
 }
 
