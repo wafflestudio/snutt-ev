@@ -2,6 +2,7 @@ package com.wafflestudio.snuttev.controller
 
 import com.wafflestudio.snuttev.core.common.dto.common.CursorPaginationResponse
 import com.wafflestudio.snuttev.core.common.error.ErrorResponse
+import com.wafflestudio.snuttev.core.common.type.EvaluationSort
 import com.wafflestudio.snuttev.core.domain.evaluation.dto.CreateEvaluationReportRequest
 import com.wafflestudio.snuttev.core.domain.evaluation.dto.CreateEvaluationRequest
 import com.wafflestudio.snuttev.core.domain.evaluation.dto.EvaluationReportDto
@@ -54,13 +55,24 @@ class EvaluationController(
         @PathVariable(value = "id") lectureId: Long,
     ): LectureEvaluationSummaryResponse = evaluationService.getEvaluationSummaryOfLecture(lectureId)
 
-    @Operation(description = "해당 강의의 강의평 전체 수를 total_count, 자신의 강의평을 제외한 강의평들을 content로 제공")
+    @Operation(description = "해당 강의의 강의평 전체 수를 total_count, 자신의 강의평을 제외한 강의평들을 content로 제공. sort=latest|recommended")
     @GetMapping("/v1/lectures/{id}/evaluations")
     fun getLectureEvaluations(
         @PathVariable(value = "id") lectureId: Long,
         @RequestParam cursor: String?,
+        @RequestParam(required = false) sort: String?,
+        @RequestParam(required = false) year: Int?,
+        @RequestParam(required = false) semester: Int?,
         @RequestAttribute(value = "UserId") userId: String,
-    ): CursorPaginationResponse<EvaluationWithSemesterResponse> = evaluationService.getEvaluationsOfLecture(userId, lectureId, cursor)
+    ): CursorPaginationResponse<EvaluationWithSemesterResponse> =
+        evaluationService.getEvaluationsOfLecture(
+            userId,
+            lectureId,
+            cursor,
+            EvaluationSort.fromParameter(sort),
+            year,
+            semester,
+        )
 
     @GetMapping("/v1/lectures/{id}/evaluations/users/me")
     fun getLectureEvaluationsOfMe(

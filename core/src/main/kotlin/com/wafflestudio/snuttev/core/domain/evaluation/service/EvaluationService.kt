@@ -13,6 +13,7 @@ import com.wafflestudio.snuttev.core.common.error.MyLectureEvaluationException
 import com.wafflestudio.snuttev.core.common.error.NotMyLectureEvaluationException
 import com.wafflestudio.snuttev.core.common.error.SemesterLectureNotFoundException
 import com.wafflestudio.snuttev.core.common.error.TagNotFoundException
+import com.wafflestudio.snuttev.core.common.type.EvaluationSort
 import com.wafflestudio.snuttev.core.common.util.PageUtils
 import com.wafflestudio.snuttev.core.common.util.cache.Cache
 import com.wafflestudio.snuttev.core.common.util.cache.CacheKey
@@ -110,6 +111,7 @@ class EvaluationService internal constructor(
                     avgGains = lectureEvaluationSummaryDao.avgGains,
                     avgLifeBalance = lectureEvaluationSummaryDao.avgLifeBalance,
                     avgRating = lectureEvaluationSummaryDao.avgRating,
+                    evaluationCount = lectureEvaluationSummaryDao.evaluationCount,
                 ),
         )
     }
@@ -118,10 +120,13 @@ class EvaluationService internal constructor(
         userId: String,
         lectureId: Long,
         cursor: String?,
+        sort: EvaluationSort = EvaluationSort.LATEST,
+        year: Int? = null,
+        semester: Int? = null,
     ): CursorPaginationResponse<EvaluationWithSemesterResponse> {
         val evaluationCursor = PageUtils.getCursor<EvaluationCursor>(cursor)
 
-        val lectureEvaluationsCount = lectureEvaluationRepository.countByLectureId(lectureId)
+        val lectureEvaluationsCount = lectureEvaluationRepository.countByLectureIdAndSemester(lectureId, year, semester)
 
         var evaluationWithSemesterDtos =
             lectureEvaluationRepository.findNotMyEvaluationsWithSemesterByLectureId(
@@ -129,13 +134,19 @@ class EvaluationService internal constructor(
                 userId,
                 evaluationCursor,
                 DEFAULT_PAGE_SIZE + 1,
+                sort,
+                year,
+                semester,
             )
 
         var nextCursor: String? = null
         if (evaluationWithSemesterDtos.size > DEFAULT_PAGE_SIZE) {
             evaluationWithSemesterDtos = evaluationWithSemesterDtos.dropLast(1)
             evaluationWithSemesterDtos.last().run {
-                nextCursor = PageUtils.generateCursor(EvaluationCursor(this.year, this.semester, this.id))
+                nextCursor =
+                    PageUtils.generateCursor(
+                        EvaluationCursor(this.year, this.semester, this.id, this.likeCount),
+                    )
             }
         }
 

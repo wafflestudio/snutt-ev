@@ -53,6 +53,7 @@ class LectureRepositoryImpl(
                         Projections.constructor(
                             LectureEvaluationSimpleSummary::class.java,
                             lectureEvaluation.rating.avg(),
+                            lectureEvaluation.id.count(),
                         ),
                     ),
                 ).from(lecture)
@@ -119,6 +120,7 @@ class LectureRepositoryImpl(
                         Projections.constructor(
                             LectureEvaluationSimpleSummary::class.java,
                             lectureEvaluation.rating.avg(),
+                            lectureEvaluation.id.count(),
                         ),
                     ),
                 ).from(lecture)

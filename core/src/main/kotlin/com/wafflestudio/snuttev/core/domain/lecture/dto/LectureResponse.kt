@@ -21,6 +21,7 @@ data class LectureDto(
 
 data class LectureEvaluationSimpleSummary(
     val avgRating: Double?,
+    val evaluationCount: Long,
 )
 
 data class LectureAndSemesterLecturesResponse(

@@ -23,7 +23,7 @@ interface LectureRepository :
         sl.lecture.id, sl.lecture.title, sl.lecture.instructor, sl.lecture.department, sl.lecture.courseNumber, 
         sl.lecture.credit, sl.lecture.academicYear, sl.lecture.category, sl.lecture.classification, 
         avg(le.gradeSatisfaction), avg(le.teachingSkill),
-        avg(le.gains), avg(le.lifeBalance), avg(le.rating)) 
+        avg(le.gains), avg(le.lifeBalance), avg(le.rating), count(le.id)) 
         from LectureEvaluation le right join le.semesterLecture sl on le.isHidden = false where sl.lecture.id = :id
     """,
     )
