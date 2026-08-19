@@ -21,11 +21,6 @@ interface LectureEvaluationRepository :
     ): List<LectureEvaluation>
 
     @Query(
-        "select count(le.id) from LectureEvaluation le inner join le.semesterLecture sl where sl.lecture.id = :lectureId and le.isHidden = false",
-    )
-    fun countByLectureId(lectureId: Long): Long
-
-    @Query(
         """
         select count(le.id) from LectureEvaluation le inner join le.semesterLecture sl
         where sl.lecture.id = :lectureId and le.isHidden = false
