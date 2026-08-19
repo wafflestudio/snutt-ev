@@ -804,23 +804,23 @@ class EvaluationServiceTest
         }
     }
 
-    private data class SavedEvaluation(
-        val id: Long,
-        val gradeSatisfaction: Double,
-        val teachingSkill: Double,
-        val gains: Double,
-        val lifeBalance: Double,
-        val rating: Double,
-    ) {
-        constructor(
-            id: Long,
-            ratingValues: EvaluationServiceTest.RatingValues,
-        ) : this(
-            id = id,
-            gradeSatisfaction = ratingValues.gradeSatisfaction,
-            teachingSkill = ratingValues.teachingSkill,
-            gains = ratingValues.gains,
-            lifeBalance = ratingValues.lifeBalance,
-            rating = ratingValues.rating,
-        )
-    }
+private data class SavedEvaluation(
+    val id: Long,
+    val gradeSatisfaction: Double,
+    val teachingSkill: Double,
+    val gains: Double,
+    val lifeBalance: Double,
+    val rating: Double,
+) {
+    constructor(
+        id: Long,
+        ratingValues: EvaluationServiceTest.RatingValues,
+    ) : this(
+        id = id,
+        gradeSatisfaction = ratingValues.gradeSatisfaction,
+        teachingSkill = ratingValues.teachingSkill,
+        gains = ratingValues.gains,
+        lifeBalance = ratingValues.lifeBalance,
+        rating = ratingValues.rating,
+    )
+}
