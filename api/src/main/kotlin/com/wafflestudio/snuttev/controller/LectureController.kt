@@ -34,6 +34,9 @@ class LectureController(
     private val lectureService: LectureService,
     private val objectMapper: ObjectMapper,
 ) {
+    @Operation(
+        description = "강의 검색. 조건별 페이지네이션 반환. evaluation은 숨김 제외 평균 평점과 개수 포함.",
+    )
     @GetMapping("/v1/lectures")
     fun getLectures(
         @ModelAttribute params: SearchLectureRequest,
