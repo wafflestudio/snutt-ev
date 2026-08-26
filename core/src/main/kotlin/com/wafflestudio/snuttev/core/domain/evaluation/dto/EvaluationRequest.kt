@@ -51,4 +51,5 @@ data class EvaluationCursor(
     val year: Int,
     val semester: Int,
     val lectureEvaluationId: Long,
+    val likeCount: Long? = null,
 )

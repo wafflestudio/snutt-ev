@@ -1,9 +1,11 @@
 package com.wafflestudio.snuttev.core.domain.evaluation.repository
 
 import com.querydsl.core.BooleanBuilder
+import com.querydsl.core.types.OrderSpecifier
 import com.querydsl.core.types.dsl.CaseBuilder
 import com.querydsl.jpa.JPAExpressions.select
 import com.querydsl.jpa.impl.JPAQueryFactory
+import com.wafflestudio.snuttev.core.common.type.EvaluationSort
 import com.wafflestudio.snuttev.core.common.type.LectureClassification
 import com.wafflestudio.snuttev.core.domain.evaluation.dto.EvaluationCursor
 import com.wafflestudio.snuttev.core.domain.evaluation.dto.EvaluationWithLectureDto
@@ -34,14 +36,18 @@ class LectureEvaluationRepositoryImpl(
         userId: String,
         cursor: EvaluationCursor?,
         pageSize: Int,
+        sort: EvaluationSort,
+        year: Int?,
+        semester: Int?,
     ): List<EvaluationWithSemesterDto> =
         queryFactory
             .selectEvaluationWithSemesterDto(userId)
             .where(semesterLecture.lecture.id.eq(lectureId))
             .where(lectureEvaluation.userId.ne(userId))
             .where(lectureEvaluation.isHidden.isFalse)
-            .where(getEvaluationCursorPredicate(cursor))
-            .orderBy(semesterLecture.year.desc(), semesterLecture.semester.desc(), lectureEvaluation.id.desc())
+            .where(getSemesterFilterPredicate(year, semester))
+            .where(getEvaluationCursorPredicate(cursor, sort))
+            .orderBy(*getEvaluationSortOrder(sort))
             .limit(pageSize.toLong())
             .fetch()
 
@@ -197,20 +203,51 @@ class LectureEvaluationRepositoryImpl(
             .on(evaluationLike.userId.eq(userId))
             .innerJoin(semesterLecture.lecture, lecture)
 
-    private fun getEvaluationCursorPredicate(cursor: EvaluationCursor?) =
-        BooleanBuilder(
-            cursor?.let {
-                semesterLecture.year
-                    .lt(it.year)
-                    .or(semesterLecture.year.eq(it.year).and(semesterLecture.semester.lt(it.semester)))
-                    .or(
-                        semesterLecture.year
-                            .eq(it.year)
-                            .and(semesterLecture.semester.eq(it.semester))
-                            .and(lectureEvaluation.id.lt(it.lectureEvaluationId)),
-                    )
-            },
-        )
+    private fun getSemesterFilterPredicate(
+        year: Int?,
+        semester: Int?,
+    ) = BooleanBuilder().apply {
+        year?.let { and(semesterLecture.year.eq(it)) }
+        semester?.let { and(semesterLecture.semester.eq(it)) }
+    }
+
+    private fun getEvaluationSortOrder(sort: EvaluationSort): Array<OrderSpecifier<*>> =
+        when (sort) {
+            EvaluationSort.LATEST ->
+                arrayOf(semesterLecture.year.desc(), semesterLecture.semester.desc(), lectureEvaluation.id.desc())
+            EvaluationSort.RECOMMENDED ->
+                arrayOf(lectureEvaluation.likeCount.desc(), lectureEvaluation.id.desc())
+        }
+
+    private fun getEvaluationCursorPredicate(
+        cursor: EvaluationCursor?,
+        sort: EvaluationSort = EvaluationSort.LATEST,
+    ) = BooleanBuilder(
+        cursor?.let {
+            when (sort) {
+                EvaluationSort.LATEST ->
+                    semesterLecture.year
+                        .lt(it.year)
+                        .or(semesterLecture.year.eq(it.year).and(semesterLecture.semester.lt(it.semester)))
+                        .or(
+                            semesterLecture.year
+                                .eq(it.year)
+                                .and(semesterLecture.semester.eq(it.semester))
+                                .and(lectureEvaluation.id.lt(it.lectureEvaluationId)),
+                        )
+                EvaluationSort.RECOMMENDED -> {
+                    val likeCount = it.likeCount ?: 0
+                    lectureEvaluation.likeCount
+                        .lt(likeCount)
+                        .or(
+                            lectureEvaluation.likeCount
+                                .eq(likeCount)
+                                .and(lectureEvaluation.id.lt(it.lectureEvaluationId)),
+                        )
+                }
+            }
+        },
+    )
 
     private fun getEvaluationIdCursorPredicate(cursor: Long?) =
         BooleanBuilder(

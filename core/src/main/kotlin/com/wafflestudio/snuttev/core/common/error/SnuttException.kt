@@ -32,4 +32,6 @@ object EvaluationLikeAlreadyNotExistsException : SnuttException(ErrorType.EVALUA
 
 object EvaluationContentBlankException : SnuttException(ErrorType.EVALUATION_CONTENT_BLANK)
 
+object InvalidEvaluationSortException : SnuttException(ErrorType.INVALID_EVALUATION_SORT)
+
 object LectureMismatchException : SnuttException(ErrorType.LECTURE_MISMATCH)

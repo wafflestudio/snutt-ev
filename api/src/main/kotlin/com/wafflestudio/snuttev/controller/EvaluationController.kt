@@ -2,6 +2,7 @@ package com.wafflestudio.snuttev.controller
 
 import com.wafflestudio.snuttev.core.common.dto.common.CursorPaginationResponse
 import com.wafflestudio.snuttev.core.common.error.ErrorResponse
+import com.wafflestudio.snuttev.core.common.type.EvaluationSort
 import com.wafflestudio.snuttev.core.domain.evaluation.dto.CreateEvaluationReportRequest
 import com.wafflestudio.snuttev.core.domain.evaluation.dto.CreateEvaluationRequest
 import com.wafflestudio.snuttev.core.domain.evaluation.dto.EvaluationReportDto
@@ -13,6 +14,8 @@ import com.wafflestudio.snuttev.core.domain.evaluation.dto.LectureEvaluationSumm
 import com.wafflestudio.snuttev.core.domain.evaluation.dto.UpdateEvaluationRequest
 import com.wafflestudio.snuttev.core.domain.evaluation.service.EvaluationService
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.Parameter
+import io.swagger.v3.oas.annotations.enums.ParameterIn
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
@@ -49,18 +52,83 @@ class EvaluationController(
         @RequestAttribute(value = "UserId") userId: String,
     ): LectureEvaluationDto = evaluationService.createEvaluation(userId, semesterLectureId, createEvaluationRequest)
 
+    @Operation(
+        description = "강의 평가 요약 조회. 강의 기본 정보와 평균 점수, 강의평 개수(evaluation.evaluationCount)를 반환한다. 숨김 처리된 강의평은 제외된다.",
+        responses = [
+            ApiResponse(responseCode = "200"),
+            ApiResponse(
+                responseCode = "404",
+                description = "24001 LECTURE_NOT_FOUND",
+                content = [Content(schema = Schema(implementation = ErrorResponse::class))],
+            ),
+        ],
+    )
     @GetMapping("/v1/lectures/{id}/evaluation-summary")
     fun getLectureEvaluationSummary(
         @PathVariable(value = "id") lectureId: Long,
     ): LectureEvaluationSummaryResponse = evaluationService.getEvaluationSummaryOfLecture(lectureId)
 
-    @Operation(description = "해당 강의의 강의평 전체 수를 total_count, 자신의 강의평을 제외한 강의평들을 content로 제공")
+    @Operation(
+        description = "강의별 강의평 목록 조회 (커서 페이지네이션). total_count는 필터 후 숨김 제외 전체 개수, content는 본인 제외. sort는 latest/recommended.",
+        parameters = [
+            Parameter(
+                `in` = ParameterIn.PATH,
+                name = "id",
+                description = "강의 ID",
+                required = true,
+            ),
+            Parameter(
+                `in` = ParameterIn.QUERY,
+                name = "cursor",
+                description = "다음 페이지 커서(Base64). latest: year/semester/id, recommended: likeCount/id. sort 변경 시 null 권장",
+                required = false,
+            ),
+            Parameter(
+                `in` = ParameterIn.QUERY,
+                name = "sort",
+                description = "정렬 방식. latest(기본값) 또는 recommended",
+                required = false,
+                schema = Schema(allowableValues = ["latest", "recommended"]),
+            ),
+            Parameter(
+                `in` = ParameterIn.QUERY,
+                name = "year",
+                description = "필터링할 수강 연도. 예: 2024. null이면 전체 연도",
+                required = false,
+            ),
+            Parameter(
+                `in` = ParameterIn.QUERY,
+                name = "semester",
+                description = "필터링할 수강 학기. 1=봄, 2=여름, 3=가을, 4=겨울. year와 함께 사용하는 것을 권장",
+                required = false,
+            ),
+        ],
+        responses = [
+            ApiResponse(responseCode = "200"),
+            ApiResponse(
+                responseCode = "400",
+                description = "20001 WRONG_CURSOR_FORMAT, 20005 INVALID_EVALUATION_SORT (sort가 latest|recommended가 아닌 경우)",
+                content = [Content(schema = Schema(implementation = ErrorResponse::class))],
+            ),
+        ],
+    )
     @GetMapping("/v1/lectures/{id}/evaluations")
     fun getLectureEvaluations(
         @PathVariable(value = "id") lectureId: Long,
         @RequestParam cursor: String?,
+        @RequestParam(required = false) sort: String?,
+        @RequestParam(required = false) year: Int?,
+        @RequestParam(required = false) semester: Int?,
         @RequestAttribute(value = "UserId") userId: String,
-    ): CursorPaginationResponse<EvaluationWithSemesterResponse> = evaluationService.getEvaluationsOfLecture(userId, lectureId, cursor)
+    ): CursorPaginationResponse<EvaluationWithSemesterResponse> =
+        evaluationService.getEvaluationsOfLecture(
+            userId,
+            lectureId,
+            cursor,
+            EvaluationSort.fromParameter(sort),
+            year,
+            semester,
+        )
 
     @GetMapping("/v1/lectures/{id}/evaluations/users/me")
     fun getLectureEvaluationsOfMe(

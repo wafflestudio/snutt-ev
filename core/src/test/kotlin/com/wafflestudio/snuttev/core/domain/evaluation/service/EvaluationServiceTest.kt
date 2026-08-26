@@ -4,6 +4,7 @@ import com.wafflestudio.snuttev.core.common.error.EvaluationAlreadyExistsExcepti
 import com.wafflestudio.snuttev.core.common.error.EvaluationLikeAlreadyExistsException
 import com.wafflestudio.snuttev.core.common.error.EvaluationLikeAlreadyNotExistsException
 import com.wafflestudio.snuttev.core.common.error.NotMyLectureEvaluationException
+import com.wafflestudio.snuttev.core.common.type.EvaluationSort
 import com.wafflestudio.snuttev.core.common.type.LectureClassification
 import com.wafflestudio.snuttev.core.common.type.Semester
 import com.wafflestudio.snuttev.core.domain.evaluation.dto.CreateEvaluationRequest
@@ -247,6 +248,7 @@ class EvaluationServiceTest
             assertThat(response.evaluation.avgGains).isEqualTo(totalRatingValues.gains / 5)
             assertThat(response.evaluation.avgLifeBalance).isEqualTo(totalRatingValues.lifeBalance / 5)
             assertThat(response.evaluation.avgRating).isEqualTo(totalRatingValues.rating / 5)
+            assertThat(response.evaluation.evaluationCount).isEqualTo(5)
         }
 
         @Test
@@ -431,6 +433,66 @@ class EvaluationServiceTest
                     }
                 }
             }
+        }
+
+        @Test
+        fun `test - getEvaluationsOfLecture - recommendedOrdering`() {
+            val lecture = lectureRepository.findAll().first()
+            val semesterLecture = semesterLectureRepository.findAll().first { it.lecture.id == lecture.id }
+            val myUserId = "1"
+
+            val likedMost = saveLectureEvaluation("2", semesterLecture.id!!)
+            val likedOnce = saveLectureEvaluation("3", semesterLecture.id!!)
+            saveLectureEvaluation("4", semesterLecture.id!!)
+            evaluationService.likeEvaluation(userId = "10", evaluationId = likedMost.id)
+            evaluationService.likeEvaluation(userId = "11", evaluationId = likedMost.id)
+            evaluationService.likeEvaluation(userId = "10", evaluationId = likedOnce.id)
+
+            val response =
+                evaluationService.getEvaluationsOfLecture(
+                    myUserId,
+                    lecture.id!!,
+                    cursor = null,
+                    sort = EvaluationSort.RECOMMENDED,
+                )
+
+            assertThat(response.content.map { it.id }.take(2)).containsExactly(likedMost.id, likedOnce.id)
+            assertThat(response.content.map { it.likeCount }).containsExactly(2L, 1L, 0L)
+        }
+
+        @Test
+        fun `test - getEvaluationsOfLecture - semesterFilter`() {
+            val lecture = lectureRepository.findAll().first()
+            val spring2010 =
+                semesterLectureRepository.findByYearAndSemesterAndLecture(
+                    2010,
+                    Semester.SPRING.value,
+                    lecture,
+                )!!
+            val autumn2010 =
+                semesterLectureRepository.findByYearAndSemesterAndLecture(
+                    2010,
+                    Semester.AUTUMN.value,
+                    lecture,
+                )!!
+            val myUserId = "1"
+
+            saveLectureEvaluation("2", spring2010.id!!)
+            saveLectureEvaluation("3", spring2010.id!!)
+            saveLectureEvaluation("4", autumn2010.id!!)
+
+            val response =
+                evaluationService.getEvaluationsOfLecture(
+                    myUserId,
+                    lecture.id!!,
+                    cursor = null,
+                    year = 2010,
+                    semester = Semester.SPRING.value,
+                )
+
+            assertThat(response.totalCount).isEqualTo(2)
+            assertThat(response.content).hasSize(2)
+            assertThat(response.content).allMatch { it.year == 2010 && it.semester == Semester.SPRING.value }
         }
 
         @Test
@@ -714,7 +776,7 @@ class EvaluationServiceTest
         private fun saveLectureEvaluation(
             userId: String,
             semesterLectureId: Long,
-        ): RatingValues {
+        ): SavedEvaluation {
             val ratingValues =
                 RatingValues(
                     gradeSatisfaction = makeRandomScore(),
@@ -724,19 +786,41 @@ class EvaluationServiceTest
                     rating = makeRandomScore(),
                 )
 
-            lectureEvaluationRepository.save(
-                LectureEvaluation(
-                    semesterLecture = semesterLectureRepository.findByIdOrNull(semesterLectureId)!!,
-                    userId = userId,
-                    content = "content",
-                    gradeSatisfaction = ratingValues.gradeSatisfaction,
-                    teachingSkill = ratingValues.teachingSkill,
-                    gains = ratingValues.gains,
-                    lifeBalance = ratingValues.lifeBalance,
-                    rating = ratingValues.rating,
-                ),
-            )
+            val evaluation =
+                lectureEvaluationRepository.save(
+                    LectureEvaluation(
+                        semesterLecture = semesterLectureRepository.findByIdOrNull(semesterLectureId)!!,
+                        userId = userId,
+                        content = "content",
+                        gradeSatisfaction = ratingValues.gradeSatisfaction,
+                        teachingSkill = ratingValues.teachingSkill,
+                        gains = ratingValues.gains,
+                        lifeBalance = ratingValues.lifeBalance,
+                        rating = ratingValues.rating,
+                    ),
+                )
 
-            return ratingValues
+            return SavedEvaluation(evaluation.id!!, ratingValues)
         }
     }
+
+private data class SavedEvaluation(
+    val id: Long,
+    val gradeSatisfaction: Double,
+    val teachingSkill: Double,
+    val gains: Double,
+    val lifeBalance: Double,
+    val rating: Double,
+) {
+    constructor(
+        id: Long,
+        ratingValues: EvaluationServiceTest.RatingValues,
+    ) : this(
+        id = id,
+        gradeSatisfaction = ratingValues.gradeSatisfaction,
+        teachingSkill = ratingValues.teachingSkill,
+        gains = ratingValues.gains,
+        lifeBalance = ratingValues.lifeBalance,
+        rating = ratingValues.rating,
+    )
+}

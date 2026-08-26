@@ -49,6 +49,7 @@ data class LectureEvaluationSummary(
     val avgGains: Double?,
     val avgLifeBalance: Double?,
     val avgRating: Double?,
+    val evaluationCount: Long,
 )
 
 data class EvaluationWithSemesterResponse(

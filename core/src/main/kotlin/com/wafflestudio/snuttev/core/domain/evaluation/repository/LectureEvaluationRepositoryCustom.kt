@@ -1,5 +1,6 @@
 package com.wafflestudio.snuttev.core.domain.evaluation.repository
 
+import com.wafflestudio.snuttev.core.common.type.EvaluationSort
 import com.wafflestudio.snuttev.core.domain.evaluation.dto.EvaluationCursor
 import com.wafflestudio.snuttev.core.domain.evaluation.dto.EvaluationWithLectureDto
 import com.wafflestudio.snuttev.core.domain.evaluation.dto.EvaluationWithSemesterDto
@@ -16,6 +17,9 @@ interface LectureEvaluationRepositoryCustom {
         userId: String,
         cursor: EvaluationCursor?,
         pageSize: Int,
+        sort: EvaluationSort = EvaluationSort.LATEST,
+        year: Int? = null,
+        semester: Int? = null,
     ): List<EvaluationWithSemesterDto>
 
     fun findMyEvaluationsWithSemesterByLectureId(
