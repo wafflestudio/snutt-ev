@@ -1,6 +1,8 @@
 spring:
   profiles:
     default: local
+  flyway:
+    locations: classpath:/db
   threads:
     virtual:
       enabled: true
@@ -37,7 +39,6 @@ spring:
   datasource:
     url: jdbc:h2:mem:testdb;MODE=MYSQL;DATABASE_TO_UPPER=false;DB_CLOSE_DELAY=-1;NON_KEYWORDS=year
   flyway:
-    locations: classpath:/db
     baseline-on-migrate: true
   data:
     redis:

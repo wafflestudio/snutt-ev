@@ -1,0 +1,10 @@
+{
+  "resources": [
+    {
+      "glob": "db"
+    },
+    {
+      "glob": "db/*"
+    }
+  ]
+}
